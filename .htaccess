@@ -1,0 +1,26 @@
+<FilesMatch "\.(lang.php|cfg.php|tpl|inc)$">
+  Order allow,deny
+</FilesMatch>
+
+
+<Files ~ "php.ini">
+	Order allow,deny
+	Deny from all
+	Satisfy All
+</Files>
+
+#disable directory browsing
+Options -Indexes 
+
+# Turn on URL rewriting
+Options +FollowSymlinks
+RewriteEngine on
+
+# Allow direct links to real files
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Allow direct links to real directories
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Force everything else through /index.php
+RewriteRule ^.*$ index.php [NC]

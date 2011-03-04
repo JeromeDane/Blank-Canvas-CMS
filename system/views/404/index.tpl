@@ -1,0 +1,1 @@
+<p>sytem verison: {$system.version} </p> 

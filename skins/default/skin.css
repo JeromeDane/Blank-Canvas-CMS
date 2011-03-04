@@ -1,0 +1,214 @@
+* { margin:0; padding:0; border:none; }
+
+body, td {
+	font-family:Tahoma, Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+body { color:#444; }
+
+body { background:url(/skins/default/images/bg.gif) repeat-x top; }
+
+p { margin-bottom:1em; }
+
+a {
+	color:#005B9C;
+	text-decoration:none;
+}
+	a:hover {
+		text-decoration:underline;
+	}
+
+ol, ul { margin-left:2em; }
+
+input, select, textarea { border:1px solid #666; }
+.input_checkbox { border:none; }
+	.input_text_dropdown {
+		background-color:#FFFFCC;
+		border:1px solid #ccc;
+		font-family:Arial, Helvetica, sans-serif;
+		font-size:13px;
+		top:1.5em;
+		position:relative;
+		z-index:999;
+	}
+	.input_text_dropdown, {	/* IE only hack */
+		top:2em;
+	}
+		.input_text_dropdown_row_selected,
+		.input_text_dropdown_row {
+			padding:.4em;
+		}
+			.input_text_dropdown_row_selected {
+				background-color:#666666;
+				color:#fff;
+			}
+		.input_text_span {
+			border:1px solid #708aa1;
+			border-color:#708aa1 #b2bfca #b2bfca #708aa1;
+			padding:.1em .2em;
+			background-color:#ddd;
+			margin-top:-.3em;
+			font-weight:bold;
+			cursor:text;
+			height:1.4em;
+			overflow:hidden;
+		}
+		.input_text_span, {		/* IE only hack */
+			margin-top:.1em;
+			line-height:1em;
+			height:1em;	
+		}
+		.input_text_spacer {
+			height:0;
+			
+		}
+
+option { padding-right:.3em; }
+
+#outter_wrapper {
+	width:1000px;
+	margin:auto;
+}
+	#inner_wrapper {
+		width:1000px;
+		float:left;
+		background-color:#fff;
+		margin-top:5px;
+		/*padding:7px;*/
+		border:1px solid #999;
+	}
+		#header {
+			height:100px;
+			/*background-color:#0033CC;
+			background:url(/skins/default/images/bg_header.gif) repeat-x top;*/
+			color:#000;
+			font-weight:normal;
+			padding-top:5px;
+		}
+			#header h1 {
+				font-family:Tahoma, Arial, Helvetica, sans-serif;
+				font-size:24px;
+				font-weight:bold;
+				padding-top:17px;
+				margin-bottom:0;
+				margin-right:20px;
+				color:#444;
+			}
+			#header h2 {
+				font-weight:normal;
+				font-size:16px;
+			}
+		.right_box {
+			border-style:solid;
+			border-color:#fff;
+			padding:10px;
+		}
+		#content {
+			margin-top:5px;
+		}
+			#content a { text-decoration:underline; }
+			#content a:hover { text-decoration:none; }
+			#content .crumb_navs a { text-decoration:none; }
+			#content .crumb_navs a:hover { text-decoration:underline; }
+			#content h1 {
+				margin-bottom:.5em; 
+				mgin-top:0;
+				color:#005B9C;
+				font-family:Tahoma, Arial, Helvetica, sans-serif;
+				font-weight:normal;
+				font-size:26px;
+				clear:left;
+			}
+			#content h2 {
+				font-family:Tahoma, Arial, Helvetica, sans-serif;
+				font-weight:bold;
+				color:#005B9C;
+				font-size:16px;
+				margin-bottom:1em;
+			}
+			#content ul, #content ol {
+				margin-left:2em;
+				margin-bottom:1em;
+			}
+			#content hr { border-bottom:1px solid; margin-bottom:1em; }
+			#content blockquote { margin-left:2em; }
+		#footer {
+			clear:both;
+			background-color:#507bb2;
+			padding:10px;
+			margin-top:5px;
+			color:#ddd;
+			font-size:10pt;
+			text-align:center;
+		}
+
+
+.error_text { font-weight:bold; color:red; }
+.benchmark_report { clear:left; margin:20px; }
+
+.crumb_navs, #crumb_nav {
+		margin-bottom:1.5em;
+		font-weight:bold;
+}
+
+.item_row_header {
+	background-color:#333333;
+	color:#fff;
+	font-weight:bold;
+	margin-bottom:2px;
+	clear:both;
+}
+.item_row_header,
+.item_row_odd,
+.item_row_even {
+	padding:.2em .4em;
+	display:block;
+}
+.item_row_odd {
+	background-color:#DEDEDE;
+}
+.item_row_odd, .item_row_even {
+	color:#000;
+	padding:.4em;
+}
+
+.error {
+	color:red;
+	font-weight:bold;
+}
+
+.data_table { border-collapse:collapse; }
+	.data_table th, .data_table td { padding:4px 10px; }
+	.data_table th {
+		font-weight:bold;
+		background-color:#000;
+		color:#fff;
+		text-align:left;
+	}
+	.data_table td { background-color:#ddd; }
+	.data_table .odd td { background-color:#eee; }
+	.data_table tr:hover td { background-color:#d8e4f8; color:#000; }
+	
+.item_form,
+.popup_form {
+	background-color:#fff;
+	width:500px;
+	padding:1.5em;
+	border:4px double #ccc;
+	position:absolute;
+	z-index:1000;
+}
+.screen_mask {
+	position:absolute; 
+	top:0; 
+	left:0; 
+	background-color:#333; 
+	filter: alpha(opacity=80); 
+	opacity:.8; 
+	-moz-opacity:.8;
+	z-index:10;
+}
+
+h1 img {
+	vertical-align:middle;
+}
