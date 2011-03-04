@@ -98,6 +98,7 @@ class phpDataMapper_Adapter_Mysql extends phpDataMapper_Adapter_PDO
 	{
 		$tableColumns = array();
 		$tblCols = $this->connection()->query("SELECT * FROM information_schema.columns WHERE table_schema = '" . $source . "' AND table_name = '" . $table . "'");
+		
 		if($tblCols) {
 			while($columnData = $tblCols->fetch(PDO::FETCH_ASSOC)) {
 				$tableColumns[$columnData['COLUMN_NAME']] = $columnData;
@@ -132,8 +133,6 @@ class phpDataMapper_Adapter_Mysql extends phpDataMapper_Adapter_PDO
 		$syntax .= ($fieldInfo['unsigned']) ? ' unsigned' : '';
 		// Collate
 		$syntax .= ($fieldInfo['type'] == 'string' || $fieldInfo['type'] == 'text') ? ' COLLATE ' . $this->_collate : '';
-		// Unsigned
-		$syntax .= ($fieldInfo['primary'] || $fieldInfo['auto_increment']) ? ' UNSIGNED ' : '';
 		// Nullable
 		$isNullable = true;
 		if($fieldInfo['required'] || !$fieldInfo['null']) {
@@ -152,7 +151,7 @@ class phpDataMapper_Adapter_Mysql extends phpDataMapper_Adapter_PDO
 			$syntax .= " DEFAULT '" . $default . "'";
 		}
 		// Extra
-		$syntax .= ($fieldInfo['primary'] || $fieldInfo['auto_increment']) ? ' AUTO_INCREMENT' : '';
+		$syntax .= ($fieldInfo['primary'] && $fieldInfo['serial']) ? ' AUTO_INCREMENT' : '';
 		return $syntax;
 	}
 	
@@ -175,7 +174,7 @@ class phpDataMapper_Adapter_Mysql extends phpDataMapper_Adapter_PDO
 		$ki = 0;
 		$usedKeyNames = array();
 		foreach($formattedFields as $fieldName => $fieldInfo) {
-			// Determine key field name (can't use same key name twice, so we  have to append a number)
+			// Determine key field name (can't use same key name twice, so we have to append a number)
 			$fieldKeyName = $fieldName;
 			while(in_array($fieldKeyName, $usedKeyNames)) {
 				$fieldKeyName = $fieldName . '_' . $ki;
@@ -233,6 +232,7 @@ class phpDataMapper_Adapter_Mysql extends phpDataMapper_Adapter_PDO
 		// Columns
 		$syntax .= implode(",\n", $columnsSyntax);
 		
+		
 		// Keys...
 		$ki = 0;
 		$usedKeyNames = array();
@@ -244,14 +244,15 @@ class phpDataMapper_Adapter_Mysql extends phpDataMapper_Adapter_PDO
 			}
 			// Key type
 			if($fieldInfo['primary']) {
-				$syntax .= "\n, PRIMARY KEY(`" . $fieldName . "`)";
+				$syntax .= ",\n PRIMARY KEY(`" . $fieldName . "`)";
 			}
 			if($fieldInfo['unique']) {
-				$syntax .= "\n, UNIQUE KEY `" . $fieldKeyName . "` (`" . $fieldName . "`)";
+				$syntax .= ",\n UNIQUE KEY `" . $fieldKeyName . "` (`" . $fieldName . "`)";
 				$usedKeyNames[] = $fieldKeyName;
+				 // Example: ALTER TABLE `posts` ADD UNIQUE (`url`)
 			}
 			if($fieldInfo['index']) {
-				$syntax .= "\n, KEY `" . $fieldKeyName . "` (`" . $fieldName . "`)";
+				$syntax .= ",\n KEY `" . $fieldKeyName . "` (`" . $fieldName . "`)";
 				$usedKeyNames[] = $fieldKeyName;
 			}
 		}

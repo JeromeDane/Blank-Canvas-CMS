@@ -30,6 +30,7 @@ class SystemUserModel extends phpDataMapper_Base {
 		"required" => true
 	);
 	
+	
 }
 
 /**

@@ -184,10 +184,10 @@ class phpDataMapper_Base
 				'null' => true,
 				'unsigned' => false,
 				
-				'auto_increment' => false,
 				'primary' => false,
 				'index' => false,
 				'unique' => false,
+				'serial' => false,
 				
 				'relation' => false
 				);
@@ -712,7 +712,7 @@ class phpDataMapper_Base
 	 */
 	public function isEmpty($value)
 	{
-		return (empty($value) && 0 !== $value);
+		return (empty($value) && 0 !== $value && '0' !== $value);
 	}
 	
 	

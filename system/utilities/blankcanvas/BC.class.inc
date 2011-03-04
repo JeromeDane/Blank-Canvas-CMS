@@ -63,7 +63,7 @@ class BC {
 		require 'system/models/User.model.inc';
 		
 		$userModel = new SystemUserModel($adapter);
-		//$userModel->migrate();
+		$userModel->migrate();
 		
 		
 		BC::setRequestUri();

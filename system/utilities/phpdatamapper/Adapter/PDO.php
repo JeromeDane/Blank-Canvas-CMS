@@ -145,9 +145,6 @@ abstract class phpDataMapper_Adapter_PDO implements phpDataMapper_Adapter_Interf
 			$tableExists = true;
 		}
 		if($tableExists) {
-			// Determine missing or changed columns, if any
-			// var_dump($tableColumns);
-			
 			// Update table
 			$this->migrateTableUpdate($table, $fields);
 		} else {
@@ -191,7 +188,6 @@ abstract class phpDataMapper_Adapter_PDO implements phpDataMapper_Adapter_Interf
 	 */
 	public function migrateTableUpdate($table, array $formattedFields)
 	{
-		
 		/*
 			STEPS:
 			* Use fields to get column syntax
@@ -202,9 +198,7 @@ abstract class phpDataMapper_Adapter_PDO implements phpDataMapper_Adapter_Interf
 		// Prepare fields and get syntax for each
 		$tableColumns = $this->getColumnsForTable($table, $this->database);
 		$updateFormattedFields = array();
-		$existingColumnNames = array();
 		foreach($tableColumns as $fieldName => $columnInfo) {
-			$existingColumnNames[] = $fieldName;
 			if(isset($formattedFields[$fieldName])) {
 				// TODO: Need to do a more exact comparison and make this non-mysql specific
 				if (
@@ -219,16 +213,13 @@ abstract class phpDataMapper_Adapter_PDO implements phpDataMapper_Adapter_Interf
 		}
 		
 		$columnsSyntax = array();
-		
+		// Update fields whose options have changed
 		foreach($updateFormattedFields as $fieldName => $fieldInfo) {
 			$columnsSyntax[$fieldName] = $this->migrateSyntaxFieldUpdate($fieldName, $fieldInfo, false);
 		}
-		
-		// create fields
+		// Add fields that are missing from current ones
 		foreach($formattedFields as $fieldName => $fieldInfo) {
-			if(!in_array($fieldName, $existingColumnNames)) {
-				$columnsSyntax[$fieldName] = $this->migrateSyntaxFieldUpdate($fieldName, $fieldInfo, true);
-			}
+			$columnsSyntax[$fieldName] = $this->migrateSyntaxFieldUpdate($fieldName, $fieldInfo, true);
 		}
 		
 		// Get syntax for table with fields/columns
