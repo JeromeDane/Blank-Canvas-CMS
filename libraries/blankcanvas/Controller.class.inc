@@ -23,10 +23,27 @@
  * @package BlankCanvas
  */
 
-require 'libraries/smarty/libs/Smarty.class.php';
-require 'libraries/php-activerecord/ActiveRecord.php';
-require 'libraries/blankcanvas/App.class.inc';
+namespace BlankCanvas;
 
-BlankCanvas\App::init();
+
+class Controller {
+	
+	public $view;
+	protected $_name;
+	
+	public function __construct() {
+		
+		// determine simple controller name
+		$traceStack = debug_backtrace();
+		$className = get_class($traceStack[0]['object']);
+		$this->_name = strtolower(preg_replace('/Controller$/', '', $className));
+		$this->_name = preg_replace('/^.+\\\\/', '', $this->_name);
+		
+		// create view
+		$this->view = new View($this->_name);
+		
+	}
+	
+}
 
 ?>
