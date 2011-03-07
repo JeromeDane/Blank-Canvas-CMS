@@ -36,6 +36,9 @@ namespace BlankCanvas;
  */
 class User extends \BlankCanvas\Model  {
 	
+	public function bark() {
+		var_dump($this->name . ' says woof');
+	}
 	
 }
 

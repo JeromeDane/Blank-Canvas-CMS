@@ -27,12 +27,12 @@ class AppUser {
 		require_once 'application/models/user.model.inc';
 		
 		$hashedPassword = $password;
-		$conditions = array(
-			"email = ? AND password = ?",			
-			$email, 
-			$hashedPassword
-		);
-		self::$_user = User::find(array('conditions' => $conditions)); 
+		
+		self::$_user = User::find(array(
+			'where' => array("email = ? AND password = ?", $email, $hashedPassword)
+		)); 
+		var_dump(self::$_user );
+		
 		//self::$_user = User::find_by_email($email); 
 		if(self::$_user) {
 			return true;

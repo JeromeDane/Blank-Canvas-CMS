@@ -35,7 +35,11 @@ class UserController extends Controller {
 	
 	public function index($params = null) {
 		
-		$this->view->assign(array('users' => User::find('all')));
+		$users = User::find('all');
+		
+		$this->view->assign('users', $users);
+		
+		
 		return $this->view->render();
 		
 	}
@@ -54,6 +58,7 @@ class UserController extends Controller {
 	public function details($params = null) {
 		
 		if($user = User::find($params['id'])) {
+			
 			$this->view->assign('user', $user);
 			return $this->view->render();
 		} else {

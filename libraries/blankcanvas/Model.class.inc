@@ -47,7 +47,11 @@ class Model extends \ActiveRecord\Model {
 		$tableName = $context.'_'.(isset($this->plural) ? $this->plural : $className.'s');
 		Model::$table_name = strtolower($tableName);
 
+		if(!in_array('where', self::$VALID_OPTIONS))
+			self::$VALID_OPTIONS[] = "where";
+		
 		parent::__construct($attributes, $guard_attributes, $instantiating_via_find, $new_record);
+		
 	}
 	
 	/**
@@ -81,6 +85,8 @@ class Model extends \ActiveRecord\Model {
 		}
 	}
 
+	
+	
 	
 	
 	

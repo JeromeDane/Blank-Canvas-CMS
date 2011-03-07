@@ -23,10 +23,11 @@
  * @package BlankCanvas
  */
 
-require 'libraries/smarty/libs/Smarty.class.php';
-require 'libraries/php-activerecord/ActiveRecord.php';
 require 'libraries/blankcanvas/App.class.inc';
 
 BlankCanvas\App::init();
+
+//require 'libraries/blankcanvas/DB.class.inc';
+//BlankCanvas\DB::connect();
 
 ?>

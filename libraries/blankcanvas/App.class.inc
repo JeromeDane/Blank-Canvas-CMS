@@ -74,6 +74,9 @@ class App {
 	 */
 	public static function init() {
 		
+		require 'libraries/smarty/libs/Smarty.class.php';
+		
+		
 		// auto load blank canvas classes
 		spl_autoload_register(function($className) {
 			if(preg_match('/^BlankCanvas/', $className) || __NAMESPACE__ == 'BlankCanvas') {
@@ -87,6 +90,7 @@ class App {
 		});
 		
 		// connect to the database
+		require 'libraries/php-activerecord/ActiveRecord.php';
 		\ActiveRecord\Config::initialize(function ($cfg) {
 			$cfg->set_model_directory('application/models');
 			require 'config/db.config.inc';
