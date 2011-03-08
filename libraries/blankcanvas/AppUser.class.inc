@@ -14,12 +14,12 @@ class AppUser {
 	
 	/**
 	 * Login
-	 * 
+	 *
 	 * Log a user in using their login and password
-	 * 
+	 *
 	 * @param	string	$email		The user's email
 	 * @param 	string	$password 	The user's password
-	 * 
+	 *
 	 * @return	boolean		True if successful, false if not
 	 */
 	static function login($email, $password) {
@@ -28,12 +28,12 @@ class AppUser {
 		
 		$hashedPassword = $password;
 		
-		self::$_user = User::find(array(
-			'where' => array("email = ? AND password = ?", $email, $hashedPassword)
-		)); 
+		self::$_user = User::select()->where(array(
+			"email" => $email
+		));
 		var_dump(self::$_user );
 		
-		//self::$_user = User::find_by_email($email); 
+		//self::$_user = User::find_by_email($email);
 		if(self::$_user) {
 			return true;
 		} else {

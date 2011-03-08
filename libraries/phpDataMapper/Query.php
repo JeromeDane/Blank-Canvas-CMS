@@ -1,7 +1,7 @@
 <?php
 /**
  * Query Object - Used to build adapter-independent queries PHP-style
- * 
+ *
  * @package phpDataMapper
  * @author Vance Lucas <vance@vancelucas.com>
  * @link http://phpdatamapper.com
@@ -40,7 +40,7 @@ class phpDataMapper_Query implements Countable, IteratorAggregate
 	
 	/**
 	 * Called from mapper's select() function
-	 * 
+	 *
 	 * @param mixed $fields (optional)
 	 * @param string $source Data source name
 	 * @return string
@@ -82,7 +82,7 @@ class phpDataMapper_Query implements Countable, IteratorAggregate
 	
 	/**
 	 * WHERE conditions
-	 * 
+	 *
 	 * @param array $conditions Array of conditions for this clause
 	 * @param string $type Keyword that will separate each condition - "AND", "OR"
 	 * @param string $setType Keyword that will separate the whole set of conditions - "AND", "OR"
@@ -153,7 +153,7 @@ class phpDataMapper_Query implements Countable, IteratorAggregate
 	/**
 	 * Limit executed query to specified amount of rows
 	 * Implemented at adapter-level for databases that support it
-	 * 
+	 *
 	 * @param int $limit Number of records to return
 	 * @param int $offset Row to start at for limited result set
 	 */
@@ -220,7 +220,7 @@ class phpDataMapper_Query implements Countable, IteratorAggregate
 	/**
 	 * Convenience function passthrough for Collection
 	 *
-	 * @return array 
+	 * @return array
 	 */
 	public function toArray($keyColumn = null, $valueColumn = null)
 	{
@@ -243,7 +243,7 @@ class phpDataMapper_Query implements Countable, IteratorAggregate
 	
 	/**
 	 * Execute and return query as a collection
-	 * 
+	 *
 	 * @return mixed Collection object on success, boolean false on failure
 	 */
 	public function execute()

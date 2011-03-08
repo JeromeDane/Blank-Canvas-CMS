@@ -150,70 +150,76 @@ class phpDataMapper_Base {
 	 * @return array Defined fields plus all defaults for full array of all possible options
 	 */
 	public function fields() {
-		if ($this->_fields) {
-			$returnFields = $this->_fields;
-		} else {
+		if (is_null($this->_fields)) {
 			$getFields = create_function('$obj', 'return get_object_vars($obj);');
-			$fields = $getFields($this);
-			
-			// Default settings for all fields
-			$fieldDefaults = array(
-				'type'     => 'string',
-				'default'  => null,
-				'length'   => null,
-				'required' => false,
-				'null'     => true,
-				'unsigned' => false,
-				'primary'  => false,
-				'index'    => false,
-				'unique'   => false,
-				'serial'   => false,
-				'relation' => false
-			);
-			
-			// Type default overrides for specific field types
-			$fieldTypeDefaults = array(
-				'string' => array(
-					'length' => 255
-				),
-				'float'  => array(
-					'length' => array(
-						10,
-						2
-					)
-				),
-				'int'    => array(
-					'length'   => 10,
-					'unsigned' => true
-				)
-			);
-			
-			$returnFields = array();
-			foreach ($fields as $fieldName => $fieldOpts) {
-				// Format field will full set of default options
-				if (isset($fieldInfo['type']) && isset($fieldTypeDefaults[$fieldOpts['type']])) {
-					// Include type defaults
-					$fieldOpts = array_merge($fieldDefaults, $fieldTypeDefaults[$fieldOpts['type']], $fieldOpts);
-				} else {
-					// Merge with defaults
-					$fieldOpts = array_merge($fieldDefaults, $fieldOpts);
-				}
-				
-				// Store primary key
-				if ($fieldOpts['primary'] === true) {
-					$this->_primaryKey = $fieldName;
-				}
-				// Store relations (and remove them from the mix of regular fields)
-				if ($fieldOpts['type'] == 'relation') {
-					$this->_relations[$fieldName] = $fieldOpts;
-					continue; // skip, not a field
-				}
-				
-				$returnFields[$fieldName] = $fieldOpts;
-			}
-			$this->_fields = $returnFields;
+			$this->loadFields($getFields($this));
 		}
-		return $returnFields;
+		return $this->_fields;
+	}
+	
+	/**
+	 * Internally set fields so that classes that extend from the base have more flexibility
+	 * in the way they define their fields.
+	 *
+	 * @return void
+	 */
+	protected function loadFields($fields) {
+		// Default settings for all fields
+		$fieldDefaults = array(
+			'type'     => 'string',
+			'default'  => null,
+			'length'   => null,
+			'required' => false,
+			'null'     => true,
+			'unsigned' => false,
+			'primary'  => false,
+			'index'    => false,
+			'unique'   => false,
+			'serial'   => false,
+			'relation' => false
+		);
+		
+		// Type default overrides for specific field types
+		$fieldTypeDefaults = array(
+			'string' => array(
+				'length' => 255
+			),
+			'float'  => array(
+				'length' => array(
+					10,
+					2
+				)
+			),
+			'int'    => array(
+				'length'   => 10,
+				'unsigned' => true
+			)
+		);
+		
+		$returnFields = array();
+		foreach ($fields as $fieldName => $fieldOpts) {
+			// Format field will full set of default options
+			if (isset($fieldInfo['type']) && isset($fieldTypeDefaults[$fieldOpts['type']])) {
+				// Include type defaults
+				$fieldOpts = array_merge($fieldDefaults, $fieldTypeDefaults[$fieldOpts['type']], $fieldOpts);
+			} else {
+				// Merge with defaults
+				$fieldOpts = array_merge($fieldDefaults, $fieldOpts);
+			}
+			
+			// Store primary key
+			if ($fieldOpts['primary'] === true) {
+				$this->_primaryKey = $fieldName;
+			}
+			// Store relations (and remove them from the mix of regular fields)
+			if ($fieldOpts['type'] == 'relation') {
+				$this->_relations[$fieldName] = $fieldOpts;
+				continue; // skip, not a field
+			}
+			
+			$returnFields[$fieldName] = $fieldOpts;
+		}
+		$this->_fields = $returnFields;
 	}
 	
 	/**

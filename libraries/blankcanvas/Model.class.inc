@@ -54,12 +54,21 @@ class Model extends \phpDataMapper_Entity {
 		return self::_getMapper()->get();
 	}
 	
-	public static function find($input = null) {
-		if (is_int($input)) {
-			return self::_getMapper()->get($input);
-		}
-		return self::_getMapper()->select();
+	public static function getById($id) {
+		return self::_getMapper()->get($id);
 	}
+	
+	public static function query($input = null) {
+		return self::_getMapper()->query($input);
+	}
+	
+	public static function select($fields = '*') {
+		if (is_int($fields)) {
+			return self::_getMapper()->get($fields);
+		}
+		return self::_getMapper()->select($fields)->from(self::_getTableName());
+	}
+	
 	
 	public static function updateDatabase() {
 		self::_getMapper()->migrate();
@@ -67,7 +76,6 @@ class Model extends \phpDataMapper_Entity {
 	
 	protected static function &_getMapper() {
 		if (is_null(self::$_mapper)) {
-			//$className = get_called_class();
 			
 			$fullClassName = get_called_class();
 			
@@ -82,77 +90,25 @@ class Model extends \phpDataMapper_Entity {
 			$tableName = strtolower($tableName);
 			
 			$inst = new $fullClassName();
-			$preparedFields = self::_prepareFields($inst->getFields());
+			self::$_mapper = new Mapper(self::$_globalAdapter, null, $fullClassName, $tableName, $inst->getFields());
 			$inst = null;
-			
-			self::$_mapper = new Mapper(self::$_globalAdapter, null, $fullClassName, $tableName, $preparedFields);
 			
 		}
 		return self::$_mapper;
 	}
 	
-	protected static function _prepareFields($fields) {
+	protected static function _getTableName() {
+		$fullClassName = get_called_class();
 		
-		// impose ID as unique promary key
-		$fields['id'] = array(
-			'type'     => 'int',
-			'primary'  => true,
-			'serial'   => true,
-			'unsigned' => true
-		);
+		preg_match('/[^\\\\]+$/', $fullClassName, $matches);
+		$className = $matches[0];
 		
-		// Default settings for all fields
-		$fieldDefaults = array(
-			'type'     => 'string',
-			'default'  => null,
-			'length'   => null,
-			'required' => false,
-			'null'     => true,
-			'unsigned' => false,
-			'primary'  => false,
-			'index'    => false,
-			'unique'   => false,
-			'serial'   => false,
-			'relation' => false
-		);
+		// @todo detect plugin context and generate context name
+		$context = "system";
 		
-		// Type default overrides for specific field types
-		$fieldTypeDefaults = array(
-			'string' => array(
-				'length' => 255
-			),
-			'float'  => array(
-				'length' => array(
-					10,
-					2
-				)
-			),
-			'int'    => array(
-				'length'   => 10,
-				'unsigned' => true
-			)
-		);
-		
-		$returnFields = array();
-		foreach ($fields as $fieldName => $fieldOpts) {
-			// Format field will full set of default options
-			if (isset($fieldInfo['type']) && isset($fieldTypeDefaults[$fieldOpts['type']])) {
-				// Include type defaults
-				$fieldOpts = array_merge($fieldDefaults, $fieldTypeDefaults[$fieldOpts['type']], $fieldOpts);
-			} else {
-				// Merge with defaults
-				$fieldOpts = array_merge($fieldDefaults, $fieldOpts);
-			}
-			
-			// Store relations (and remove them from the mix of regular fields)
-			if ($fieldOpts['type'] == 'relation') {
-				$this->_relations[$fieldName] = $fieldOpts;
-				continue; // skip, not a field
-			}
-			
-			$returnFields[$fieldName] = $fieldOpts;
-		}
-		return $returnFields;
+		// @todo add table prefixing
+		$tableName = $context . '_' . (isset(self::$_plural) ? self::$_plural : $className . 's');
+		return strtolower($tableName);
 	}
 	
 	/**
@@ -198,7 +154,7 @@ class Mapper extends \phpDataMapper_Base {
 		
 		$this->_datasource = $tableName;
 		$this->_entityClass = $entityClassName;
-		$this->_fields = $fields;
+		$this->loadFields($fields);
 		
 		$adapter = is_null($adapter) ? self::$_globalAdapter : $adapter;
 		parent::__construct($adapter, $adapterRead);

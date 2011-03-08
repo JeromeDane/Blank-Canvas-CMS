@@ -25,7 +25,6 @@
 
 namespace BlankCanvas;
 
-
 /**
  *
  * @author Jerome Dane
@@ -35,9 +34,13 @@ class UserController extends Controller {
 	
 	public function index($params = null) {
 		
-		$users = User::find();
+		$order = array(
+			"name" => 'desc',
+			"id"   => 'asc',
+		);
+		$users = User::select()->order($order);
 		
-		User::updateDatabase();
+		//User::updateDatabase();
 		
 		$this->view->assign('users', $users);
 		
@@ -46,11 +49,11 @@ class UserController extends Controller {
 	}
 	
 	public function create($params = null) {
-		if(isset($_POST['name'])) {
+		if (isset($_POST['name'])) {
 			$user = new User();
 			$user->import($_POST, "name,email,password");
 			$user->save();
-			App::redirect('/user/'.$user->id);
+			App::redirect('/user/' . $user->id);
 		}
 		
 		return $this->view->render();
@@ -58,14 +61,13 @@ class UserController extends Controller {
 	
 	public function details($params = null) {
 		
-		if($user = User::find($params['id'])) {
+		if ($user = User::getById($params['id'])) {
 			
 			$this->view->assign('user', $user);
 			return $this->view->render();
 		} else {
 			return View::get404()->render();
 		}
-		
 		
 	}
 	
