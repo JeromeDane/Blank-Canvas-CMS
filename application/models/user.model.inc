@@ -26,23 +26,41 @@
 namespace BlankCanvas;
 
 /**
+ * User
  *
- * Enter description here ...
+ * System user class
+ *
  * @author Jerome
  *
  * @property 	string 	$name	The user's [screen] name
  * @property	string	$email	The user's email (and login)
  *
  */
-class User extends \BlankCanvas\Model  {
+class User extends \BlankCanvas\Model {
+	
+	public function getFields() {
+		return array(
+			'name'  => array(
+				'type'     => 'string',
+				'required' => true
+			),
+			'email' => array(
+				'type'     => 'string',
+				'required' => true
+			),
+			'password' => array(
+				'type'     => 'string',
+				'required' => true
+			),
+		);
+	}
 	
 	public function bark() {
-		var_dump($this->name . ' says woof');
+		return $this->name . ' says woof';
 	}
 	
 }
 
 $user = new User();
-
 
 ?>

@@ -25,6 +25,7 @@
 
 namespace BlankCanvas;
 
+require_once 'libraries/phpdatamapper/Base.php';
 
 /**
  * EntityModel
@@ -34,61 +35,174 @@ namespace BlankCanvas;
  * @author 	Jerome Dane
  *
  */
-class Model extends \ActiveRecord\Model {
+class Model extends \phpDataMapper_Entity {
+	
+	protected static $_globalAdapter;
+	protected static $_innerModel;
+	protected static $_mapper;
+	protected static $_className;
+	protected static $_plural;
+	protected static $_tableName;
+	protected static $_fields;
+	
+	public static function connect($server, $database, $user, $password) {
+		require_once 'libraries/phpdatamapper/Adapter/Mysql.php';
+		self::$_globalAdapter = new \phpDataMapper_Adapter_Mysql($server, $database, $user, $password);
+	}
+	
+	public static function create() {
+		return self::_getMapper()->get();
+	}
+	
+	public static function find($input = null) {
+		if (is_int($input)) {
+			return self::_getMapper()->get($input);
+		}
+		return self::_getMapper()->select();
+	}
+	
+	public static function updateDatabase() {
+		self::_getMapper()->migrate();
+	}
+	
+	protected static function &_getMapper() {
+		if (is_null(self::$_mapper)) {
+			//$className = get_called_class();
+			
+			$fullClassName = get_called_class();
+			
+			preg_match('/[^\\\\]+$/', $fullClassName, $matches);
+			$className = $matches[0];
+			
+			// @todo detect plugin context and generate context name
+			$context = "system";
+			
+			// @todo add table prefixing
+			$tableName = $context . '_' . (isset(self::$_plural) ? self::$_plural : $className . 's');
+			$tableName = strtolower($tableName);
+			
+			$inst = new $fullClassName();
+			$preparedFields = self::_prepareFields($inst->getFields());
+			$inst = null;
+			
+			self::$_mapper = new Mapper(self::$_globalAdapter, null, $fullClassName, $tableName, $preparedFields);
+			
+		}
+		return self::$_mapper;
+	}
+	
+	protected static function _prepareFields($fields) {
 		
-	public function __construct(array $attributes=array(), $guard_attributes=true, $instantiating_via_find=false, $new_record=true) {
-		preg_match('/[^\\\\]+$/', get_class($this), $matches);
-		$className = $matches[0];
+		// impose ID as unique promary key
+		$fields['id'] = array(
+			'type'     => 'int',
+			'primary'  => true,
+			'serial'   => true,
+			'unsigned' => true
+		);
 		
-		// @todo detect plugin context and generate context name
-		$context = "system";
+		// Default settings for all fields
+		$fieldDefaults = array(
+			'type'     => 'string',
+			'default'  => null,
+			'length'   => null,
+			'required' => false,
+			'null'     => true,
+			'unsigned' => false,
+			'primary'  => false,
+			'index'    => false,
+			'unique'   => false,
+			'serial'   => false,
+			'relation' => false
+		);
 		
-		// @todo add table prefixing
-		$tableName = $context.'_'.(isset($this->plural) ? $this->plural : $className.'s');
-		Model::$table_name = strtolower($tableName);
-
-		if(!in_array('where', self::$VALID_OPTIONS))
-			self::$VALID_OPTIONS[] = "where";
+		// Type default overrides for specific field types
+		$fieldTypeDefaults = array(
+			'string' => array(
+				'length' => 255
+			),
+			'float'  => array(
+				'length' => array(
+					10,
+					2
+				)
+			),
+			'int'    => array(
+				'length'   => 10,
+				'unsigned' => true
+			)
+		);
 		
-		parent::__construct($attributes, $guard_attributes, $instantiating_via_find, $new_record);
-		
+		$returnFields = array();
+		foreach ($fields as $fieldName => $fieldOpts) {
+			// Format field will full set of default options
+			if (isset($fieldInfo['type']) && isset($fieldTypeDefaults[$fieldOpts['type']])) {
+				// Include type defaults
+				$fieldOpts = array_merge($fieldDefaults, $fieldTypeDefaults[$fieldOpts['type']], $fieldOpts);
+			} else {
+				// Merge with defaults
+				$fieldOpts = array_merge($fieldDefaults, $fieldOpts);
+			}
+			
+			// Store relations (and remove them from the mix of regular fields)
+			if ($fieldOpts['type'] == 'relation') {
+				$this->_relations[$fieldName] = $fieldOpts;
+				continue; // skip, not a field
+			}
+			
+			$returnFields[$fieldName] = $fieldOpts;
+		}
+		return $returnFields;
 	}
 	
 	/**
 	 * Import from an array
-	 * 
+	 *
 	 * Allows for rapid importing from an array such as $_POST
-	 * while limiting which fields to import through an 
-	 * 
+	 * while limiting which fields to import through an
+	 *
 	 * @param unknown_type $importArray
 	 * @param unknown_type $fields
 	 */
 	public function import($importArray, $fieldNames = null) {
-		if(!is_array($importArray)) {
+		if (!is_array($importArray)) {
 			throw new Exception('BlankCanvas\\Model must take an array as its first argument');
 		}
-		if(is_string($fieldNames)) {
+		if (is_string($fieldNames)) {
 			$fieldNames = preg_split('/,/', $fieldNames);
 		}
-		foreach($importArray as $k => $v) {
-			if(!is_array($fieldNames) || (is_array($fieldNames) && in_array($k, $fieldNames))) {
+		foreach ($importArray as $k => $v) {
+			if (!is_array($fieldNames) || (is_array($fieldNames) && in_array($k, $fieldNames))) {
 				$this->$k = $v;
 			}
 		}
 	}
 	
-	public static function find_by_pk($values, $options) {
-		try {
-			return parent::find_by_pk($values, $options);
-		} catch(\ActiveRecord\RecordNotFound $e) {
-			return null;
-		}
+	public function save() {
+		self::_getMapper()->save($this);
 	}
+	
+	public function __get($property) {
+		if ($property == 'id') {
+			return (int) parent::__get($property);
+		}
+		return parent::__get($property);
+	}
+	
+}
 
-	
-	
-	
-	
+class Mapper extends \phpDataMapper_Base {
+	public function __construct($adapter = null, $adapterRead = null, $entityClassName = null, $tableName = null, $fields) {
+		
+		$this->_primaryKey = 'id';
+		
+		$this->_datasource = $tableName;
+		$this->_entityClass = $entityClassName;
+		$this->_fields = $fields;
+		
+		$adapter = is_null($adapter) ? self::$_globalAdapter : $adapter;
+		parent::__construct($adapter, $adapterRead);
+	}
 	
 }
 

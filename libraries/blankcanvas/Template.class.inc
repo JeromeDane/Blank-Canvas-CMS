@@ -8,6 +8,8 @@ class Template extends \Smarty {
 	public function __construct() {
 		parent::__construct();
 		
+		$this->cache_dir ='temp/cache/';
+		
 		$appSmartyPluginDir = 'libraries/blankcanvas/smarty_plugins/';
 		
 		if(isset($this->plugins_dir) && is_array($this->plugins_dir)) {
@@ -15,7 +17,7 @@ class Template extends \Smarty {
 		} else {
 			$this->plugins_dir = array($appSmartyPluginDir);
 		}
-	} 
+	}
 	
 }
 

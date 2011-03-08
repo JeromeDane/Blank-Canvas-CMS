@@ -31,6 +31,8 @@ namespace BlankCanvas;
  * @author Jerome Dane
  *`
  */
+use ActiveRecord\Model;
+
 class App {
 	
 	/**
@@ -74,8 +76,8 @@ class App {
 	 */
 	public static function init() {
 		
+		// include parent template class
 		require 'libraries/smarty/libs/Smarty.class.php';
-		
 		
 		// auto load blank canvas classes
 		spl_autoload_register(function($className) {
@@ -85,10 +87,14 @@ class App {
 				if(is_file($filePath)) {
 					require_once $filePath;
 					return true;
-				}				
+				}
 			}
 		});
 		
+		require 'config/db.config.inc';
+		\BlankCanvas\Model::connect($db['server'], $db['database'], $db['user'], $db['password']);
+		
+		/*
 		// connect to the database
 		require 'libraries/php-activerecord/ActiveRecord.php';
 		\ActiveRecord\Config::initialize(function ($cfg) {
@@ -97,7 +103,7 @@ class App {
 			$cfg->set_connections(array(
 				'development' => 'mysql://' . $db['user'] . ':' . $db['password'] . '@localhost/' . $db['database']));
 		});
-		
+		*/
 		App::handleRequest();
 	}
 	

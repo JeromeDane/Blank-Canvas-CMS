@@ -35,10 +35,11 @@ class UserController extends Controller {
 	
 	public function index($params = null) {
 		
-		$users = User::find('all');
+		$users = User::find();
+		
+		User::updateDatabase();
 		
 		$this->view->assign('users', $users);
-		
 		
 		return $this->view->render();
 		
