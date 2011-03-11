@@ -23,7 +23,7 @@
  * @package BlankCanvas
  */
 
-require 'libraries/blankcanvas/App.class.inc';
+require 'application/libraries/blankcanvas/App.class.inc';
 
 BlankCanvas\App::init();
 
