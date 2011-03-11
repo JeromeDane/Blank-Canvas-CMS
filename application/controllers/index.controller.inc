@@ -34,7 +34,8 @@ namespace BlankCanvas;
 class IndexController extends Controller {
 	
 	public function index($params = null) {
-		
+		$data['name'] = '<b>bob</b>';
+		$this->view->assign($data);
 		return $this->view->render();
 	}
 }

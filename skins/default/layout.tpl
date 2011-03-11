@@ -25,7 +25,7 @@
 		<div id="content" style="width:750px; float:left;">
 			{$system.controller} - {$system.action}
 			<div style="margin:15px">
-				{$system.body}
+				{$system.body nofilter}
 			</div>
 		</div>
 		<div style="margin-left:750px;">
