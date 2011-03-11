@@ -7,6 +7,8 @@ require_once('application/libraries/recaptcha-php-1.11/recaptchalib.php');
 class Captcha {
 	protected static $_publickey = "6Ld108ESAAAAAD_-_tHrSCRMPHfaMBRVcMN-m6nf";
 	protected static $_privatekey = "6Ld108ESAAAAAB-1hQJq7w32jgdFlkQ23RA5BQl1";
+	
+	// @todo Put Captcha HTML into a template
 	public static function getHtml() {
 		
 		$pubkey = self::$_publickey;
@@ -45,10 +47,10 @@ class Captcha {
 			<tr>
 				<td id="recaptcha_image"></td>
 				<td style="padding-left:.5em;">
-				   <div><a href="javascript:Recaptcha.reload()"><img src="/libraries/blankcanvas/captcha//refresh.png"/></a></div>
-				   <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type(\'audio\')"><img src="/libraries/blankcanvas/captcha//audio.png"/></a></div>
-				   <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type(\'image\')"><img src="/libraries/blankcanvas/captcha//text.png"/></a></div>
-				   <div><a href="javascript:Recaptcha.showhelp()"><img src="/libraries/blankcanvas/captcha//help.png"/></a></div>
+				   <div><a href="javascript:Recaptcha.reload()"><img src="/application/libraries/blankcanvas/captcha//refresh.png"/></a></div>
+				   <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type(\'audio\')"><img src="/application/libraries/blankcanvas/captcha//audio.png"/></a></div>
+				   <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type(\'image\')"><img src="/application/libraries/blankcanvas/captcha//text.png"/></a></div>
+				   <div><a href="javascript:Recaptcha.showhelp()"><img src="/application/libraries/blankcanvas/captcha//help.png"/></a></div>
 				</td>
 			</tr>
 			<tr>

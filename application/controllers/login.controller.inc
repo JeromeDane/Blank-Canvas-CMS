@@ -33,11 +33,6 @@ namespace BlankCanvas;
 class LoginController extends Controller {
 	
 	public function index($params = null) {
-		return $this->login();
-	}
-	
-	public function login($params = null) {
-		
 		if(isset($_POST['email']) && isset($_POST['pass'])  ){ // && Captcha::passed()) {
 			var_dump(AppUser::login($_POST['email'], $_POST['pass']));
 		}

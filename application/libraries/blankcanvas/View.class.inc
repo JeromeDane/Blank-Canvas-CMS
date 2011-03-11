@@ -9,7 +9,6 @@ class View extends Template {
 	
 	public function __construct($controllerName = null) {
 		parent::__construct();
-		$this->compile_dir = 'cache/compiled_templates';
 		$this->_controllerName = $controllerName;
 	}
 	
@@ -28,7 +27,11 @@ class View extends Template {
 		$actionName = $traceStack[1]['function'];
 		
 		$viewsFolder = 'application/views/';
-		$filePath = $viewsFolder.$this->_controllerName.'/'.$actionName.'.tpl';
+		if($this->_controllerName == 'index' && $actionName == 'index') {
+			$filePath  = $viewsFolder.'index.tpl';
+		} else {
+			$filePath = $viewsFolder.$this->_controllerName.'.'.$actionName.'.tpl';
+		}
 		if(is_file($filePath)) {
 			
 			$systemTags = array(
@@ -48,7 +51,7 @@ class View extends Template {
 				
 				$systemTags['body'] = $renderedString;
 				
-				$layout = new \Smarty();
+				$layout = new Template();
 				$layout->assign(array(
 					'system' => $systemTags
 				));

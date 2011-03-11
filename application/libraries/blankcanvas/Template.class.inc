@@ -6,10 +6,15 @@ namespace BlankCanvas;
 class Template extends \Smarty {
 	
 	public function __construct() {
+
 		parent::__construct();
 		
-		$this->cache_dir ='temp/cache/';
+		$this->compile_dir = 'cache/compiled_templates';
+		$this->cache_dir ='cache/templates';
 		
+		// escape htmlentities by default
+		$this->default_modifiers = array('escape:"htmlall"');
+
 		$appSmartyPluginDir = 'application/libraries/blankcanvas/smarty_plugins/';
 		
 		if(isset($this->plugins_dir) && is_array($this->plugins_dir)) {
