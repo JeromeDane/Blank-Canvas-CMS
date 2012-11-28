@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:02:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_register.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_register.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_register.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Register</p><p>External Smarty methods register/unregister</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>
+<a name="line3"></a>/**
+<a name="line4"></a> * Smarty Internal Plugin Register
+<a name="line5"></a> * 
+<a name="line6"></a> * External Smarty methods register/unregister
+<a name="line7"></a> * 
+<a name="line8"></a> * @package Smarty
+<a name="line9"></a> * @author Uwe Tews 
+<a name="line10"></a> */
+<a name="line11"></a>
+<a name="line12"></a>/**
+<a name="line13"></a> * Class for register/unregister methods
+<a name="line14"></a> */
+<a name="line15"></a>class Smarty_Internal_Register {
+<a name="line16"></a>
+<a name="line17"></a>    function __construct($smarty)
+<a name="line18"></a>    {
+<a name="line19"></a>        $this->smarty = $smarty;
+<a name="line20"></a>    } 
+<a name="line21"></a>    /**
+<a name="line22"></a>     * Registers plugin to be used in templates
+<a name="line23"></a>     * 
+<a name="line24"></a>     * @param string $type plugin type
+<a name="line25"></a>     * @param string $tag name of template tag
+<a name="line26"></a>     * @param callback $callback PHP callback to register
+<a name="line27"></a>     * @param boolean $cacheable if true (default) this fuction is cachable
+<a name="line28"></a>     * @param array $cache_attr caching attributes if any
+<a name="line29"></a>     */
+<a name="line30"></a>
+<a name="line31"></a>	public function registerPlugin($type, $tag, $callback, $cacheable = true, $cache_attr = null)
+<a name="line32"></a>	{
+<a name="line33"></a>		if (isset($this->smarty->registered_plugins[$type][$tag])) {
+<a name="line34"></a>        	throw new Exception("Plugin tag \"{$tag}\" already registered");
+<a name="line35"></a>    	} elseif (!is_callable($callback)) {
+<a name="line36"></a>        	throw new Exception("Plugin \"{$tag}\" not callable");
+<a name="line37"></a>    	} else {
+<a name="line38"></a>       		$this->smarty->registered_plugins[$type][$tag] = array($callback, (bool) $cacheable, (array) $cache_attr);
+<a name="line39"></a>    	}
+<a name="line40"></a>	} 
+<a name="line41"></a>
+<a name="line42"></a>    /**
+<a name="line43"></a>     * Unregister Plugin
+<a name="line44"></a>     * 
+<a name="line45"></a>     * @param string $type of plugin
+<a name="line46"></a>     * @param string $tag name of plugin
+<a name="line47"></a>     */
+<a name="line48"></a>    function unregisterPlugin($type, $tag)
+<a name="line49"></a>    {
+<a name="line50"></a>        if (isset($this->smarty->registered_plugins[$type][$tag])) {
+<a name="line51"></a>            unset($this->smarty->registered_plugins[$type][$tag]);
+<a name="line52"></a>        } 
+<a name="line53"></a>    } 
+<a name="line54"></a> 
+<a name="line55"></a>    /**
+<a name="line56"></a>     * Registers a resource to fetch a template
+<a name="line57"></a>     * 
+<a name="line58"></a>     * @param string $type name of resource type
+<a name="line59"></a>     * @param array $callback array of callbacks to handle resource
+<a name="line60"></a>     */
+<a name="line61"></a> 	public function registerResource($type, $callback)
+<a name="line62"></a>	{
+<a name="line63"></a>       	$this->smarty->registered_resources[$type] = array($callback, false);
+<a name="line64"></a>    }
+<a name="line65"></a>
+<a name="line66"></a>    /**
+<a name="line67"></a>     * Unregisters a resource 
+<a name="line68"></a>     * 
+<a name="line69"></a>     * @param string $type name of resource type
+<a name="line70"></a>     */
+<a name="line71"></a>   function unregisterResource($type)
+<a name="line72"></a>    {
+<a name="line73"></a>        if (isset($this->smarty->registered_resources[$type])) {
+<a name="line74"></a>            unset($this->smarty->registered_resources[$type]);
+<a name="line75"></a>        } 
+<a name="line76"></a>    } 
+<a name="line77"></a>
+<a name="line78"></a>
+<a name="line79"></a>    /**
+<a name="line80"></a>     * Registers object to be used in templates
+<a name="line81"></a>     * 
+<a name="line82"></a>     * @param string $object name of template object
+<a name="line83"></a>     * @param object $ &$object_impl the referenced PHP object to register
+<a name="line84"></a>     * @param mixed $ null | array $allowed list of allowed methods (empty = all)
+<a name="line85"></a>     * @param boolean $smarty_args smarty argument format, else traditional
+<a name="line86"></a>     * @param mixed $ null | array $block_functs list of methods that are block format
+<a name="line87"></a>     */
+<a name="line88"></a>    function registerObject($object_name, $object_impl, $allowed = array(), $smarty_args = true, $block_methods = array())
+<a name="line89"></a>    { 
+<a name="line90"></a>        // test if allowed methodes callable
+<a name="line91"></a>        if (!empty($allowed)) {
+<a name="line92"></a>            foreach ((array)$allowed as $method) {
+<a name="line93"></a>                if (!is_callable(array($object_impl, $method))) {
+<a name="line94"></a>                    throw new SmartyException("Undefined method '$method' in registered object");
+<a name="line95"></a>                } 
+<a name="line96"></a>            } 
+<a name="line97"></a>        } 
+<a name="line98"></a>        // test if block methodes callable
+<a name="line99"></a>        if (!empty($block_methods)) {
+<a name="line100"></a>            foreach ((array)$block_methods as $method) {
+<a name="line101"></a>                if (!is_callable(array($object_impl, $method))) {
+<a name="line102"></a>                    throw new SmartyException("Undefined method '$method' in registered object");
+<a name="line103"></a>                } 
+<a name="line104"></a>            } 
+<a name="line105"></a>        } 
+<a name="line106"></a>        // register the object
+<a name="line107"></a>        $this->smarty->registered_objects[$object_name] =
+<a name="line108"></a>        array($object_impl, (array)$allowed, (boolean)$smarty_args, (array)$block_methods);
+<a name="line109"></a>    } 
+<a name="line110"></a>
+<a name="line111"></a>    /**
+<a name="line112"></a>     * Registers static classes to be used in templates
+<a name="line113"></a>     * 
+<a name="line114"></a>     * @param string $class name of template class
+<a name="line115"></a>     * @param string $class_impl the referenced PHP class to register
+<a name="line116"></a>     */
+<a name="line117"></a>    function registerClass($class_name, $class_impl)
+<a name="line118"></a>    { 
+<a name="line119"></a>        // test if exists
+<a name="line120"></a>        if (!class_exists($class_impl)) {
+<a name="line121"></a>            throw new SmartyException("Undefined class '$class_impl' in register template class");
+<a name="line122"></a>        } 
+<a name="line123"></a>        // register the class
+<a name="line124"></a>        $this->smarty->registered_classes[$class_name] = $class_impl;
+<a name="line125"></a>    } 
+<a name="line126"></a>
+<a name="line127"></a>    /**
+<a name="line128"></a>     * Registers a default plugin handler
+<a name="line129"></a>     * 
+<a name="line130"></a>     * @param  $callback mixed string | array $plugin class/methode name
+<a name="line131"></a>     */
+<a name="line132"></a>    function registerDefaultPluginHandler($callback)
+<a name="line133"></a>    {
+<a name="line134"></a>        if (is_callable($callback)) {
+<a name="line135"></a>            $this->smarty->default_plugin_handler_func = $callback;
+<a name="line136"></a>        } else {
+<a name="line137"></a>            throw new SmartyException("Default plugin handler '$callback' not callable");
+<a name="line138"></a>        } 
+<a name="line139"></a>    } 
+<a name="line140"></a>
+<a name="line141"></a>    /**
+<a name="line142"></a>     * Registers a default template handler
+<a name="line143"></a>     * 
+<a name="line144"></a>     * @param  $callback mixed string | array class/method name
+<a name="line145"></a>     */
+<a name="line146"></a>    function registerDefaultTemplateHandler($callback)
+<a name="line147"></a>    {
+<a name="line148"></a>        if (is_callable($callback)) {
+<a name="line149"></a>            $this->smarty->default_template_handler_func = $callback;
+<a name="line150"></a>        } else {
+<a name="line151"></a>            throw new SmartyException("Default template handler '$callback' not callable");
+<a name="line152"></a>        } 
+<a name="line153"></a>    } 
+<a name="line154"></a>
+<a name="line155"></a>}
+<a name="line156"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_register.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

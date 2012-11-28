@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:55 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\blankcanvas\Model_class.inc (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\blankcanvas\model_class.inc.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\blankcanvas\Model_class.inc</h1>
+<div class="comment" id="overview_description"><p><code><a href="http://jeromedane.com">Blank Canvas CMS</a></code></p><p>This file is part of the <code><a href="http://jeromedane.com">Blank Canvas CMS</a></code>.</p><p><code><a href="http://jeromedane.com">Blank Canvas CMS</a></code> is free software:
+you can redistribute it and/or modify it under the terms of the
+<code><a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a></code>
+as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.</p><p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/** {@link http://jeromedane.com Blank Canvas CMS}
+<a name="line3"></a> *
+<a name="line4"></a> * This file is part of the {@link http://jeromedane.com Blank Canvas CMS}.
+<a name="line5"></a> *
+<a name="line6"></a> * {@link http://jeromedane.com Blank Canvas CMS} is free software:
+<a name="line7"></a> * you can redistribute it and/or modify it under the terms of the
+<a name="line8"></a> * {@link http://www.gnu.org/licenses/gpl.html GNU General Public License}
+<a name="line9"></a> * as published by the Free Software Foundation, either version 3 of the
+<a name="line10"></a> * License, or (at your option) any later version.
+<a name="line11"></a> *
+<a name="line12"></a> * This program is distributed in the hope that it will be useful,
+<a name="line13"></a> * but WITHOUT ANY WARRANTY; without even the implied warranty of
+<a name="line14"></a> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<a name="line15"></a> * GNU General Public License for more details.
+<a name="line16"></a> *
+<a name="line17"></a> * You should have received a copy of the GNU General Public License
+<a name="line18"></a> * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+<a name="line19"></a> *
+<a name="line20"></a> * @author Jerome Dane <http://jeromedane.com>
+<a name="line21"></a> * @copyright Copyright (c) 2011, Jerome Dane
+<a name="line22"></a> * @license http://www.gnu.org/licenses/gpl.html GNU General Public License
+<a name="line23"></a> * @package BlankCanvas
+<a name="line24"></a> */
+<a name="line25"></a>
+<a name="line26"></a>namespace BlankCanvas;
+<a name="line27"></a>
+<a name="line28"></a>require_once 'system/libraries/phpdatamapper/Base.php';
+<a name="line29"></a>
+<a name="line30"></a>/**
+<a name="line31"></a> * EntityModel
+<a name="line32"></a> *
+<a name="line33"></a> * @author 	Jerome Dane
+<a name="line34"></a> *
+<a name="line35"></a> */
+<a name="line36"></a>class Model extends \phpDataMapper_Entity {
+<a name="line37"></a>	
+<a name="line38"></a>	protected static $_globalAdapter;
+<a name="line39"></a>	protected static $_innerModel;
+<a name="line40"></a>	protected static $_mapper;
+<a name="line41"></a>	protected static $_className;
+<a name="line42"></a>	protected static $_plural;
+<a name="line43"></a>	protected static $_tableName;
+<a name="line44"></a>	protected static $_fields;
+<a name="line45"></a>	
+<a name="line46"></a>	public static function connect($server, $database, $user, $password) {
+<a name="line47"></a>		require_once 'system/libraries/phpdatamapper/Adapter/Mysql.php';
+<a name="line48"></a>		self::$_globalAdapter = new \phpDataMapper_Adapter_Mysql($server, $database, $user, $password);
+<a name="line49"></a>	}
+<a name="line50"></a>	
+<a name="line51"></a>	public static function create() {
+<a name="line52"></a>		return self::_getMapper()->get();
+<a name="line53"></a>	}
+<a name="line54"></a>	
+<a name="line55"></a>	public static function getById($id) {
+<a name="line56"></a>		return self::_getMapper()->get($id);
+<a name="line57"></a>	}
+<a name="line58"></a>	
+<a name="line59"></a>	public static function query($input = null) {
+<a name="line60"></a>		return self::_getMapper()->query($input);
+<a name="line61"></a>	}
+<a name="line62"></a>	
+<a name="line63"></a>	public static function select($fields = '*') {
+<a name="line64"></a>		if (is_int($fields)) {
+<a name="line65"></a>			return self::_getMapper()->get($fields);
+<a name="line66"></a>		}
+<a name="line67"></a>		return self::_getMapper()->select($fields)->from(self::_getTableName());
+<a name="line68"></a>	}
+<a name="line69"></a>	
+<a name="line70"></a>	public static function updateDatabase() {
+<a name="line71"></a>		self::_getMapper()->migrate();
+<a name="line72"></a>	}
+<a name="line73"></a>	
+<a name="line74"></a>	protected static function &_getMapper() {
+<a name="line75"></a>		if (is_null(self::$_mapper)) {
+<a name="line76"></a>			
+<a name="line77"></a>			$fullClassName = get_called_class();
+<a name="line78"></a>			
+<a name="line79"></a>			preg_match('/[^\\\\]+$/', $fullClassName, $matches);
+<a name="line80"></a>			$className = $matches[0];
+<a name="line81"></a>			
+<a name="line82"></a>			// @todo detect plugin context and generate context name
+<a name="line83"></a>			$context = "system";
+<a name="line84"></a>			
+<a name="line85"></a>			// @todo add table prefixing
+<a name="line86"></a>			$tableName = $context . '_' . (isset(self::$_plural) ? self::$_plural : $className . 's');
+<a name="line87"></a>			$tableName = strtolower($tableName);
+<a name="line88"></a>			
+<a name="line89"></a>			$engine = isset(self::$_engine) ? self::$_engine : null;
+<a name="line90"></a>			
+<a name="line91"></a>			$inst = new $fullClassName();
+<a name="line92"></a>			self::$_mapper = new Mapper(self::$_globalAdapter, null, $fullClassName, $tableName, $inst->getFields(), $engine);
+<a name="line93"></a>			
+<a name="line94"></a>			$inst = null;
+<a name="line95"></a>			
+<a name="line96"></a>		}
+<a name="line97"></a>		return self::$_mapper;
+<a name="line98"></a>	}
+<a name="line99"></a>	
+<a name="line100"></a>	protected static function _getTableName() {
+<a name="line101"></a>		$fullClassName = get_called_class();
+<a name="line102"></a>		
+<a name="line103"></a>		preg_match('/[^\\\\]+$/', $fullClassName, $matches);
+<a name="line104"></a>		$className = $matches[0];
+<a name="line105"></a>		
+<a name="line106"></a>		// @todo detect plugin context and generate context name
+<a name="line107"></a>		$context = "system";
+<a name="line108"></a>		
+<a name="line109"></a>		// @todo add table prefixing
+<a name="line110"></a>		$tableName = $context . '_' . (isset(self::$_plural) ? self::$_plural : $className . 's');
+<a name="line111"></a>		return strtolower($tableName);
+<a name="line112"></a>	}
+<a name="line113"></a>	
+<a name="line114"></a>	/**
+<a name="line115"></a>	 * Import from an array
+<a name="line116"></a>	 *
+<a name="line117"></a>	 * Allows for rapid importing from an array such as $_POST
+<a name="line118"></a>	 * while limiting which fields to import through an
+<a name="line119"></a>	 *
+<a name="line120"></a>	 * @param unknown_type $importArray
+<a name="line121"></a>	 * @param unknown_type $fields
+<a name="line122"></a>	 */
+<a name="line123"></a>	public function import($importArray, $fieldNames = null) {
+<a name="line124"></a>		if (!is_array($importArray)) {
+<a name="line125"></a>			throw new Exception('BlankCanvas\\Model must take an array as its first argument');
+<a name="line126"></a>		}
+<a name="line127"></a>		if (is_string($fieldNames)) {
+<a name="line128"></a>			$fieldNames = preg_split('/,/', $fieldNames);
+<a name="line129"></a>		}
+<a name="line130"></a>		foreach ($importArray as $k => $v) {
+<a name="line131"></a>			if (!is_array($fieldNames) || (is_array($fieldNames) && in_array($k, $fieldNames))) {
+<a name="line132"></a>				$this->$k = $v;
+<a name="line133"></a>			}
+<a name="line134"></a>		}
+<a name="line135"></a>	}
+<a name="line136"></a>	
+<a name="line137"></a>	public function save() {
+<a name="line138"></a>		self::_getMapper()->save($this);
+<a name="line139"></a>	}
+<a name="line140"></a>	
+<a name="line141"></a>	public function __get($property) {
+<a name="line142"></a>		if ($property == 'id') {
+<a name="line143"></a>			return (int) parent::__get($property);
+<a name="line144"></a>		}
+<a name="line145"></a>		return parent::__get($property);
+<a name="line146"></a>	}
+<a name="line147"></a>	
+<a name="line148"></a>}
+<a name="line149"></a>
+<a name="line150"></a>class Mapper extends \phpDataMapper_Base {
+<a name="line151"></a>	public function __construct($adapter = null, $adapterRead = null, $entityClassName = null, $tableName = null, $fields, $engine) {
+<a name="line152"></a>		
+<a name="line153"></a>		$this->_primaryKey = 'id';
+<a name="line154"></a>		
+<a name="line155"></a>		$this->_datasource = $tableName;
+<a name="line156"></a>		$this->_entityClass = $entityClassName;
+<a name="line157"></a>		
+<a name="line158"></a>		if(!is_null($engine)) {
+<a name="line159"></a>			$this->engine($engine);
+<a name="line160"></a>		}
+<a name="line161"></a>		
+<a name="line162"></a>		$id = array(
+<a name="line163"></a>			'id' => array(
+<a name="line164"></a>				'type' => 'int',
+<a name="line165"></a>				'primary' => true,
+<a name="line166"></a>				'unsigned' => true,
+<a name="line167"></a>				'serial' => true
+<a name="line168"></a>			)
+<a name="line169"></a>		);
+<a name="line170"></a>		if(is_array($fields)) {
+<a name="line171"></a>			$fields = array_merge($id, $fields);
+<a name="line172"></a>		} else {
+<a name="line173"></a>			$fields = $id;
+<a name="line174"></a>		}
+<a name="line175"></a>		$this->loadFields($fields);
+<a name="line176"></a>		
+<a name="line177"></a>		$adapter = is_null($adapter) ? self::$_globalAdapter : $adapter;
+<a name="line178"></a>		parent::__construct($adapter, $adapterRead);
+<a name="line179"></a>	}
+<a name="line180"></a>	
+<a name="line181"></a>}
+<a name="line182"></a>
+<a name="line183"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\blankcanvas\model_class.inc.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

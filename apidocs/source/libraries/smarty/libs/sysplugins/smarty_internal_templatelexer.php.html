@@ -1,0 +1,1244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:02:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_templatelexer.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_templatelexer.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_templatelexer.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Templatelexer</p><p>This is the lexer to break the template source into tokens</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a>* Smarty Internal Plugin Templatelexer
+<a name="line4"></a>*
+<a name="line5"></a>* This is the lexer to break the template source into tokens 
+<a name="line6"></a>* @package Smarty
+<a name="line7"></a>* @subpackage Compiler
+<a name="line8"></a>* @author Uwe Tews 
+<a name="line9"></a>*/
+<a name="line10"></a>/**
+<a name="line11"></a>* Smarty Internal Plugin Templatelexer
+<a name="line12"></a>*/
+<a name="line13"></a>class Smarty_Internal_Templatelexer
+<a name="line14"></a>{
+<a name="line15"></a>    public $data;
+<a name="line16"></a>    public $counter;
+<a name="line17"></a>    public $token;
+<a name="line18"></a>    public $value;
+<a name="line19"></a>    public $node;
+<a name="line20"></a>    public $line;
+<a name="line21"></a>    public $taglineno;
+<a name="line22"></a>    public $state = 1;
+<a name="line23"></a>    public $strip = false;
+<a name="line24"></a>    private $heredoc_id_stack = Array();
+<a name="line25"></a>    public $smarty_token_names = array (		// Text for parser error messages
+<a name="line26"></a>    				'IDENTITY'	=> '===',
+<a name="line27"></a>    				'NONEIDENTITY'	=> '!==',
+<a name="line28"></a>    				'EQUALS'	=> '==',
+<a name="line29"></a>    				'NOTEQUALS'	=> '!=',
+<a name="line30"></a>    				'GREATEREQUAL' => '(>=,ge)',
+<a name="line31"></a>    				'LESSEQUAL' => '(<=,le)',
+<a name="line32"></a>    				'GREATERTHAN' => '(>,gt)',
+<a name="line33"></a>    				'LESSTHAN' => '(<,lt)',
+<a name="line34"></a>    				'MOD' => '(%,mod)',
+<a name="line35"></a>    				'NOT'			=> '(!,not)',
+<a name="line36"></a>    				'LAND'		=> '(&&,and)',
+<a name="line37"></a>    				'LOR'			=> '(||,or)',
+<a name="line38"></a>    				'LXOR'			=> 'xor',
+<a name="line39"></a>    				'OPENP'		=> '(',
+<a name="line40"></a>    				'CLOSEP'	=> ')',
+<a name="line41"></a>    				'OPENB'		=> '[',
+<a name="line42"></a>    				'CLOSEB'	=> ']',
+<a name="line43"></a>    				'PTR'			=> '->',
+<a name="line44"></a>    				'APTR'		=> '=>',
+<a name="line45"></a>    				'EQUAL'		=> '=',
+<a name="line46"></a>    				'NUMBER'	=> 'number',
+<a name="line47"></a>    				'UNIMATH'	=> '+" , "-',
+<a name="line48"></a>    				'MATH'		=> '*" , "/" , "%',
+<a name="line49"></a>    				'INCDEC'	=> '++" , "--',
+<a name="line50"></a>    				'SPACE'		=> ' ',
+<a name="line51"></a>    				'DOLLAR'	=> '$',
+<a name="line52"></a>    				'SEMICOLON' => ';',
+<a name="line53"></a>    				'COLON'		=> ':',
+<a name="line54"></a>    				'DOUBLECOLON'		=> '::',
+<a name="line55"></a>    				'AT'		=> '@',
+<a name="line56"></a>    				'HATCH'		=> '#',
+<a name="line57"></a>    				'QUOTE'		=> '"',
+<a name="line58"></a>    				'BACKTICK'		=> '`',
+<a name="line59"></a>    				'VERT'		=> '|',
+<a name="line60"></a>    				'DOT'			=> '.',
+<a name="line61"></a>    				'COMMA'		=> '","',
+<a name="line62"></a>    				'ANDSYM'		=> '"&"',
+<a name="line63"></a>    				'QMARK'		=> '"?"',
+<a name="line64"></a>    				'ID'			=> 'identifier',
+<a name="line65"></a>    				'OTHER'		=> 'text',
+<a name="line66"></a>    				'LINEBREAK'		=> 'newline',
+<a name="line67"></a>     				'FAKEPHPSTARTTAG'	=> 'Fake PHP start tag',
+<a name="line68"></a>     				'PHPSTARTTAG'	=> 'PHP start tag',
+<a name="line69"></a>     				'PHPENDTAG'	=> 'PHP end tag',
+<a name="line70"></a> 						'LITERALSTART'  => 'Literal start',
+<a name="line71"></a> 						'LITERALEND'    => 'Literal end',
+<a name="line72"></a>    				'LDELSLASH' => 'closing tag',
+<a name="line73"></a>    				'COMMENT' => 'comment',
+<a name="line74"></a>     				'LITERALEND' => 'literal close',
+<a name="line75"></a>    				'AS' => 'as',
+<a name="line76"></a>    				'TO' => 'to',
+<a name="line77"></a>    				);
+<a name="line78"></a>    				
+<a name="line79"></a>    				
+<a name="line80"></a>    function __construct($data,$compiler)
+<a name="line81"></a>    {
+<a name="line82"></a>//        $this->data = preg_replace("/(\r\n|\r|\n)/", "\n", $data);
+<a name="line83"></a>        $this->data = $data;
+<a name="line84"></a>        $this->counter = 0;
+<a name="line85"></a>        $this->line = 1;
+<a name="line86"></a>        $this->smarty = $compiler->smarty;
+<a name="line87"></a>        $this->compiler = $compiler;
+<a name="line88"></a>        $this->ldel = preg_quote($this->smarty->left_delimiter,'/'); 
+<a name="line89"></a>        $this->ldel_length = strlen($this->smarty->left_delimiter); 
+<a name="line90"></a>        $this->rdel = preg_quote($this->smarty->right_delimiter,'/');
+<a name="line91"></a>        $this->smarty_token_names['LDEL'] =	$this->smarty->left_delimiter;
+<a name="line92"></a>        $this->smarty_token_names['RDEL'] =	$this->smarty->right_delimiter;
+<a name="line93"></a>     }
+<a name="line94"></a>
+<a name="line95"></a>
+<a name="line96"></a>    private $_yy_state = 1;
+<a name="line97"></a>    private $_yy_stack = array();
+<a name="line98"></a>
+<a name="line99"></a>    function yylex()
+<a name="line100"></a>    {
+<a name="line101"></a>        return $this->{'yylex' . $this->_yy_state}();
+<a name="line102"></a>    }
+<a name="line103"></a>
+<a name="line104"></a>    function yypushstate($state)
+<a name="line105"></a>    {
+<a name="line106"></a>        array_push($this->_yy_stack, $this->_yy_state);
+<a name="line107"></a>        $this->_yy_state = $state;
+<a name="line108"></a>    }
+<a name="line109"></a>
+<a name="line110"></a>    function yypopstate()
+<a name="line111"></a>    {
+<a name="line112"></a>        $this->_yy_state = array_pop($this->_yy_stack);
+<a name="line113"></a>    }
+<a name="line114"></a>
+<a name="line115"></a>    function yybegin($state)
+<a name="line116"></a>    {
+<a name="line117"></a>        $this->_yy_state = $state;
+<a name="line118"></a>    }
+<a name="line119"></a>
+<a name="line120"></a>
+<a name="line121"></a>
+<a name="line122"></a>    function yylex1()
+<a name="line123"></a>    {
+<a name="line124"></a>        $tokenMap = array (
+<a name="line125"></a>              1 => 0,
+<a name="line126"></a>              2 => 0,
+<a name="line127"></a>              3 => 1,
+<a name="line128"></a>              5 => 0,
+<a name="line129"></a>              6 => 0,
+<a name="line130"></a>              7 => 0,
+<a name="line131"></a>              8 => 0,
+<a name="line132"></a>              9 => 0,
+<a name="line133"></a>              10 => 0,
+<a name="line134"></a>              11 => 0,
+<a name="line135"></a>              12 => 1,
+<a name="line136"></a>              14 => 0,
+<a name="line137"></a>              15 => 0,
+<a name="line138"></a>              16 => 0,
+<a name="line139"></a>              17 => 0,
+<a name="line140"></a>              18 => 0,
+<a name="line141"></a>              19 => 0,
+<a name="line142"></a>              20 => 0,
+<a name="line143"></a>              21 => 0,
+<a name="line144"></a>              22 => 0,
+<a name="line145"></a>              23 => 2,
+<a name="line146"></a>              26 => 0,
+<a name="line147"></a>              27 => 0,
+<a name="line148"></a>            );
+<a name="line149"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line150"></a>            return false; // end of input
+<a name="line151"></a>        }
+<a name="line152"></a>        $yy_global_pattern = "/^(".$this->ldel."[$]smarty\\.block\\.child".$this->rdel.")|^(\\{\\})|^(".$this->ldel."\\*([\S\s]*?)\\*".$this->rdel.")|^([\t ]*[\r\n]+[\t ]*)|^(".$this->ldel."strip".$this->rdel.")|^(".$this->ldel."\\s{1,}strip\\s{1,}".$this->rdel.")|^(".$this->ldel."\/strip".$this->rdel.")|^(".$this->ldel."\\s{1,}\/strip\\s{1,}".$this->rdel.")|^(".$this->ldel."\\s*literal\\s*".$this->rdel.")|^(".$this->ldel."\\s{1,}\/)|^(".$this->ldel."\\s*(if|elseif|else if|while)(?![^\s]))|^(".$this->ldel."\\s*for(?![^\s]))|^(".$this->ldel."\\s*foreach(?![^\s]))|^(".$this->ldel."\\s{1,})|^(".$this->ldel."\/)|^(".$this->ldel.")|^(<\\?(?:php\\w+|=|[a-zA-Z]+)?)|^(\\?>)|^(<%)|^(%>)|^(([\S\s]*?)(?=([\t ]*[\r\n]+[\t ]*|".$this->ldel."|<\\?|\\?>|<%|%>)))|^([\S\s]+)|^(.)/iS";
+<a name="line153"></a>
+<a name="line154"></a>        do {
+<a name="line155"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line156"></a>                $yysubmatches = $yymatches;
+<a name="line157"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line158"></a>                if (!count($yymatches)) {
+<a name="line159"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line160"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line161"></a>                        $this->counter, 5) . '... state TEXT');
+<a name="line162"></a>                }
+<a name="line163"></a>                next($yymatches); // skip global match
+<a name="line164"></a>                $this->token = key($yymatches); // token number
+<a name="line165"></a>                if ($tokenMap[$this->token]) {
+<a name="line166"></a>                    // extract sub-patterns for passing to lex function
+<a name="line167"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line168"></a>                        $tokenMap[$this->token]);
+<a name="line169"></a>                } else {
+<a name="line170"></a>                    $yysubmatches = array();
+<a name="line171"></a>                }
+<a name="line172"></a>                $this->value = current($yymatches); // token value
+<a name="line173"></a>                $r = $this->{'yy_r1_' . $this->token}($yysubmatches);
+<a name="line174"></a>                if ($r === null) {
+<a name="line175"></a>                    $this->counter += strlen($this->value);
+<a name="line176"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line177"></a>                    // accept this token
+<a name="line178"></a>                    return true;
+<a name="line179"></a>                } elseif ($r === true) {
+<a name="line180"></a>                    // we have changed state
+<a name="line181"></a>                    // process this token in the new state
+<a name="line182"></a>                    return $this->yylex();
+<a name="line183"></a>                } elseif ($r === false) {
+<a name="line184"></a>                    $this->counter += strlen($this->value);
+<a name="line185"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line186"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line187"></a>                        return false; // end of input
+<a name="line188"></a>                    }
+<a name="line189"></a>                    // skip this token
+<a name="line190"></a>                    continue;
+<a name="line191"></a>                }            } else {
+<a name="line192"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line193"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line194"></a>            }
+<a name="line195"></a>            break;
+<a name="line196"></a>        } while (true);
+<a name="line197"></a>
+<a name="line198"></a>    } // end function
+<a name="line199"></a>
+<a name="line200"></a>
+<a name="line201"></a>    const TEXT = 1;
+<a name="line202"></a>    function yy_r1_1($yy_subpatterns)
+<a name="line203"></a>    {
+<a name="line204"></a>
+<a name="line205"></a>  $this->token = Smarty_Internal_Templateparser::TP_SMARTYBLOCKCHILD;
+<a name="line206"></a>    }
+<a name="line207"></a>    function yy_r1_2($yy_subpatterns)
+<a name="line208"></a>    {
+<a name="line209"></a>
+<a name="line210"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line211"></a>    }
+<a name="line212"></a>    function yy_r1_3($yy_subpatterns)
+<a name="line213"></a>    {
+<a name="line214"></a>
+<a name="line215"></a>  $this->token = Smarty_Internal_Templateparser::TP_COMMENT;
+<a name="line216"></a>    }
+<a name="line217"></a>    function yy_r1_5($yy_subpatterns)
+<a name="line218"></a>    {
+<a name="line219"></a>
+<a name="line220"></a>  if ($this->strip) {
+<a name="line221"></a>     return false;
+<a name="line222"></a>  } else {
+<a name="line223"></a>     $this->token = Smarty_Internal_Templateparser::TP_LINEBREAK;
+<a name="line224"></a>  }
+<a name="line225"></a>    }
+<a name="line226"></a>    function yy_r1_6($yy_subpatterns)
+<a name="line227"></a>    {
+<a name="line228"></a>
+<a name="line229"></a>  $this->strip = true;
+<a name="line230"></a>  return false;
+<a name="line231"></a>    }
+<a name="line232"></a>    function yy_r1_7($yy_subpatterns)
+<a name="line233"></a>    {
+<a name="line234"></a>
+<a name="line235"></a>  if ($this->smarty->auto_literal) {
+<a name="line236"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line237"></a>  } else {
+<a name="line238"></a>    $this->strip = true;
+<a name="line239"></a>    return false;
+<a name="line240"></a>  }
+<a name="line241"></a>    }
+<a name="line242"></a>    function yy_r1_8($yy_subpatterns)
+<a name="line243"></a>    {
+<a name="line244"></a>
+<a name="line245"></a>  $this->strip = false;
+<a name="line246"></a>  return false;
+<a name="line247"></a>    }
+<a name="line248"></a>    function yy_r1_9($yy_subpatterns)
+<a name="line249"></a>    {
+<a name="line250"></a>
+<a name="line251"></a>  if ($this->smarty->auto_literal) {
+<a name="line252"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line253"></a>  } else {
+<a name="line254"></a>    $this->strip = false;
+<a name="line255"></a>    return false;
+<a name="line256"></a>  }
+<a name="line257"></a>    }
+<a name="line258"></a>    function yy_r1_10($yy_subpatterns)
+<a name="line259"></a>    {
+<a name="line260"></a>
+<a name="line261"></a>   $this->token = Smarty_Internal_Templateparser::TP_LITERALSTART;
+<a name="line262"></a>   $this->yypushstate(self::LITERAL);
+<a name="line263"></a>    }
+<a name="line264"></a>    function yy_r1_11($yy_subpatterns)
+<a name="line265"></a>    {
+<a name="line266"></a>
+<a name="line267"></a>  if ($this->smarty->auto_literal) {
+<a name="line268"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line269"></a>  } else {
+<a name="line270"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELSLASH;
+<a name="line271"></a>     $this->yypushstate(self::SMARTY);
+<a name="line272"></a>     $this->taglineno = $this->line;
+<a name="line273"></a>  }
+<a name="line274"></a>    }
+<a name="line275"></a>    function yy_r1_12($yy_subpatterns)
+<a name="line276"></a>    {
+<a name="line277"></a>
+<a name="line278"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line279"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line280"></a>  } else {
+<a name="line281"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELIF;
+<a name="line282"></a>     $this->yypushstate(self::SMARTY);
+<a name="line283"></a>     $this->taglineno = $this->line;
+<a name="line284"></a>  }
+<a name="line285"></a>    }
+<a name="line286"></a>    function yy_r1_14($yy_subpatterns)
+<a name="line287"></a>    {
+<a name="line288"></a>
+<a name="line289"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line290"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line291"></a>  } else {
+<a name="line292"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELFOR;
+<a name="line293"></a>     $this->yypushstate(self::SMARTY);
+<a name="line294"></a>     $this->taglineno = $this->line;
+<a name="line295"></a>  }
+<a name="line296"></a>    }
+<a name="line297"></a>    function yy_r1_15($yy_subpatterns)
+<a name="line298"></a>    {
+<a name="line299"></a>
+<a name="line300"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line301"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line302"></a>  } else {
+<a name="line303"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELFOREACH;
+<a name="line304"></a>     $this->yypushstate(self::SMARTY);
+<a name="line305"></a>     $this->taglineno = $this->line;
+<a name="line306"></a>  }
+<a name="line307"></a>    }
+<a name="line308"></a>    function yy_r1_16($yy_subpatterns)
+<a name="line309"></a>    {
+<a name="line310"></a>
+<a name="line311"></a>  if ($this->smarty->auto_literal) {
+<a name="line312"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line313"></a>  } else {
+<a name="line314"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDEL;
+<a name="line315"></a>     $this->yypushstate(self::SMARTY);
+<a name="line316"></a>     $this->taglineno = $this->line;
+<a name="line317"></a>  }
+<a name="line318"></a>    }
+<a name="line319"></a>    function yy_r1_17($yy_subpatterns)
+<a name="line320"></a>    {
+<a name="line321"></a>
+<a name="line322"></a>  $this->token = Smarty_Internal_Templateparser::TP_LDELSLASH;
+<a name="line323"></a>     $this->yypushstate(self::SMARTY);
+<a name="line324"></a>     $this->taglineno = $this->line;
+<a name="line325"></a>    }
+<a name="line326"></a>    function yy_r1_18($yy_subpatterns)
+<a name="line327"></a>    {
+<a name="line328"></a>
+<a name="line329"></a>  $this->token = Smarty_Internal_Templateparser::TP_LDEL;
+<a name="line330"></a>     $this->yypushstate(self::SMARTY);
+<a name="line331"></a>     $this->taglineno = $this->line;
+<a name="line332"></a>    }
+<a name="line333"></a>    function yy_r1_19($yy_subpatterns)
+<a name="line334"></a>    {
+<a name="line335"></a>
+<a name="line336"></a>  if (in_array($this->value, Array('<?', '<?=', '<?php'))) {
+<a name="line337"></a>    $this->token = Smarty_Internal_Templateparser::TP_PHPSTARTTAG;
+<a name="line338"></a>  } elseif ($this->value == '<?xml') {
+<a name="line339"></a>      $this->token = Smarty_Internal_Templateparser::TP_XMLTAG;
+<a name="line340"></a>  } else {
+<a name="line341"></a>    $this->token = Smarty_Internal_Templateparser::TP_FAKEPHPSTARTTAG;
+<a name="line342"></a>    $this->value = substr($this->value, 0, 2);
+<a name="line343"></a>  }
+<a name="line344"></a>     }
+<a name="line345"></a>    function yy_r1_20($yy_subpatterns)
+<a name="line346"></a>    {
+<a name="line347"></a>
+<a name="line348"></a>  $this->token = Smarty_Internal_Templateparser::TP_PHPENDTAG;
+<a name="line349"></a>    }
+<a name="line350"></a>    function yy_r1_21($yy_subpatterns)
+<a name="line351"></a>    {
+<a name="line352"></a>
+<a name="line353"></a>  $this->token = Smarty_Internal_Templateparser::TP_ASPSTARTTAG;
+<a name="line354"></a>    }
+<a name="line355"></a>    function yy_r1_22($yy_subpatterns)
+<a name="line356"></a>    {
+<a name="line357"></a>
+<a name="line358"></a>  $this->token = Smarty_Internal_Templateparser::TP_ASPENDTAG;
+<a name="line359"></a>    }
+<a name="line360"></a>    function yy_r1_23($yy_subpatterns)
+<a name="line361"></a>    {
+<a name="line362"></a>
+<a name="line363"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line364"></a>    }
+<a name="line365"></a>    function yy_r1_26($yy_subpatterns)
+<a name="line366"></a>    {
+<a name="line367"></a>
+<a name="line368"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line369"></a>    }
+<a name="line370"></a>    function yy_r1_27($yy_subpatterns)
+<a name="line371"></a>    {
+<a name="line372"></a>
+<a name="line373"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line374"></a>    }
+<a name="line375"></a>
+<a name="line376"></a>
+<a name="line377"></a>    function yylex2()
+<a name="line378"></a>    {
+<a name="line379"></a>        $tokenMap = array (
+<a name="line380"></a>              1 => 0,
+<a name="line381"></a>              2 => 0,
+<a name="line382"></a>              3 => 1,
+<a name="line383"></a>              5 => 0,
+<a name="line384"></a>              6 => 0,
+<a name="line385"></a>              7 => 0,
+<a name="line386"></a>              8 => 0,
+<a name="line387"></a>              9 => 0,
+<a name="line388"></a>              10 => 0,
+<a name="line389"></a>              11 => 0,
+<a name="line390"></a>              12 => 0,
+<a name="line391"></a>              13 => 0,
+<a name="line392"></a>              14 => 0,
+<a name="line393"></a>              15 => 0,
+<a name="line394"></a>              16 => 0,
+<a name="line395"></a>              17 => 0,
+<a name="line396"></a>              18 => 0,
+<a name="line397"></a>              19 => 0,
+<a name="line398"></a>              20 => 1,
+<a name="line399"></a>              22 => 1,
+<a name="line400"></a>              24 => 1,
+<a name="line401"></a>              26 => 0,
+<a name="line402"></a>              27 => 0,
+<a name="line403"></a>              28 => 0,
+<a name="line404"></a>              29 => 0,
+<a name="line405"></a>              30 => 0,
+<a name="line406"></a>              31 => 0,
+<a name="line407"></a>              32 => 0,
+<a name="line408"></a>              33 => 0,
+<a name="line409"></a>              34 => 0,
+<a name="line410"></a>              35 => 0,
+<a name="line411"></a>              36 => 0,
+<a name="line412"></a>              37 => 0,
+<a name="line413"></a>              38 => 0,
+<a name="line414"></a>              39 => 0,
+<a name="line415"></a>              40 => 0,
+<a name="line416"></a>              41 => 0,
+<a name="line417"></a>              42 => 0,
+<a name="line418"></a>              43 => 3,
+<a name="line419"></a>              47 => 0,
+<a name="line420"></a>              48 => 0,
+<a name="line421"></a>              49 => 0,
+<a name="line422"></a>              50 => 0,
+<a name="line423"></a>              51 => 0,
+<a name="line424"></a>              52 => 0,
+<a name="line425"></a>              53 => 0,
+<a name="line426"></a>              54 => 0,
+<a name="line427"></a>              55 => 1,
+<a name="line428"></a>              57 => 1,
+<a name="line429"></a>              59 => 0,
+<a name="line430"></a>              60 => 0,
+<a name="line431"></a>              61 => 0,
+<a name="line432"></a>              62 => 0,
+<a name="line433"></a>              63 => 0,
+<a name="line434"></a>              64 => 0,
+<a name="line435"></a>              65 => 0,
+<a name="line436"></a>              66 => 0,
+<a name="line437"></a>              67 => 0,
+<a name="line438"></a>              68 => 0,
+<a name="line439"></a>              69 => 0,
+<a name="line440"></a>              70 => 0,
+<a name="line441"></a>              71 => 0,
+<a name="line442"></a>              72 => 0,
+<a name="line443"></a>              73 => 0,
+<a name="line444"></a>              74 => 0,
+<a name="line445"></a>              75 => 0,
+<a name="line446"></a>              76 => 0,
+<a name="line447"></a>            );
+<a name="line448"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line449"></a>            return false; // end of input
+<a name="line450"></a>        }
+<a name="line451"></a>        $yy_global_pattern = "/^('[^'\\\\]*(?:\\\\.[^'\\\\]*)*')|^(".$this->ldel."\\s{1,}\/)|^(".$this->ldel."\\s*(if|elseif|else if|while)(?![^\s]))|^(".$this->ldel."\\s*for(?![^\s]))|^(".$this->ldel."\\s*foreach(?![^\s]))|^(".$this->ldel."\\s{1,})|^(\\s{1,}".$this->rdel.")|^(".$this->ldel."\/)|^(".$this->ldel.")|^(".$this->rdel.")|^(\\s+is\\s+in\\s+)|^(\\s+as\\s+)|^(\\s+to\\s+)|^(\\s+step\\s+)|^(\\s+instanceof\\s+)|^(\\s*===\\s*)|^(\\s*!==\\s*)|^(\\s*==\\s*|\\s+eq\\s+)|^(\\s*!=\\s*|\\s*<>\\s*|\\s+(ne|neq)\\s+)|^(\\s*>=\\s*|\\s+(ge|gte)\\s+)|^(\\s*<=\\s*|\\s+(le|lte)\\s+)|^(\\s*>\\s*|\\s+gt\\s+)|^(\\s*<\\s*|\\s+lt\\s+)|^(\\s+mod\\s+)|^(!\\s*|not\\s+)|^(\\s*&&\\s*|\\s*and\\s+)|^(\\s*\\|\\|\\s*|\\s*or\\s+)|^(\\s*xor\\s+)|^(\\s+is\\s+odd\\s+by\\s+)|^(\\s+is\\s+not\\s+odd\\s+by\\s+)|^(\\s+is\\s+odd)|^(\\s+is\\s+not\\s+odd)|^(\\s+is\\s+even\\s+by\\s+)|^(\\s+is\\s+not\\s+even\\s+by\\s+)|^(\\s+is\\s+even)|^(\\s+is\\s+not\\s+even)|^(\\s+is\\s+div\\s+by\\s+)|^(\\s+is\\s+not\\s+div\\s+by\\s+)|^(\\((int(eger)?|bool(ean)?|float|double|real|string|binary|array|object)\\)\\s*)|^(\\(\\s*)|^(\\s*\\))|^(\\[\\s*)|^(\\s*\\])|^(\\s*->\\s*)|^(\\s*=>\\s*)|^(\\s*=\\s*)|^(\\+\\+|--)|^(\\s*(\\+|-)\\s*)|^(\\s*(\\*|\/|%)\\s*)|^(\\$)|^(\\s*;)|^(::)|^(\\s*:\\s*)|^(@)|^(#)|^(\")|^(`)|^(\\|)|^(\\.)|^(\\s*,\\s*)|^(\\s*&\\s*)|^(\\s*\\?\\s*)|^(0[xX][0-9a-fA-F]+)|^([0-9]*[a-zA-Z_]\\w*)|^(\\d+)|^(\\s+)|^(.)/iS";
+<a name="line452"></a>
+<a name="line453"></a>        do {
+<a name="line454"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line455"></a>                $yysubmatches = $yymatches;
+<a name="line456"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line457"></a>                if (!count($yymatches)) {
+<a name="line458"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line459"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line460"></a>                        $this->counter, 5) . '... state SMARTY');
+<a name="line461"></a>                }
+<a name="line462"></a>                next($yymatches); // skip global match
+<a name="line463"></a>                $this->token = key($yymatches); // token number
+<a name="line464"></a>                if ($tokenMap[$this->token]) {
+<a name="line465"></a>                    // extract sub-patterns for passing to lex function
+<a name="line466"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line467"></a>                        $tokenMap[$this->token]);
+<a name="line468"></a>                } else {
+<a name="line469"></a>                    $yysubmatches = array();
+<a name="line470"></a>                }
+<a name="line471"></a>                $this->value = current($yymatches); // token value
+<a name="line472"></a>                $r = $this->{'yy_r2_' . $this->token}($yysubmatches);
+<a name="line473"></a>                if ($r === null) {
+<a name="line474"></a>                    $this->counter += strlen($this->value);
+<a name="line475"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line476"></a>                    // accept this token
+<a name="line477"></a>                    return true;
+<a name="line478"></a>                } elseif ($r === true) {
+<a name="line479"></a>                    // we have changed state
+<a name="line480"></a>                    // process this token in the new state
+<a name="line481"></a>                    return $this->yylex();
+<a name="line482"></a>                } elseif ($r === false) {
+<a name="line483"></a>                    $this->counter += strlen($this->value);
+<a name="line484"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line485"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line486"></a>                        return false; // end of input
+<a name="line487"></a>                    }
+<a name="line488"></a>                    // skip this token
+<a name="line489"></a>                    continue;
+<a name="line490"></a>                }            } else {
+<a name="line491"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line492"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line493"></a>            }
+<a name="line494"></a>            break;
+<a name="line495"></a>        } while (true);
+<a name="line496"></a>
+<a name="line497"></a>    } // end function
+<a name="line498"></a>
+<a name="line499"></a>
+<a name="line500"></a>    const SMARTY = 2;
+<a name="line501"></a>    function yy_r2_1($yy_subpatterns)
+<a name="line502"></a>    {
+<a name="line503"></a>
+<a name="line504"></a>  $this->token = Smarty_Internal_Templateparser::TP_SINGLEQUOTESTRING;
+<a name="line505"></a>    }
+<a name="line506"></a>    function yy_r2_2($yy_subpatterns)
+<a name="line507"></a>    {
+<a name="line508"></a>
+<a name="line509"></a>  if ($this->smarty->auto_literal) {
+<a name="line510"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line511"></a>  } else {
+<a name="line512"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELSLASH;
+<a name="line513"></a>     $this->yypushstate(self::SMARTY);
+<a name="line514"></a>     $this->taglineno = $this->line;
+<a name="line515"></a>  }
+<a name="line516"></a>    }
+<a name="line517"></a>    function yy_r2_3($yy_subpatterns)
+<a name="line518"></a>    {
+<a name="line519"></a>
+<a name="line520"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line521"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line522"></a>  } else {
+<a name="line523"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELIF;
+<a name="line524"></a>     $this->yypushstate(self::SMARTY);
+<a name="line525"></a>     $this->taglineno = $this->line;
+<a name="line526"></a>  }
+<a name="line527"></a>    }
+<a name="line528"></a>    function yy_r2_5($yy_subpatterns)
+<a name="line529"></a>    {
+<a name="line530"></a>
+<a name="line531"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line532"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line533"></a>  } else {
+<a name="line534"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELFOR;
+<a name="line535"></a>     $this->yypushstate(self::SMARTY);
+<a name="line536"></a>     $this->taglineno = $this->line;
+<a name="line537"></a>  }
+<a name="line538"></a>    }
+<a name="line539"></a>    function yy_r2_6($yy_subpatterns)
+<a name="line540"></a>    {
+<a name="line541"></a>
+<a name="line542"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line543"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line544"></a>  } else {
+<a name="line545"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELFOREACH;
+<a name="line546"></a>     $this->yypushstate(self::SMARTY);
+<a name="line547"></a>     $this->taglineno = $this->line;
+<a name="line548"></a>  }
+<a name="line549"></a>    }
+<a name="line550"></a>    function yy_r2_7($yy_subpatterns)
+<a name="line551"></a>    {
+<a name="line552"></a>
+<a name="line553"></a>  if ($this->smarty->auto_literal) {
+<a name="line554"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line555"></a>  } else {
+<a name="line556"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDEL;
+<a name="line557"></a>     $this->yypushstate(self::SMARTY);
+<a name="line558"></a>     $this->taglineno = $this->line;
+<a name="line559"></a>  }
+<a name="line560"></a>    }
+<a name="line561"></a>    function yy_r2_8($yy_subpatterns)
+<a name="line562"></a>    {
+<a name="line563"></a>
+<a name="line564"></a>  if ($this->smarty->auto_literal) {
+<a name="line565"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line566"></a>  } else {
+<a name="line567"></a>     $this->token = Smarty_Internal_Templateparser::TP_RDEL;
+<a name="line568"></a>     $this->yypopstate();
+<a name="line569"></a>  }
+<a name="line570"></a>    }
+<a name="line571"></a>    function yy_r2_9($yy_subpatterns)
+<a name="line572"></a>    {
+<a name="line573"></a>
+<a name="line574"></a>  $this->token = Smarty_Internal_Templateparser::TP_LDELSLASH;
+<a name="line575"></a>     $this->yypushstate(self::SMARTY);
+<a name="line576"></a>     $this->taglineno = $this->line;
+<a name="line577"></a>    }
+<a name="line578"></a>    function yy_r2_10($yy_subpatterns)
+<a name="line579"></a>    {
+<a name="line580"></a>
+<a name="line581"></a>  $this->token = Smarty_Internal_Templateparser::TP_LDEL;
+<a name="line582"></a>     $this->yypushstate(self::SMARTY);
+<a name="line583"></a>     $this->taglineno = $this->line;
+<a name="line584"></a>    }
+<a name="line585"></a>    function yy_r2_11($yy_subpatterns)
+<a name="line586"></a>    {
+<a name="line587"></a>
+<a name="line588"></a>  $this->token = Smarty_Internal_Templateparser::TP_RDEL;
+<a name="line589"></a>     $this->yypopstate();
+<a name="line590"></a>    }
+<a name="line591"></a>    function yy_r2_12($yy_subpatterns)
+<a name="line592"></a>    {
+<a name="line593"></a>
+<a name="line594"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISIN;
+<a name="line595"></a>    }
+<a name="line596"></a>    function yy_r2_13($yy_subpatterns)
+<a name="line597"></a>    {
+<a name="line598"></a>
+<a name="line599"></a>  $this->token = Smarty_Internal_Templateparser::TP_AS;
+<a name="line600"></a>    }
+<a name="line601"></a>    function yy_r2_14($yy_subpatterns)
+<a name="line602"></a>    {
+<a name="line603"></a>
+<a name="line604"></a>  $this->token = Smarty_Internal_Templateparser::TP_TO;
+<a name="line605"></a>    }
+<a name="line606"></a>    function yy_r2_15($yy_subpatterns)
+<a name="line607"></a>    {
+<a name="line608"></a>
+<a name="line609"></a>  $this->token = Smarty_Internal_Templateparser::TP_STEP;
+<a name="line610"></a>    }
+<a name="line611"></a>    function yy_r2_16($yy_subpatterns)
+<a name="line612"></a>    {
+<a name="line613"></a>
+<a name="line614"></a>  $this->token = Smarty_Internal_Templateparser::TP_INSTANCEOF;
+<a name="line615"></a>    }
+<a name="line616"></a>    function yy_r2_17($yy_subpatterns)
+<a name="line617"></a>    {
+<a name="line618"></a>
+<a name="line619"></a>  $this->token = Smarty_Internal_Templateparser::TP_IDENTITY;
+<a name="line620"></a>    }
+<a name="line621"></a>    function yy_r2_18($yy_subpatterns)
+<a name="line622"></a>    {
+<a name="line623"></a>
+<a name="line624"></a>  $this->token = Smarty_Internal_Templateparser::TP_NONEIDENTITY;
+<a name="line625"></a>    }
+<a name="line626"></a>    function yy_r2_19($yy_subpatterns)
+<a name="line627"></a>    {
+<a name="line628"></a>
+<a name="line629"></a>  $this->token = Smarty_Internal_Templateparser::TP_EQUALS;
+<a name="line630"></a>    }
+<a name="line631"></a>    function yy_r2_20($yy_subpatterns)
+<a name="line632"></a>    {
+<a name="line633"></a>
+<a name="line634"></a>  $this->token = Smarty_Internal_Templateparser::TP_NOTEQUALS;
+<a name="line635"></a>    }
+<a name="line636"></a>    function yy_r2_22($yy_subpatterns)
+<a name="line637"></a>    {
+<a name="line638"></a>
+<a name="line639"></a>  $this->token = Smarty_Internal_Templateparser::TP_GREATEREQUAL;
+<a name="line640"></a>    }
+<a name="line641"></a>    function yy_r2_24($yy_subpatterns)
+<a name="line642"></a>    {
+<a name="line643"></a>
+<a name="line644"></a>  $this->token = Smarty_Internal_Templateparser::TP_LESSEQUAL;
+<a name="line645"></a>    }
+<a name="line646"></a>    function yy_r2_26($yy_subpatterns)
+<a name="line647"></a>    {
+<a name="line648"></a>
+<a name="line649"></a>  $this->token = Smarty_Internal_Templateparser::TP_GREATERTHAN;
+<a name="line650"></a>    }
+<a name="line651"></a>    function yy_r2_27($yy_subpatterns)
+<a name="line652"></a>    {
+<a name="line653"></a>
+<a name="line654"></a>  $this->token = Smarty_Internal_Templateparser::TP_LESSTHAN;
+<a name="line655"></a>    }
+<a name="line656"></a>    function yy_r2_28($yy_subpatterns)
+<a name="line657"></a>    {
+<a name="line658"></a>
+<a name="line659"></a>  $this->token = Smarty_Internal_Templateparser::TP_MOD;
+<a name="line660"></a>    }
+<a name="line661"></a>    function yy_r2_29($yy_subpatterns)
+<a name="line662"></a>    {
+<a name="line663"></a>
+<a name="line664"></a>  $this->token = Smarty_Internal_Templateparser::TP_NOT;
+<a name="line665"></a>    }
+<a name="line666"></a>    function yy_r2_30($yy_subpatterns)
+<a name="line667"></a>    {
+<a name="line668"></a>
+<a name="line669"></a>  $this->token = Smarty_Internal_Templateparser::TP_LAND;
+<a name="line670"></a>    }
+<a name="line671"></a>    function yy_r2_31($yy_subpatterns)
+<a name="line672"></a>    {
+<a name="line673"></a>
+<a name="line674"></a>  $this->token = Smarty_Internal_Templateparser::TP_LOR;
+<a name="line675"></a>    }
+<a name="line676"></a>    function yy_r2_32($yy_subpatterns)
+<a name="line677"></a>    {
+<a name="line678"></a>
+<a name="line679"></a>  $this->token = Smarty_Internal_Templateparser::TP_LXOR;
+<a name="line680"></a>    }
+<a name="line681"></a>    function yy_r2_33($yy_subpatterns)
+<a name="line682"></a>    {
+<a name="line683"></a>
+<a name="line684"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISODDBY;
+<a name="line685"></a>    }
+<a name="line686"></a>    function yy_r2_34($yy_subpatterns)
+<a name="line687"></a>    {
+<a name="line688"></a>
+<a name="line689"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISNOTODDBY;
+<a name="line690"></a>    }
+<a name="line691"></a>    function yy_r2_35($yy_subpatterns)
+<a name="line692"></a>    {
+<a name="line693"></a>
+<a name="line694"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISODD;
+<a name="line695"></a>    }
+<a name="line696"></a>    function yy_r2_36($yy_subpatterns)
+<a name="line697"></a>    {
+<a name="line698"></a>
+<a name="line699"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISNOTODD;
+<a name="line700"></a>    }
+<a name="line701"></a>    function yy_r2_37($yy_subpatterns)
+<a name="line702"></a>    {
+<a name="line703"></a>
+<a name="line704"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISEVENBY;
+<a name="line705"></a>    }
+<a name="line706"></a>    function yy_r2_38($yy_subpatterns)
+<a name="line707"></a>    {
+<a name="line708"></a>
+<a name="line709"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISNOTEVENBY;
+<a name="line710"></a>    }
+<a name="line711"></a>    function yy_r2_39($yy_subpatterns)
+<a name="line712"></a>    {
+<a name="line713"></a>
+<a name="line714"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISEVEN;
+<a name="line715"></a>    }
+<a name="line716"></a>    function yy_r2_40($yy_subpatterns)
+<a name="line717"></a>    {
+<a name="line718"></a>
+<a name="line719"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISNOTEVEN;
+<a name="line720"></a>    }
+<a name="line721"></a>    function yy_r2_41($yy_subpatterns)
+<a name="line722"></a>    {
+<a name="line723"></a>
+<a name="line724"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISDIVBY;
+<a name="line725"></a>    }
+<a name="line726"></a>    function yy_r2_42($yy_subpatterns)
+<a name="line727"></a>    {
+<a name="line728"></a>
+<a name="line729"></a>  $this->token = Smarty_Internal_Templateparser::TP_ISNOTDIVBY;
+<a name="line730"></a>    }
+<a name="line731"></a>    function yy_r2_43($yy_subpatterns)
+<a name="line732"></a>    {
+<a name="line733"></a>
+<a name="line734"></a>  $this->token = Smarty_Internal_Templateparser::TP_TYPECAST;
+<a name="line735"></a>    }
+<a name="line736"></a>    function yy_r2_47($yy_subpatterns)
+<a name="line737"></a>    {
+<a name="line738"></a>
+<a name="line739"></a>  $this->token = Smarty_Internal_Templateparser::TP_OPENP;
+<a name="line740"></a>    }
+<a name="line741"></a>    function yy_r2_48($yy_subpatterns)
+<a name="line742"></a>    {
+<a name="line743"></a>
+<a name="line744"></a>  $this->token = Smarty_Internal_Templateparser::TP_CLOSEP;
+<a name="line745"></a>    }
+<a name="line746"></a>    function yy_r2_49($yy_subpatterns)
+<a name="line747"></a>    {
+<a name="line748"></a>
+<a name="line749"></a>  $this->token = Smarty_Internal_Templateparser::TP_OPENB;
+<a name="line750"></a>    }
+<a name="line751"></a>    function yy_r2_50($yy_subpatterns)
+<a name="line752"></a>    {
+<a name="line753"></a>
+<a name="line754"></a>  $this->token = Smarty_Internal_Templateparser::TP_CLOSEB;
+<a name="line755"></a>    }
+<a name="line756"></a>    function yy_r2_51($yy_subpatterns)
+<a name="line757"></a>    {
+<a name="line758"></a>
+<a name="line759"></a>  $this->token = Smarty_Internal_Templateparser::TP_PTR; 
+<a name="line760"></a>    }
+<a name="line761"></a>    function yy_r2_52($yy_subpatterns)
+<a name="line762"></a>    {
+<a name="line763"></a>
+<a name="line764"></a>  $this->token = Smarty_Internal_Templateparser::TP_APTR;
+<a name="line765"></a>    }
+<a name="line766"></a>    function yy_r2_53($yy_subpatterns)
+<a name="line767"></a>    {
+<a name="line768"></a>
+<a name="line769"></a>  $this->token = Smarty_Internal_Templateparser::TP_EQUAL;
+<a name="line770"></a>    }
+<a name="line771"></a>    function yy_r2_54($yy_subpatterns)
+<a name="line772"></a>    {
+<a name="line773"></a>
+<a name="line774"></a>  $this->token = Smarty_Internal_Templateparser::TP_INCDEC;
+<a name="line775"></a>    }
+<a name="line776"></a>    function yy_r2_55($yy_subpatterns)
+<a name="line777"></a>    {
+<a name="line778"></a>
+<a name="line779"></a>  $this->token = Smarty_Internal_Templateparser::TP_UNIMATH;
+<a name="line780"></a>    }
+<a name="line781"></a>    function yy_r2_57($yy_subpatterns)
+<a name="line782"></a>    {
+<a name="line783"></a>
+<a name="line784"></a>  $this->token = Smarty_Internal_Templateparser::TP_MATH;
+<a name="line785"></a>    }
+<a name="line786"></a>    function yy_r2_59($yy_subpatterns)
+<a name="line787"></a>    {
+<a name="line788"></a>
+<a name="line789"></a>  $this->token = Smarty_Internal_Templateparser::TP_DOLLAR;
+<a name="line790"></a>    }
+<a name="line791"></a>    function yy_r2_60($yy_subpatterns)
+<a name="line792"></a>    {
+<a name="line793"></a>
+<a name="line794"></a>  $this->token = Smarty_Internal_Templateparser::TP_SEMICOLON;
+<a name="line795"></a>    }
+<a name="line796"></a>    function yy_r2_61($yy_subpatterns)
+<a name="line797"></a>    {
+<a name="line798"></a>
+<a name="line799"></a>  $this->token = Smarty_Internal_Templateparser::TP_DOUBLECOLON;
+<a name="line800"></a>    }
+<a name="line801"></a>    function yy_r2_62($yy_subpatterns)
+<a name="line802"></a>    {
+<a name="line803"></a>
+<a name="line804"></a>  $this->token = Smarty_Internal_Templateparser::TP_COLON;
+<a name="line805"></a>    }
+<a name="line806"></a>    function yy_r2_63($yy_subpatterns)
+<a name="line807"></a>    {
+<a name="line808"></a>
+<a name="line809"></a>  $this->token = Smarty_Internal_Templateparser::TP_AT;
+<a name="line810"></a>    }
+<a name="line811"></a>    function yy_r2_64($yy_subpatterns)
+<a name="line812"></a>    {
+<a name="line813"></a>
+<a name="line814"></a>  $this->token = Smarty_Internal_Templateparser::TP_HATCH;
+<a name="line815"></a>    }
+<a name="line816"></a>    function yy_r2_65($yy_subpatterns)
+<a name="line817"></a>    {
+<a name="line818"></a>
+<a name="line819"></a>  $this->token = Smarty_Internal_Templateparser::TP_QUOTE;
+<a name="line820"></a>  $this->yypushstate(self::DOUBLEQUOTEDSTRING);
+<a name="line821"></a>    }
+<a name="line822"></a>    function yy_r2_66($yy_subpatterns)
+<a name="line823"></a>    {
+<a name="line824"></a>
+<a name="line825"></a>  $this->token = Smarty_Internal_Templateparser::TP_BACKTICK;
+<a name="line826"></a>  $this->yypopstate();
+<a name="line827"></a>    }
+<a name="line828"></a>    function yy_r2_67($yy_subpatterns)
+<a name="line829"></a>    {
+<a name="line830"></a>
+<a name="line831"></a>  $this->token = Smarty_Internal_Templateparser::TP_VERT;
+<a name="line832"></a>    }
+<a name="line833"></a>    function yy_r2_68($yy_subpatterns)
+<a name="line834"></a>    {
+<a name="line835"></a>
+<a name="line836"></a>  $this->token = Smarty_Internal_Templateparser::TP_DOT;
+<a name="line837"></a>    }
+<a name="line838"></a>    function yy_r2_69($yy_subpatterns)
+<a name="line839"></a>    {
+<a name="line840"></a>
+<a name="line841"></a>  $this->token = Smarty_Internal_Templateparser::TP_COMMA;
+<a name="line842"></a>    }
+<a name="line843"></a>    function yy_r2_70($yy_subpatterns)
+<a name="line844"></a>    {
+<a name="line845"></a>
+<a name="line846"></a>  $this->token = Smarty_Internal_Templateparser::TP_ANDSYM;
+<a name="line847"></a>    }
+<a name="line848"></a>    function yy_r2_71($yy_subpatterns)
+<a name="line849"></a>    {
+<a name="line850"></a>
+<a name="line851"></a>  $this->token = Smarty_Internal_Templateparser::TP_QMARK;
+<a name="line852"></a>    }
+<a name="line853"></a>    function yy_r2_72($yy_subpatterns)
+<a name="line854"></a>    {
+<a name="line855"></a>
+<a name="line856"></a>  $this->token = Smarty_Internal_Templateparser::TP_HEX;
+<a name="line857"></a>    }
+<a name="line858"></a>    function yy_r2_73($yy_subpatterns)
+<a name="line859"></a>    {
+<a name="line860"></a>
+<a name="line861"></a>  $this->token = Smarty_Internal_Templateparser::TP_ID;
+<a name="line862"></a>    }
+<a name="line863"></a>    function yy_r2_74($yy_subpatterns)
+<a name="line864"></a>    {
+<a name="line865"></a>
+<a name="line866"></a>  $this->token = Smarty_Internal_Templateparser::TP_INTEGER;
+<a name="line867"></a>    }
+<a name="line868"></a>    function yy_r2_75($yy_subpatterns)
+<a name="line869"></a>    {
+<a name="line870"></a>
+<a name="line871"></a>  $this->token = Smarty_Internal_Templateparser::TP_SPACE;
+<a name="line872"></a>    }
+<a name="line873"></a>    function yy_r2_76($yy_subpatterns)
+<a name="line874"></a>    {
+<a name="line875"></a>
+<a name="line876"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line877"></a>    }
+<a name="line878"></a>
+<a name="line879"></a>
+<a name="line880"></a>
+<a name="line881"></a>    function yylex3()
+<a name="line882"></a>    {
+<a name="line883"></a>        $tokenMap = array (
+<a name="line884"></a>              1 => 0,
+<a name="line885"></a>              2 => 0,
+<a name="line886"></a>              3 => 0,
+<a name="line887"></a>              4 => 0,
+<a name="line888"></a>              5 => 0,
+<a name="line889"></a>              6 => 0,
+<a name="line890"></a>              7 => 0,
+<a name="line891"></a>              8 => 2,
+<a name="line892"></a>              11 => 0,
+<a name="line893"></a>            );
+<a name="line894"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line895"></a>            return false; // end of input
+<a name="line896"></a>        }
+<a name="line897"></a>        $yy_global_pattern = "/^(".$this->ldel."\\s*literal\\s*".$this->rdel.")|^(".$this->ldel."\\s*\/literal\\s*".$this->rdel.")|^([\t ]*[\r\n]+[\t ]*)|^(<\\?(?:php\\w+|=|[a-zA-Z]+)?)|^(\\?>)|^(<%)|^(%>)|^(([\S\s]*?)(?=([\t ]*[\r\n]+[\t ]*|".$this->ldel."\/?literal".$this->rdel."|<\\?|<%)))|^(.)/iS";
+<a name="line898"></a>
+<a name="line899"></a>        do {
+<a name="line900"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line901"></a>                $yysubmatches = $yymatches;
+<a name="line902"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line903"></a>                if (!count($yymatches)) {
+<a name="line904"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line905"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line906"></a>                        $this->counter, 5) . '... state LITERAL');
+<a name="line907"></a>                }
+<a name="line908"></a>                next($yymatches); // skip global match
+<a name="line909"></a>                $this->token = key($yymatches); // token number
+<a name="line910"></a>                if ($tokenMap[$this->token]) {
+<a name="line911"></a>                    // extract sub-patterns for passing to lex function
+<a name="line912"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line913"></a>                        $tokenMap[$this->token]);
+<a name="line914"></a>                } else {
+<a name="line915"></a>                    $yysubmatches = array();
+<a name="line916"></a>                }
+<a name="line917"></a>                $this->value = current($yymatches); // token value
+<a name="line918"></a>                $r = $this->{'yy_r3_' . $this->token}($yysubmatches);
+<a name="line919"></a>                if ($r === null) {
+<a name="line920"></a>                    $this->counter += strlen($this->value);
+<a name="line921"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line922"></a>                    // accept this token
+<a name="line923"></a>                    return true;
+<a name="line924"></a>                } elseif ($r === true) {
+<a name="line925"></a>                    // we have changed state
+<a name="line926"></a>                    // process this token in the new state
+<a name="line927"></a>                    return $this->yylex();
+<a name="line928"></a>                } elseif ($r === false) {
+<a name="line929"></a>                    $this->counter += strlen($this->value);
+<a name="line930"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line931"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line932"></a>                        return false; // end of input
+<a name="line933"></a>                    }
+<a name="line934"></a>                    // skip this token
+<a name="line935"></a>                    continue;
+<a name="line936"></a>                }            } else {
+<a name="line937"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line938"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line939"></a>            }
+<a name="line940"></a>            break;
+<a name="line941"></a>        } while (true);
+<a name="line942"></a>
+<a name="line943"></a>    } // end function
+<a name="line944"></a>
+<a name="line945"></a>
+<a name="line946"></a>    const LITERAL = 3;
+<a name="line947"></a>    function yy_r3_1($yy_subpatterns)
+<a name="line948"></a>    {
+<a name="line949"></a>
+<a name="line950"></a>  $this->token = Smarty_Internal_Templateparser::TP_LITERALSTART;
+<a name="line951"></a>  $this->yypushstate(self::LITERAL);
+<a name="line952"></a>    }
+<a name="line953"></a>    function yy_r3_2($yy_subpatterns)
+<a name="line954"></a>    {
+<a name="line955"></a>
+<a name="line956"></a>  $this->token = Smarty_Internal_Templateparser::TP_LITERALEND;
+<a name="line957"></a>  $this->yypopstate();
+<a name="line958"></a>    }
+<a name="line959"></a>    function yy_r3_3($yy_subpatterns)
+<a name="line960"></a>    {
+<a name="line961"></a>
+<a name="line962"></a>  $this->token = Smarty_Internal_Templateparser::TP_LITERAL;
+<a name="line963"></a>    }
+<a name="line964"></a>    function yy_r3_4($yy_subpatterns)
+<a name="line965"></a>    {
+<a name="line966"></a>
+<a name="line967"></a>  if (in_array($this->value, Array('<?', '<?=', '<?php'))) {
+<a name="line968"></a>    $this->token = Smarty_Internal_Templateparser::TP_PHPSTARTTAG;
+<a name="line969"></a>   } else {
+<a name="line970"></a>    $this->token = Smarty_Internal_Templateparser::TP_FAKEPHPSTARTTAG;
+<a name="line971"></a>    $this->value = substr($this->value, 0, 2);
+<a name="line972"></a>   }
+<a name="line973"></a>    }
+<a name="line974"></a>    function yy_r3_5($yy_subpatterns)
+<a name="line975"></a>    {
+<a name="line976"></a>
+<a name="line977"></a>  $this->token = Smarty_Internal_Templateparser::TP_PHPENDTAG;
+<a name="line978"></a>    }
+<a name="line979"></a>    function yy_r3_6($yy_subpatterns)
+<a name="line980"></a>    {
+<a name="line981"></a>
+<a name="line982"></a>  $this->token = Smarty_Internal_Templateparser::TP_ASPSTARTTAG;
+<a name="line983"></a>    }
+<a name="line984"></a>    function yy_r3_7($yy_subpatterns)
+<a name="line985"></a>    {
+<a name="line986"></a>
+<a name="line987"></a>  $this->token = Smarty_Internal_Templateparser::TP_ASPENDTAG;
+<a name="line988"></a>    }
+<a name="line989"></a>    function yy_r3_8($yy_subpatterns)
+<a name="line990"></a>    {
+<a name="line991"></a>
+<a name="line992"></a>  $this->token = Smarty_Internal_Templateparser::TP_LITERAL;
+<a name="line993"></a>    }
+<a name="line994"></a>    function yy_r3_11($yy_subpatterns)
+<a name="line995"></a>    {
+<a name="line996"></a>
+<a name="line997"></a>  $this->compiler->trigger_template_error ("missing or misspelled literal closing tag");
+<a name="line998"></a>    }
+<a name="line999"></a>
+<a name="line1000"></a>
+<a name="line1001"></a>    function yylex4()
+<a name="line1002"></a>    {
+<a name="line1003"></a>        $tokenMap = array (
+<a name="line1004"></a>              1 => 0,
+<a name="line1005"></a>              2 => 1,
+<a name="line1006"></a>              4 => 0,
+<a name="line1007"></a>              5 => 0,
+<a name="line1008"></a>              6 => 0,
+<a name="line1009"></a>              7 => 0,
+<a name="line1010"></a>              8 => 0,
+<a name="line1011"></a>              9 => 0,
+<a name="line1012"></a>              10 => 0,
+<a name="line1013"></a>              11 => 0,
+<a name="line1014"></a>              12 => 0,
+<a name="line1015"></a>              13 => 3,
+<a name="line1016"></a>              17 => 0,
+<a name="line1017"></a>              18 => 0,
+<a name="line1018"></a>            );
+<a name="line1019"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line1020"></a>            return false; // end of input
+<a name="line1021"></a>        }
+<a name="line1022"></a>        $yy_global_pattern = "/^(".$this->ldel."\\s{1,}\/)|^(".$this->ldel."\\s*(if|elseif|else if|while)(?![^\s]))|^(".$this->ldel."\\s*for(?![^\s]))|^(".$this->ldel."\\s*foreach(?![^\s]))|^(".$this->ldel."\\s{1,})|^(".$this->ldel."\/)|^(".$this->ldel.")|^(\")|^(`\\$)|^(\\$[0-9]*[a-zA-Z_]\\w*)|^(\\$)|^(([^\"\\\\]*?)((?:\\\\.[^\"\\\\]*?)*?)(?=(".$this->ldel."|\\$|`\\$|\")))|^([\S\s]+)|^(.)/iS";
+<a name="line1023"></a>
+<a name="line1024"></a>        do {
+<a name="line1025"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line1026"></a>                $yysubmatches = $yymatches;
+<a name="line1027"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line1028"></a>                if (!count($yymatches)) {
+<a name="line1029"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line1030"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line1031"></a>                        $this->counter, 5) . '... state DOUBLEQUOTEDSTRING');
+<a name="line1032"></a>                }
+<a name="line1033"></a>                next($yymatches); // skip global match
+<a name="line1034"></a>                $this->token = key($yymatches); // token number
+<a name="line1035"></a>                if ($tokenMap[$this->token]) {
+<a name="line1036"></a>                    // extract sub-patterns for passing to lex function
+<a name="line1037"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line1038"></a>                        $tokenMap[$this->token]);
+<a name="line1039"></a>                } else {
+<a name="line1040"></a>                    $yysubmatches = array();
+<a name="line1041"></a>                }
+<a name="line1042"></a>                $this->value = current($yymatches); // token value
+<a name="line1043"></a>                $r = $this->{'yy_r4_' . $this->token}($yysubmatches);
+<a name="line1044"></a>                if ($r === null) {
+<a name="line1045"></a>                    $this->counter += strlen($this->value);
+<a name="line1046"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line1047"></a>                    // accept this token
+<a name="line1048"></a>                    return true;
+<a name="line1049"></a>                } elseif ($r === true) {
+<a name="line1050"></a>                    // we have changed state
+<a name="line1051"></a>                    // process this token in the new state
+<a name="line1052"></a>                    return $this->yylex();
+<a name="line1053"></a>                } elseif ($r === false) {
+<a name="line1054"></a>                    $this->counter += strlen($this->value);
+<a name="line1055"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line1056"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line1057"></a>                        return false; // end of input
+<a name="line1058"></a>                    }
+<a name="line1059"></a>                    // skip this token
+<a name="line1060"></a>                    continue;
+<a name="line1061"></a>                }            } else {
+<a name="line1062"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line1063"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line1064"></a>            }
+<a name="line1065"></a>            break;
+<a name="line1066"></a>        } while (true);
+<a name="line1067"></a>
+<a name="line1068"></a>    } // end function
+<a name="line1069"></a>
+<a name="line1070"></a>
+<a name="line1071"></a>    const DOUBLEQUOTEDSTRING = 4;
+<a name="line1072"></a>    function yy_r4_1($yy_subpatterns)
+<a name="line1073"></a>    {
+<a name="line1074"></a>
+<a name="line1075"></a>  if ($this->smarty->auto_literal) {
+<a name="line1076"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1077"></a>  } else {
+<a name="line1078"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELSLASH;
+<a name="line1079"></a>     $this->yypushstate(self::SMARTY);
+<a name="line1080"></a>     $this->taglineno = $this->line;
+<a name="line1081"></a>  }
+<a name="line1082"></a>    }
+<a name="line1083"></a>    function yy_r4_2($yy_subpatterns)
+<a name="line1084"></a>    {
+<a name="line1085"></a>
+<a name="line1086"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line1087"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1088"></a>  } else {
+<a name="line1089"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELIF;
+<a name="line1090"></a>     $this->yypushstate(self::SMARTY);
+<a name="line1091"></a>     $this->taglineno = $this->line;
+<a name="line1092"></a>  }
+<a name="line1093"></a>    }
+<a name="line1094"></a>    function yy_r4_4($yy_subpatterns)
+<a name="line1095"></a>    {
+<a name="line1096"></a>
+<a name="line1097"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line1098"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1099"></a>  } else {
+<a name="line1100"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELFOR;
+<a name="line1101"></a>     $this->yypushstate(self::SMARTY);
+<a name="line1102"></a>     $this->taglineno = $this->line;
+<a name="line1103"></a>  }
+<a name="line1104"></a>    }
+<a name="line1105"></a>    function yy_r4_5($yy_subpatterns)
+<a name="line1106"></a>    {
+<a name="line1107"></a>
+<a name="line1108"></a>  if ($this->smarty->auto_literal && trim(substr($this->value,$this->ldel_length,1)) == '') {
+<a name="line1109"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1110"></a>  } else {
+<a name="line1111"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDELFOREACH;
+<a name="line1112"></a>     $this->yypushstate(self::SMARTY);
+<a name="line1113"></a>     $this->taglineno = $this->line;
+<a name="line1114"></a>  }
+<a name="line1115"></a>    }
+<a name="line1116"></a>    function yy_r4_6($yy_subpatterns)
+<a name="line1117"></a>    {
+<a name="line1118"></a>
+<a name="line1119"></a>  if ($this->smarty->auto_literal) {
+<a name="line1120"></a>     $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1121"></a>  } else {
+<a name="line1122"></a>     $this->token = Smarty_Internal_Templateparser::TP_LDEL;
+<a name="line1123"></a>     $this->yypushstate(self::SMARTY);
+<a name="line1124"></a>     $this->taglineno = $this->line;
+<a name="line1125"></a>  }
+<a name="line1126"></a>    }
+<a name="line1127"></a>    function yy_r4_7($yy_subpatterns)
+<a name="line1128"></a>    {
+<a name="line1129"></a>
+<a name="line1130"></a>  $this->token = Smarty_Internal_Templateparser::TP_LDELSLASH;
+<a name="line1131"></a>     $this->yypushstate(self::SMARTY);
+<a name="line1132"></a>     $this->taglineno = $this->line;
+<a name="line1133"></a>    }
+<a name="line1134"></a>    function yy_r4_8($yy_subpatterns)
+<a name="line1135"></a>    {
+<a name="line1136"></a>
+<a name="line1137"></a>  $this->token = Smarty_Internal_Templateparser::TP_LDEL;
+<a name="line1138"></a>     $this->yypushstate(self::SMARTY);
+<a name="line1139"></a>     $this->taglineno = $this->line;
+<a name="line1140"></a>    }
+<a name="line1141"></a>    function yy_r4_9($yy_subpatterns)
+<a name="line1142"></a>    {
+<a name="line1143"></a>
+<a name="line1144"></a>  $this->token = Smarty_Internal_Templateparser::TP_QUOTE;
+<a name="line1145"></a>  $this->yypopstate();
+<a name="line1146"></a>    }
+<a name="line1147"></a>    function yy_r4_10($yy_subpatterns)
+<a name="line1148"></a>    {
+<a name="line1149"></a>
+<a name="line1150"></a>  $this->token = Smarty_Internal_Templateparser::TP_BACKTICK;
+<a name="line1151"></a>  $this->value = substr($this->value,0,-1);
+<a name="line1152"></a>  $this->yypushstate(self::SMARTY);
+<a name="line1153"></a>  $this->taglineno = $this->line;
+<a name="line1154"></a>    }
+<a name="line1155"></a>    function yy_r4_11($yy_subpatterns)
+<a name="line1156"></a>    {
+<a name="line1157"></a>
+<a name="line1158"></a>  $this->token = Smarty_Internal_Templateparser::TP_DOLLARID;
+<a name="line1159"></a>    }
+<a name="line1160"></a>    function yy_r4_12($yy_subpatterns)
+<a name="line1161"></a>    {
+<a name="line1162"></a>
+<a name="line1163"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1164"></a>    }
+<a name="line1165"></a>    function yy_r4_13($yy_subpatterns)
+<a name="line1166"></a>    {
+<a name="line1167"></a>
+<a name="line1168"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1169"></a>    }
+<a name="line1170"></a>    function yy_r4_17($yy_subpatterns)
+<a name="line1171"></a>    {
+<a name="line1172"></a>
+<a name="line1173"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1174"></a>    }
+<a name="line1175"></a>    function yy_r4_18($yy_subpatterns)
+<a name="line1176"></a>    {
+<a name="line1177"></a>
+<a name="line1178"></a>  $this->token = Smarty_Internal_Templateparser::TP_OTHER;
+<a name="line1179"></a>    }
+<a name="line1180"></a>
+<a name="line1181"></a>}
+<a name="line1182"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_templatelexer.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

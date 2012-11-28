@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_compile_include.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_include.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_compile_include.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Compile Include</p><p>Compiles the {include} tag</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>
+<a name="line3"></a>/**
+<a name="line4"></a> * Smarty Internal Plugin Compile Include
+<a name="line5"></a> * 
+<a name="line6"></a> * Compiles the {include} tag
+<a name="line7"></a> * 
+<a name="line8"></a> * @package Smarty
+<a name="line9"></a> * @subpackage Compiler
+<a name="line10"></a> * @author Uwe Tews 
+<a name="line11"></a> */
+<a name="line12"></a>
+<a name="line13"></a>/**
+<a name="line14"></a> * Smarty Internal Plugin Compile Include Class
+<a name="line15"></a> */
+<a name="line16"></a>class Smarty_Internal_Compile_Include extends Smarty_Internal_CompileBase {
+<a name="line17"></a>	// caching mode to create nocache code but no cache file
+<a name="line18"></a>	const CACHING_NOCACHE_CODE = 9999;
+<a name="line19"></a>	// attribute definitions
+<a name="line20"></a>    public $required_attributes = array('file');
+<a name="line21"></a>   	public $shorttag_order = array('file');
+<a name="line22"></a>    public $option_flags = array('nocache','inline','caching');
+<a name="line23"></a>    public $optional_attributes = array('_any'); 
+<a name="line24"></a>
+<a name="line25"></a>    /**
+<a name="line26"></a>     * Compiles code for the {include} tag
+<a name="line27"></a>     * 
+<a name="line28"></a>     * @param array $args array with attributes from parser
+<a name="line29"></a>     * @param object $compiler compiler object
+<a name="line30"></a>     * @return string compiled code
+<a name="line31"></a>     */
+<a name="line32"></a>    public function compile($args, $compiler)
+<a name="line33"></a>    {
+<a name="line34"></a>        $this->compiler = $compiler;
+<a name="line35"></a>        // check and get attributes
+<a name="line36"></a>        $_attr = $this->_get_attributes($args); 
+<a name="line37"></a>        // save posible attributes
+<a name="line38"></a>        $include_file = $_attr['file'];
+<a name="line39"></a>        $has_compiled_template = false;
+<a name="line40"></a>        if ($compiler->smarty->merge_compiled_includes || $_attr['inline'] === true) {
+<a name="line41"></a>            // check if compiled code can be merged (contains no variable part)
+<a name="line42"></a>            if (!$compiler->has_variable_string && (substr_count($include_file, '"') == 2 or substr_count($include_file, "'") == 2) and substr_count($include_file, '(') == 0) {
+<a name="line43"></a>             $tmp = null;
+<a name="line44"></a>	    eval("\$tmp = $include_file;");
+<a name="line45"></a>                if ($this->compiler->template->template_resource != $tmp) {
+<a name="line46"></a>                    $tpl = new $compiler->smarty->template_class ($tmp, $compiler->smarty, $compiler->template, $compiler->template->cache_id, $compiler->template->compile_id);
+<a name="line47"></a>                    // suppress writing of compiled file
+<a name="line48"></a>                    $tpl->write_compiled_code = false;
+<a name="line49"></a>                    if ($this->compiler->template->caching) {
+<a name="line50"></a>                        // needs code for cached page but no cache file
+<a name="line51"></a>                        $tpl->caching = self::CACHING_NOCACHE_CODE;
+<a name="line52"></a>                    } 
+<a name="line53"></a>//                    if ($this->compiler->template->mustCompile) {
+<a name="line54"></a>                        // make sure whole chain gest compiled
+<a name="line55"></a>                        $tpl->mustCompile = true;
+<a name="line56"></a>//                    } 
+<a name="line57"></a>                    if ($tpl->resource_object->usesCompiler && $tpl->isExisting()) {
+<a name="line58"></a>                        // get compiled code
+<a name="line59"></a>                        $compiled_tpl = $tpl->getCompiledTemplate(); 
+<a name="line60"></a>                        // merge compiled code for {function} tags
+<a name="line61"></a>                        $compiler->template->properties['function'] = array_merge($compiler->template->properties['function'], $tpl->properties['function']); 
+<a name="line62"></a>                        // merge filedependency by evaluating header code
+<a name="line63"></a>                        preg_match_all("/(<\?php \/\*%%SmartyHeaderCode:{$tpl->properties['nocache_hash']}%%\*\/(.+?)\/\*\/%%SmartyHeaderCode%%\*\/\?>\n)/s", $compiled_tpl, $result);
+<a name="line64"></a>                        $saved_has_nocache_code = $compiler->template->has_nocache_code;
+<a name="line65"></a>                        $saved_nocache_hash = $compiler->template->properties['nocache_hash'];
+<a name="line66"></a>                        $_smarty_tpl = $compiler->template;
+<a name="line67"></a>                        eval($result[2][0]);
+<a name="line68"></a>                        $compiler->template->properties['nocache_hash'] = $saved_nocache_hash;
+<a name="line69"></a>                        $compiler->template->has_nocache_code = $saved_has_nocache_code; 
+<a name="line70"></a>                        // remove header code
+<a name="line71"></a>                        $compiled_tpl = preg_replace("/(<\?php \/\*%%SmartyHeaderCode:{$tpl->properties['nocache_hash']}%%\*\/(.+?)\/\*\/%%SmartyHeaderCode%%\*\/\?>\n)/s", '', $compiled_tpl);
+<a name="line72"></a>                        if ($tpl->has_nocache_code) {
+<a name="line73"></a>                            // replace nocache_hash
+<a name="line74"></a>                            $compiled_tpl = preg_replace("/{$tpl->properties['nocache_hash']}/", $compiler->template->properties['nocache_hash'], $compiled_tpl);
+<a name="line75"></a>                            $compiler->template->has_nocache_code = true;
+<a name="line76"></a>                        } 
+<a name="line77"></a>                        $has_compiled_template = true;
+<a name="line78"></a>                    } 
+<a name="line79"></a>                } 
+<a name="line80"></a>            } 
+<a name="line81"></a>        } 
+<a name="line82"></a>
+<a name="line83"></a>        if (isset($_attr['assign'])) {
+<a name="line84"></a>            // output will be stored in a smarty variable instead of beind displayed
+<a name="line85"></a>            $_assign = $_attr['assign'];
+<a name="line86"></a>        } 
+<a name="line87"></a>
+<a name="line88"></a>        $_parent_scope = Smarty::SCOPE_LOCAL;
+<a name="line89"></a>        if (isset($_attr['scope'])) {
+<a name="line90"></a>            $_attr['scope'] = trim($_attr['scope'], "'\"");
+<a name="line91"></a>            if ($_attr['scope'] == 'parent') {
+<a name="line92"></a>                $_parent_scope = Smarty::SCOPE_PARENT;
+<a name="line93"></a>            } elseif ($_attr['scope'] == 'root') {
+<a name="line94"></a>                $_parent_scope = Smarty::SCOPE_ROOT;
+<a name="line95"></a>            } elseif ($_attr['scope'] == 'global') {
+<a name="line96"></a>                $_parent_scope = Smarty::SCOPE_GLOBAL;
+<a name="line97"></a>            } 
+<a name="line98"></a>        } 
+<a name="line99"></a>        $_caching = 'null';
+<a name="line100"></a>        if ($this->compiler->nocache || $this->compiler->tag_nocache) {
+<a name="line101"></a>            $_caching = Smarty::CACHING_OFF;
+<a name="line102"></a>        } 
+<a name="line103"></a>        // default for included templates
+<a name="line104"></a>        if ($this->compiler->template->caching && !$this->compiler->nocache && !$this->compiler->tag_nocache) {
+<a name="line105"></a>            $_caching = self::CACHING_NOCACHE_CODE;
+<a name="line106"></a>        } 
+<a name="line107"></a>        /*
+<a name="line108"></a>        * if the {include} tag provides individual parameter for caching
+<a name="line109"></a>        * it will not be included into the common cache file and treated like
+<a name="line110"></a>        * a nocache section
+<a name="line111"></a>        */
+<a name="line112"></a>        if (isset($_attr['cache_lifetime'])) {
+<a name="line113"></a>            $_cache_lifetime = $_attr['cache_lifetime'];
+<a name="line114"></a>            $this->compiler->tag_nocache = true;
+<a name="line115"></a>            $_caching = Smarty::CACHING_LIFETIME_CURRENT;
+<a name="line116"></a>        } else {
+<a name="line117"></a>            $_cache_lifetime = 'null';
+<a name="line118"></a>        } 
+<a name="line119"></a>        if (isset($_attr['cache_id'])) {
+<a name="line120"></a>            $_cache_id = $_attr['cache_id'];
+<a name="line121"></a>            $this->compiler->tag_nocache = true;
+<a name="line122"></a>            $_caching = Smarty::CACHING_LIFETIME_CURRENT;
+<a name="line123"></a>        } else {
+<a name="line124"></a>            $_cache_id = '$_smarty_tpl->cache_id';
+<a name="line125"></a>        } 
+<a name="line126"></a>        if (isset($_attr['compile_id'])) {
+<a name="line127"></a>            $_compile_id = $_attr['compile_id'];
+<a name="line128"></a>        } else {
+<a name="line129"></a>            $_compile_id = '$_smarty_tpl->compile_id';
+<a name="line130"></a>        } 
+<a name="line131"></a>        if ($_attr['caching'] === true) {
+<a name="line132"></a>            $_caching = Smarty::CACHING_LIFETIME_CURRENT;
+<a name="line133"></a>        } 
+<a name="line134"></a>        if ($_attr['nocache'] === true) {
+<a name="line135"></a>            $this->compiler->tag_nocache = true;
+<a name="line136"></a>            $_caching = Smarty::CACHING_OFF;
+<a name="line137"></a>        } 
+<a name="line138"></a>        // create template object
+<a name="line139"></a>        $_output = "<?php \$_template = new {$compiler->smarty->template_class}($include_file, \$_smarty_tpl->smarty, \$_smarty_tpl, $_cache_id, $_compile_id, $_caching, $_cache_lifetime);\n"; 
+<a name="line140"></a>        // delete {include} standard attributes
+<a name="line141"></a>        unset($_attr['file'], $_attr['assign'], $_attr['cache_id'], $_attr['compile_id'], $_attr['cache_lifetime'], $_attr['nocache'], $_attr['caching'], $_attr['scope'], $_attr['inline']); 
+<a name="line142"></a>        // remaining attributes must be assigned as smarty variable
+<a name="line143"></a>        if (!empty($_attr)) {
+<a name="line144"></a>            if ($_parent_scope == Smarty::SCOPE_LOCAL) {
+<a name="line145"></a>                // create variables
+<a name="line146"></a>                foreach ($_attr as $_key => $_value) {
+<a name="line147"></a>                    $_output .= "\$_template->assign('$_key',$_value);";
+<a name="line148"></a>                } 
+<a name="line149"></a>            } else {
+<a name="line150"></a>                $this->compiler->trigger_template_error('variable passing not allowed in parent/global scope', $this->compiler->lex->taglineno);
+<a name="line151"></a>            } 
+<a name="line152"></a>        } 
+<a name="line153"></a>        // was there an assign attribute
+<a name="line154"></a>        if (isset($_assign)) {
+<a name="line155"></a>            $_output .= "\$_smarty_tpl->assign($_assign,\$_template->getRenderedTemplate());?>";
+<a name="line156"></a>        } else {
+<a name="line157"></a>            if ($has_compiled_template && !($compiler->template->caching && ($this->compiler->tag_nocache || $this->compiler->nocache))) {
+<a name="line158"></a>                $_output .= "\$_template->properties['nocache_hash']  = '{$compiler->template->properties['nocache_hash']}';\n";
+<a name="line159"></a>                $_output .= "\$_tpl_stack[] = \$_smarty_tpl; \$_smarty_tpl = \$_template;?>\n";
+<a name="line160"></a>                $_output .= $compiled_tpl;
+<a name="line161"></a>                $_output .= "<?php \$_smarty_tpl->updateParentVariables($_parent_scope);?>\n";
+<a name="line162"></a>                $_output .= "<?php /*  End of included template \"" . $tpl->getTemplateFilepath() . "\" */ ?>\n";
+<a name="line163"></a>                $_output .= "<?php \$_smarty_tpl = array_pop(\$_tpl_stack);?>";
+<a name="line164"></a>            } else {
+<a name="line165"></a>                $_output .= " echo \$_template->getRenderedTemplate();?>";
+<a name="line166"></a>                if ($_parent_scope != Smarty::SCOPE_LOCAL) {
+<a name="line167"></a>                	$_output .= "<?php \$_template->updateParentVariables($_parent_scope);?>";
+<a name="line168"></a>            	}
+<a name="line169"></a>            } 
+<a name="line170"></a>        } 
+<a name="line171"></a>        $_output .= "<?php unset(\$_template);?>";
+<a name="line172"></a>        return $_output;
+<a name="line173"></a>    } 
+<a name="line174"></a>} 
+<a name="line175"></a>
+<a name="line176"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_include.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

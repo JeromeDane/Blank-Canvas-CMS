@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_config_file_compiler.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_config_file_compiler.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_config_file_compiler.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Config File Compiler</p><p>This is the config file compiler class. It calls the lexer and parser to
+perform the compiling.</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>
+<a name="line3"></a>/**
+<a name="line4"></a> * Smarty Internal Plugin Config File Compiler
+<a name="line5"></a> * 
+<a name="line6"></a> * This is the config file compiler class. It calls the lexer and parser to
+<a name="line7"></a> * perform the compiling.
+<a name="line8"></a> * 
+<a name="line9"></a> * @package Smarty
+<a name="line10"></a> * @subpackage Config
+<a name="line11"></a> * @author Uwe Tews 
+<a name="line12"></a> */
+<a name="line13"></a> 
+<a name="line14"></a>/**
+<a name="line15"></a> * Main config file compiler class
+<a name="line16"></a> */
+<a name="line17"></a>class Smarty_Internal_Config_File_Compiler {
+<a name="line18"></a>    /**
+<a name="line19"></a>     * Initialize compiler
+<a name="line20"></a>     */
+<a name="line21"></a>    public function __construct($smarty)
+<a name="line22"></a>    {
+<a name="line23"></a>        $this->smarty = $smarty; 
+<a name="line24"></a>        // get required plugins
+<a name="line25"></a>        $this->smarty->loadPlugin('Smarty_Internal_Configfilelexer');
+<a name="line26"></a>		$this->smarty->loadPlugin('Smarty_Internal_Configfileparser');
+<a name="line27"></a>        $this->config_data['sections'] = array();
+<a name="line28"></a>        $this->config_data['vars'] = array();
+<a name="line29"></a>    } 
+<a name="line30"></a>
+<a name="line31"></a>    /**
+<a name="line32"></a>     * Methode to compile a Smarty template
+<a name="line33"></a>     * 
+<a name="line34"></a>     * @param  $template template object to compile
+<a name="line35"></a>     * @return bool true if compiling succeeded, false if it failed
+<a name="line36"></a>     */
+<a name="line37"></a>    public function compileSource($config)
+<a name="line38"></a>    {
+<a name="line39"></a>        /* here is where the compiling takes place. Smarty
+<a name="line40"></a>       tags in the templates are replaces with PHP code,
+<a name="line41"></a>       then written to compiled files. */
+<a name="line42"></a>        $this->config = $config; 
+<a name="line43"></a>        // get config file source
+<a name="line44"></a>        $_content = $config->getConfigSource() . "\n"; 
+<a name="line45"></a>        // on empty template just return
+<a name="line46"></a>        if ($_content == '') {
+<a name="line47"></a>            return true;
+<a name="line48"></a>        } 
+<a name="line49"></a>        // init the lexer/parser to compile the config file
+<a name="line50"></a>        $lex = new Smarty_Internal_Configfilelexer($_content, $this->smarty);
+<a name="line51"></a>        $parser = new Smarty_Internal_Configfileparser($lex, $this);
+<a name="line52"></a>        if (isset($this->smarty->_parserdebug)) $parser->PrintTrace(); 
+<a name="line53"></a>        // get tokens from lexer and parse them
+<a name="line54"></a>        while ($lex->yylex()) {
+<a name="line55"></a>            if (isset($this->smarty->_parserdebug)) echo "<br>Parsing  {$parser->yyTokenName[$lex->token]} Token {$lex->value} Line {$lex->line} \n";
+<a name="line56"></a>            $parser->doParse($lex->token, $lex->value);
+<a name="line57"></a>        } 
+<a name="line58"></a>        // finish parsing process
+<a name="line59"></a>        $parser->doParse(0, 0);
+<a name="line60"></a>        $config->compiled_config = '<?php $_config_vars = ' . var_export($this->config_data, true) . '; ?>';
+<a name="line61"></a>    } 
+<a name="line62"></a>    /**
+<a name="line63"></a>     * display compiler error messages without dying
+<a name="line64"></a>     * 
+<a name="line65"></a>     * If parameter $args is empty it is a parser detected syntax error.
+<a name="line66"></a>     * In this case the parser is called to obtain information about exspected tokens.
+<a name="line67"></a>     * 
+<a name="line68"></a>     * If parameter $args contains a string this is used as error message
+<a name="line69"></a>     * 
+<a name="line70"></a>     * @todo output exact position of parse error in source line
+<a name="line71"></a>     * @param  $args string individual error message or null
+<a name="line72"></a>     */
+<a name="line73"></a>    public function trigger_config_file_error($args = null)
+<a name="line74"></a>    {
+<a name="line75"></a>        $this->lex = Smarty_Internal_Configfilelexer::instance();
+<a name="line76"></a>        $this->parser = Smarty_Internal_Configfileparser::instance(); 
+<a name="line77"></a>        // get template source line which has error
+<a name="line78"></a>        $line = $this->lex->line;
+<a name="line79"></a>        if (isset($args)) {
+<a name="line80"></a>            // $line--;
+<a name="line81"></a>        } 
+<a name="line82"></a>        $match = preg_split("/\n/", $this->lex->data);
+<a name="line83"></a>        $error_text = "Syntax error in config file '{$this->config->getConfigFilepath()}' on line {$line} '{$match[$line-1]}' ";
+<a name="line84"></a>        if (isset($args)) {
+<a name="line85"></a>            // individual error message
+<a name="line86"></a>            $error_text .= $args;
+<a name="line87"></a>        } else {
+<a name="line88"></a>            // exspected token from parser
+<a name="line89"></a>            foreach ($this->parser->yy_get_expected_tokens($this->parser->yymajor) as $token) {
+<a name="line90"></a>                $exp_token = $this->parser->yyTokenName[$token];
+<a name="line91"></a>                if (isset($this->lex->smarty_token_names[$exp_token])) {
+<a name="line92"></a>                    // token type from lexer
+<a name="line93"></a>                    $expect[] = '"' . $this->lex->smarty_token_names[$exp_token] . '"';
+<a name="line94"></a>                } else {
+<a name="line95"></a>                    // otherwise internal token name
+<a name="line96"></a>                    $expect[] = $this->parser->yyTokenName[$token];
+<a name="line97"></a>                } 
+<a name="line98"></a>            } 
+<a name="line99"></a>            // output parser error message
+<a name="line100"></a>            $error_text .= ' - Unexpected "' . $this->lex->value . '", expected one of: ' . implode(' , ', $expect);
+<a name="line101"></a>        } 
+<a name="line102"></a>        throw new SmartyCompilerException($error_text);
+<a name="line103"></a>    } 
+<a name="line104"></a>} 
+<a name="line105"></a>
+<a name="line106"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_config_file_compiler.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

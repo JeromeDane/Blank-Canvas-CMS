@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:56 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\plugins\block.textformat.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\block.textformat.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\plugins\block.textformat.php</h1>
+<div class="comment" id="overview_description"><p>Smarty plugin to format text blocks</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty plugin to format text blocks
+<a name="line4"></a> *
+<a name="line5"></a> * @package Smarty
+<a name="line6"></a> * @subpackage PluginsBlock
+<a name="line7"></a> */
+<a name="line8"></a>
+<a name="line9"></a>/**
+<a name="line10"></a> * Smarty {textformat}{/textformat} block plugin
+<a name="line11"></a> * 
+<a name="line12"></a> * Type:     block function<br>
+<a name="line13"></a> * Name:     textformat<br>
+<a name="line14"></a> * Purpose:  format text a certain way with preset styles
+<a name="line15"></a> *            or custom wrap/indent settings<br>
+<a name="line16"></a> * 
+<a name="line17"></a> * @link http://smarty.php.net/manual/en/language.function.textformat.php {textformat}
+<a name="line18"></a> *       (Smarty online manual)
+<a name="line19"></a> * @param array $params parameters
+<a name="line20"></a> * <pre>
+<a name="line21"></a> * Params:   style: string (email)
+<a name="line22"></a> *            indent: integer (0)
+<a name="line23"></a> *            wrap: integer (80)
+<a name="line24"></a> *            wrap_char string ("\n")
+<a name="line25"></a> *            indent_char: string (" ")
+<a name="line26"></a> *            wrap_boundary: boolean (true)
+<a name="line27"></a> * </pre>
+<a name="line28"></a> * @author Monte Ohrt <monte at ohrt dot com> 
+<a name="line29"></a> * @param string $content contents of the block
+<a name="line30"></a> * @param object $template template object
+<a name="line31"></a> * @param boolean &$repeat repeat flag
+<a name="line32"></a> * @return string content re-formatted
+<a name="line33"></a> */
+<a name="line34"></a>function smarty_block_textformat($params, $content, $template, &$repeat)
+<a name="line35"></a>{
+<a name="line36"></a>    if (is_null($content)) {
+<a name="line37"></a>        return;
+<a name="line38"></a>    } 
+<a name="line39"></a>
+<a name="line40"></a>    $style = null;
+<a name="line41"></a>    $indent = 0;
+<a name="line42"></a>    $indent_first = 0;
+<a name="line43"></a>    $indent_char = ' ';
+<a name="line44"></a>    $wrap = 80;
+<a name="line45"></a>    $wrap_char = "\n";
+<a name="line46"></a>    $wrap_cut = false;
+<a name="line47"></a>    $assign = null;
+<a name="line48"></a>
+<a name="line49"></a>    foreach ($params as $_key => $_val) {
+<a name="line50"></a>        switch ($_key) {
+<a name="line51"></a>            case 'style':
+<a name="line52"></a>            case 'indent_char':
+<a name="line53"></a>            case 'wrap_char':
+<a name="line54"></a>            case 'assign':
+<a name="line55"></a>                $$_key = (string)$_val;
+<a name="line56"></a>                break;
+<a name="line57"></a>
+<a name="line58"></a>            case 'indent':
+<a name="line59"></a>            case 'indent_first':
+<a name="line60"></a>            case 'wrap':
+<a name="line61"></a>                $$_key = (int)$_val;
+<a name="line62"></a>                break;
+<a name="line63"></a>
+<a name="line64"></a>            case 'wrap_cut':
+<a name="line65"></a>                $$_key = (bool)$_val;
+<a name="line66"></a>                break;
+<a name="line67"></a>
+<a name="line68"></a>            default:
+<a name="line69"></a>                trigger_error("textformat: unknown attribute '$_key'");
+<a name="line70"></a>        } 
+<a name="line71"></a>    } 
+<a name="line72"></a>
+<a name="line73"></a>    if ($style == 'email') {
+<a name="line74"></a>        $wrap = 72;
+<a name="line75"></a>    } 
+<a name="line76"></a>    // split into paragraphs
+<a name="line77"></a>    $_paragraphs = preg_split('![\r\n][\r\n]!', $content);
+<a name="line78"></a>    $_output = '';
+<a name="line79"></a>
+<a name="line80"></a>    for($_x = 0, $_y = count($_paragraphs); $_x < $_y; $_x++) {
+<a name="line81"></a>        if ($_paragraphs[$_x] == '') {
+<a name="line82"></a>            continue;
+<a name="line83"></a>        } 
+<a name="line84"></a>        // convert mult. spaces & special chars to single space
+<a name="line85"></a>        $_paragraphs[$_x] = preg_replace(array('!\s+!', '!(^\s+)|(\s+$)!'), array(' ', ''), $_paragraphs[$_x]); 
+<a name="line86"></a>        // indent first line
+<a name="line87"></a>        if ($indent_first > 0) {
+<a name="line88"></a>            $_paragraphs[$_x] = str_repeat($indent_char, $indent_first) . $_paragraphs[$_x];
+<a name="line89"></a>        } 
+<a name="line90"></a>        // wordwrap sentences
+<a name="line91"></a>        $_paragraphs[$_x] = wordwrap($_paragraphs[$_x], $wrap - $indent, $wrap_char, $wrap_cut); 
+<a name="line92"></a>        // indent lines
+<a name="line93"></a>        if ($indent > 0) {
+<a name="line94"></a>            $_paragraphs[$_x] = preg_replace('!^!m', str_repeat($indent_char, $indent), $_paragraphs[$_x]);
+<a name="line95"></a>        } 
+<a name="line96"></a>    } 
+<a name="line97"></a>    $_output = implode($wrap_char . $wrap_char, $_paragraphs);
+<a name="line98"></a>    
+<a name="line99"></a>    return $assign ? $template->assign($assign, $_output) : $_output;
+<a name="line100"></a>} 
+<a name="line101"></a>
+<a name="line102"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\block.textformat.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

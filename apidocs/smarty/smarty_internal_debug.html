@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:25:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>Smarty_Internal_Debug (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_debug.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">Smarty\Smarty_Internal_Debug</div>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line16" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 16</a>
+
+<h1>Class Smarty_Internal_Debug</h1>
+
+<pre class="tree"><a href="../smarty/smarty_internal_data.html">Smarty_Internal_Data</a><br>    └─<strong>Smarty_Internal_Debug</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>Smarty_Internal_Debug</strong><br>extends <a href="../smarty/smarty_internal_data.html">Smarty_Internal_Data</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Debug Class</p></div>
+
+<hr>
+
+<table class="inherit">
+<tr><th colspan="2">Fields inherited from Smarty\Smarty_Internal_Data</th></tr>
+<tr><td><a href="../smarty/smarty_internal_data.html#template_class">template_class</a></td></tr></table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#display_debug()">display_debug</a>(mixed obj)</p><p class="description">Opens a window for the Smarty Debugging Consol and display the data</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#end_cache()">end_cache</a>(mixed template)</p><p class="description">End logging of cache time</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#end_compile()">end_compile</a>(mixed template)</p><p class="description">End logging of compile time</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#end_render()">end_render</a>(mixed template)</p><p class="description">End logging of compile time</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#get_debug_vars()">get_debug_vars</a>(mixed obj)</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#get_key()">get_key</a>(mixed template)</p><p class="description">get_key</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#start_cache()">start_cache</a>(mixed template)</p><p class="description">Start logging of cache time</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#start_compile()">start_compile</a>(mixed template)</p><p class="description">Start logging of compile time</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#start_render()">start_render</a>(mixed template)</p><p class="description">Start logging of render time</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from Smarty\Smarty_Internal_Data</th></tr>
+<tr><td><a href="../smarty/smarty_internal_data.html#append()">append</a>, <a href="../smarty/smarty_internal_data.html#appendByRef()">appendByRef</a>, <a href="../smarty/smarty_internal_data.html#append_by_ref()">append_by_ref</a>, <a href="../smarty/smarty_internal_data.html#assign()">assign</a>, <a href="../smarty/smarty_internal_data.html#assignByRef()">assignByRef</a>, <a href="../smarty/smarty_internal_data.html#assignGlobal()">assignGlobal</a>, <a href="../smarty/smarty_internal_data.html#assign_by_ref()">assign_by_ref</a>, <a href="../smarty/smarty_internal_data.html#clearAllAssign()">clearAllAssign</a>, <a href="../smarty/smarty_internal_data.html#clearAssign()">clearAssign</a>, <a href="../smarty/smarty_internal_data.html#clearConfig()">clearConfig</a>, <a href="../smarty/smarty_internal_data.html#configLoad()">configLoad</a>, <a href="../smarty/smarty_internal_data.html#getConfigVariable()">getConfigVariable</a>, <a href="../smarty/smarty_internal_data.html#getConfigVars()">getConfigVars</a>, <a href="../smarty/smarty_internal_data.html#getStreamVariable()">getStreamVariable</a>, <a href="../smarty/smarty_internal_data.html#getTemplateVars()">getTemplateVars</a>, <a href="../smarty/smarty_internal_data.html#getVariable()">getVariable</a></td></tr></table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line76" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 76</a>
+
+<h3 id="display_debug()">display_debug</h3>
+<code class="signature">public static  void <strong>display_debug</strong>(mixed obj)</code>
+<div class="details">
+<p>Opens a window for the Smarty Debugging Consol and display the data</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line68" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 68</a>
+
+<h3 id="end_cache()">end_cache</h3>
+<code class="signature">public static  void <strong>end_cache</strong>(mixed template)</code>
+<div class="details">
+<p>End logging of cache time</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line32" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 32</a>
+
+<h3 id="end_compile()">end_compile</h3>
+<code class="signature">public static  void <strong>end_compile</strong>(mixed template)</code>
+<div class="details">
+<p>End logging of compile time</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line50" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 50</a>
+
+<h3 id="end_render()">end_render</h3>
+<code class="signature">public static  void <strong>end_render</strong>(mixed template)</code>
+<div class="details">
+<p>End logging of compile time</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line117" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 117</a>
+
+<h3 id="get_debug_vars()">get_debug_vars</h3>
+<code class="signature">public static  void <strong>get_debug_vars</strong>(mixed obj)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line151" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 151</a>
+
+<h3 id="get_key()">get_key</h3>
+<code class="signature">public static  void <strong>get_key</strong>(mixed template)</code>
+<div class="details">
+<p>get_key</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line59" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 59</a>
+
+<h3 id="start_cache()">start_cache</h3>
+<code class="signature">public static  void <strong>start_cache</strong>(mixed template)</code>
+<div class="details">
+<p>Start logging of cache time</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line23" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 23</a>
+
+<h3 id="start_compile()">start_compile</h3>
+<code class="signature">public static  void <strong>start_compile</strong>(mixed template)</code>
+<div class="details">
+<p>Start logging of compile time</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_debug.php.html#line41" class="location">libraries\smarty\libs\sysplugins\smarty_internal_debug.php at line 41</a>
+
+<h3 id="start_render()">start_render</h3>
+<code class="signature">public static  void <strong>start_render</strong>(mixed template)</code>
+<div class="details">
+<p>Start logging of render time</p></div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_debug.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

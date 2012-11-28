@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:02:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_resource_php.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_resource_php.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_resource_php.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Resource PHP</p><p>Implements the file system as resource for PHP templates</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>
+<a name="line3"></a>/**
+<a name="line4"></a> * Smarty Internal Plugin Resource PHP
+<a name="line5"></a> * 
+<a name="line6"></a> * Implements the file system as resource for PHP templates
+<a name="line7"></a> * 
+<a name="line8"></a> * @package Smarty
+<a name="line9"></a> * @subpackage TemplateResources
+<a name="line10"></a> * @author Uwe Tews 
+<a name="line11"></a> */
+<a name="line12"></a>
+<a name="line13"></a>/**
+<a name="line14"></a> * Smarty Internal Plugin Resource PHP
+<a name="line15"></a> */
+<a name="line16"></a>class Smarty_Internal_Resource_PHP {
+<a name="line17"></a>    /**
+<a name="line18"></a>     * Class constructor, enable short open tags
+<a name="line19"></a>     */
+<a name="line20"></a>    public function __construct($smarty)
+<a name="line21"></a>    {
+<a name="line22"></a>        $this->smarty = $smarty;
+<a name="line23"></a>        ini_set('short_open_tag', '1');
+<a name="line24"></a>    } 
+<a name="line25"></a>    // properties
+<a name="line26"></a>    public $usesCompiler = false;
+<a name="line27"></a>    public $isEvaluated = false;
+<a name="line28"></a>
+<a name="line29"></a>    /**
+<a name="line30"></a>     * Return flag if template source is existing
+<a name="line31"></a>     * 
+<a name="line32"></a>     * @return boolean true
+<a name="line33"></a>     */
+<a name="line34"></a>    public function isExisting($template)
+<a name="line35"></a>    {
+<a name="line36"></a>        if ($template->getTemplateFilepath() === false) {
+<a name="line37"></a>            return false;
+<a name="line38"></a>        } else {
+<a name="line39"></a>            return true;
+<a name="line40"></a>        } 
+<a name="line41"></a>    } 
+<a name="line42"></a>
+<a name="line43"></a>    /**
+<a name="line44"></a>     * Get filepath to template source
+<a name="line45"></a>     * 
+<a name="line46"></a>     * @param object $_template template object
+<a name="line47"></a>     * @return string filepath to template source file
+<a name="line48"></a>     */
+<a name="line49"></a>    public function getTemplateFilepath($_template)
+<a name="line50"></a>    {
+<a name="line51"></a>        $_filepath = $_template->buildTemplateFilepath ();
+<a name="line52"></a>
+<a name="line53"></a>        if (is_object($_template->smarty->security_policy)) {
+<a name="line54"></a>            $_template->smarty->security_policy->isTrustedResourceDir($_filepath);
+<a name="line55"></a>        } 
+<a name="line56"></a>        $_template->templateUid = sha1($_filepath);
+<a name="line57"></a>        return $_filepath;
+<a name="line58"></a>    } 
+<a name="line59"></a>
+<a name="line60"></a>    /**
+<a name="line61"></a>     * Get timestamp to template source
+<a name="line62"></a>     * 
+<a name="line63"></a>     * @param object $_template template object
+<a name="line64"></a>     * @return integer timestamp of template source file
+<a name="line65"></a>     */
+<a name="line66"></a>    public function getTemplateTimestamp($_template)
+<a name="line67"></a>    {
+<a name="line68"></a>        return filemtime($_template->getTemplateFilepath());
+<a name="line69"></a>    } 
+<a name="line70"></a>
+<a name="line71"></a>    /**
+<a name="line72"></a>     * Read template source from file
+<a name="line73"></a>     * 
+<a name="line74"></a>     * @param object $_template template object
+<a name="line75"></a>     * @return string content of template source file
+<a name="line76"></a>     */
+<a name="line77"></a>    public function getTemplateSource($_template)
+<a name="line78"></a>    {
+<a name="line79"></a>        if (file_exists($_tfp = $_template->getTemplateFilepath())) {
+<a name="line80"></a>            $_template->template_source = file_get_contents($_tfp);
+<a name="line81"></a>            return true;
+<a name="line82"></a>        } else {
+<a name="line83"></a>            return false;
+<a name="line84"></a>        } 
+<a name="line85"></a>    } 
+<a name="line86"></a>
+<a name="line87"></a>    /**
+<a name="line88"></a>     * Get filepath to compiled template
+<a name="line89"></a>     * 
+<a name="line90"></a>     * @param object $_template template object
+<a name="line91"></a>     * @return boolean return false as compiled template is not stored
+<a name="line92"></a>     */
+<a name="line93"></a>    public function getCompiledFilepath($_template)
+<a name="line94"></a>    { 
+<a name="line95"></a>        // no filepath for PHP templates
+<a name="line96"></a>        return false;
+<a name="line97"></a>    } 
+<a name="line98"></a>
+<a name="line99"></a>    /**
+<a name="line100"></a>     * renders the PHP template
+<a name="line101"></a>     */
+<a name="line102"></a>    public function renderUncompiled($_smarty_template)
+<a name="line103"></a>    {
+<a name="line104"></a>        if (!$this->smarty->allow_php_templates) {
+<a name="line105"></a>            throw new SmartyException("PHP templates are disabled");
+<a name="line106"></a>        } 
+<a name="line107"></a>        if ($this->getTemplateFilepath($_smarty_template) === false) {
+<a name="line108"></a>            throw new SmartyException("Unable to load template \"{$_smarty_template->resource_type} : {$_smarty_template->resource_name}\"");
+<a name="line109"></a>        } 
+<a name="line110"></a>        // prepare variables
+<a name="line111"></a>        $_smarty_ptr = $_smarty_template;
+<a name="line112"></a>        do {
+<a name="line113"></a>            foreach ($_smarty_ptr->tpl_vars as $_smarty_var => $_smarty_var_object) {
+<a name="line114"></a>                if (isset($_smarty_var_object->value)) {
+<a name="line115"></a>                    $$_smarty_var = $_smarty_var_object->value;
+<a name="line116"></a>                } 
+<a name="line117"></a>            } 
+<a name="line118"></a>            $_smarty_ptr = $_smarty_ptr->parent;
+<a name="line119"></a>        } while ($_smarty_ptr != null);
+<a name="line120"></a>        unset ($_smarty_var, $_smarty_var_object, $_smarty_ptr); 
+<a name="line121"></a>        // include PHP template
+<a name="line122"></a>        include($this->getTemplateFilepath($_smarty_template));
+<a name="line123"></a>        return;
+<a name="line124"></a>    } 
+<a name="line125"></a>} 
+<a name="line126"></a>
+<a name="line127"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_resource_php.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

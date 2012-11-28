@@ -1,0 +1,313 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:55 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\phpDataMapper\Query.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\phpdatamapper\query.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\phpDataMapper\Query.php</h1>
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Query Object - Used to build adapter-independent queries PHP-style
+<a name="line4"></a> *
+<a name="line5"></a> * @package phpDataMapper
+<a name="line6"></a> * @author Vance Lucas <vance@vancelucas.com>
+<a name="line7"></a> * @link http://phpdatamapper.com
+<a name="line8"></a> */
+<a name="line9"></a>class phpDataMapper_Query implements Countable, IteratorAggregate
+<a name="line10"></a>{
+<a name="line11"></a>	protected $_mapper;
+<a name="line12"></a>	
+<a name="line13"></a>	// Storage for query properties
+<a name="line14"></a>	public $fields = array();
+<a name="line15"></a>	public $source;
+<a name="line16"></a>	public $conditions = array();
+<a name="line17"></a>	public $order = array();
+<a name="line18"></a>	public $group = array();
+<a name="line19"></a>	public $limit;
+<a name="line20"></a>	public $limitOffset;
+<a name="line21"></a>	
+<a name="line22"></a>	
+<a name="line23"></a>	/**
+<a name="line24"></a>	 *	Constructor Method
+<a name="line25"></a>	 */
+<a name="line26"></a>	public function __construct(phpDataMapper_Base $mapper)
+<a name="line27"></a>	{
+<a name="line28"></a>		$this->_mapper = $mapper;
+<a name="line29"></a>	}
+<a name="line30"></a>	
+<a name="line31"></a>	
+<a name="line32"></a>	/**
+<a name="line33"></a>	 * Get current adapter object
+<a name="line34"></a>	 */
+<a name="line35"></a>	public function mapper()
+<a name="line36"></a>	{
+<a name="line37"></a>		return $this->_mapper;
+<a name="line38"></a>	}
+<a name="line39"></a>	
+<a name="line40"></a>	
+<a name="line41"></a>	/**
+<a name="line42"></a>	 * Called from mapper's select() function
+<a name="line43"></a>	 *
+<a name="line44"></a>	 * @param mixed $fields (optional)
+<a name="line45"></a>	 * @param string $source Data source name
+<a name="line46"></a>	 * @return string
+<a name="line47"></a>	 */
+<a name="line48"></a>	public function select($fields = "*", $source = null)
+<a name="line49"></a>	{
+<a name="line50"></a>		$this->fields = (is_string($fields) ? explode(',', $fields) : $fields);
+<a name="line51"></a>		if(null !== $source) {
+<a name="line52"></a>			$this->from($source);
+<a name="line53"></a>		}
+<a name="line54"></a>		return $this;
+<a name="line55"></a>	}
+<a name="line56"></a>	
+<a name="line57"></a>	
+<a name="line58"></a>	/**
+<a name="line59"></a>	 * From
+<a name="line60"></a>	 *
+<a name="line61"></a>	 * @param string $source Name of the data source to perform a query on
+<a name="line62"></a>	 * @todo Support multiple sources/joins
+<a name="line63"></a>	 */
+<a name="line64"></a>	public function from($source = null)
+<a name="line65"></a>	{
+<a name="line66"></a>		$this->source = $source;
+<a name="line67"></a>		return $this;
+<a name="line68"></a>	}
+<a name="line69"></a>	
+<a name="line70"></a>	
+<a name="line71"></a>	/**
+<a name="line72"></a>	 * Find records with given conditions
+<a name="line73"></a>	 * If all parameters are empty, find all records
+<a name="line74"></a>	 *
+<a name="line75"></a>	 * @param array $conditions Array of conditions in column => value pairs
+<a name="line76"></a>	 */
+<a name="line77"></a>	public function all(array $conditions = array())
+<a name="line78"></a>	{
+<a name="line79"></a>		return $this->where($conditions);
+<a name="line80"></a>	}
+<a name="line81"></a>	
+<a name="line82"></a>	
+<a name="line83"></a>	/**
+<a name="line84"></a>	 * WHERE conditions
+<a name="line85"></a>	 *
+<a name="line86"></a>	 * @param array $conditions Array of conditions for this clause
+<a name="line87"></a>	 * @param string $type Keyword that will separate each condition - "AND", "OR"
+<a name="line88"></a>	 * @param string $setType Keyword that will separate the whole set of conditions - "AND", "OR"
+<a name="line89"></a>	 */
+<a name="line90"></a>	public function where(array $conditions = array(), $type = "AND", $setType = "AND")
+<a name="line91"></a>	{
+<a name="line92"></a>		$where = array();
+<a name="line93"></a>		$where['conditions'] = $conditions;
+<a name="line94"></a>		$where['type'] = $type;
+<a name="line95"></a>		$where['setType'] = $setType;
+<a name="line96"></a>		
+<a name="line97"></a>		$this->conditions[] = $where;
+<a name="line98"></a>		return $this;
+<a name="line99"></a>	}
+<a name="line100"></a>	public function orWhere(array $conditions = array(), $type = "AND")
+<a name="line101"></a>	{
+<a name="line102"></a>		return $this->where($conditions, $type, "OR");
+<a name="line103"></a>	}
+<a name="line104"></a>	public function andWhere(array $conditions = array(), $type = "AND")
+<a name="line105"></a>	{
+<a name="line106"></a>		return $this->where($conditions, $type, "AND");
+<a name="line107"></a>	}
+<a name="line108"></a>	
+<a name="line109"></a>	
+<a name="line110"></a>	/**
+<a name="line111"></a>	 * ORDER BY columns
+<a name="line112"></a>	 *
+<a name="line113"></a>	 * @param array $fields Array of field names to use for sorting
+<a name="line114"></a>	 * @return $this
+<a name="line115"></a>	 */
+<a name="line116"></a>	public function order($fields = array())
+<a name="line117"></a>	{
+<a name="line118"></a>		$orderBy = array();
+<a name="line119"></a>		$defaultSort = "ASC";
+<a name="line120"></a>		if(is_array($fields)) {
+<a name="line121"></a>			foreach($fields as $field => $sort) {
+<a name="line122"></a>				// Numeric index - field as array entry, not key/value pair
+<a name="line123"></a>				if(is_numeric($field)) {
+<a name="line124"></a>					$field = $sort;
+<a name="line125"></a>					$sort = $defaultSort;
+<a name="line126"></a>				}
+<a name="line127"></a>				
+<a name="line128"></a>				$this->order[$field] = strtoupper($sort);
+<a name="line129"></a>			}
+<a name="line130"></a>		} else {
+<a name="line131"></a>			$this->order[$fields] = $defaultSort;
+<a name="line132"></a>		}
+<a name="line133"></a>		return $this;
+<a name="line134"></a>	}
+<a name="line135"></a>	
+<a name="line136"></a>	
+<a name="line137"></a>	/**
+<a name="line138"></a>	 * GROUP BY clause
+<a name="line139"></a>	 *
+<a name="line140"></a>	 * @param array $fields Array of field names to use for grouping
+<a name="line141"></a>	 * @return $this
+<a name="line142"></a>	 */
+<a name="line143"></a>	public function group(array $fields = array())
+<a name="line144"></a>	{
+<a name="line145"></a>		$groupBy = array();
+<a name="line146"></a>		foreach($fields as $field) {
+<a name="line147"></a>			$this->group[] = $field;
+<a name="line148"></a>		}
+<a name="line149"></a>		return $this;
+<a name="line150"></a>	}
+<a name="line151"></a>	
+<a name="line152"></a>	
+<a name="line153"></a>	/**
+<a name="line154"></a>	 * Limit executed query to specified amount of rows
+<a name="line155"></a>	 * Implemented at adapter-level for databases that support it
+<a name="line156"></a>	 *
+<a name="line157"></a>	 * @param int $limit Number of records to return
+<a name="line158"></a>	 * @param int $offset Row to start at for limited result set
+<a name="line159"></a>	 */
+<a name="line160"></a>	public function limit($limit = 20, $offset = null)
+<a name="line161"></a>	{
+<a name="line162"></a>		$this->limit = $limit;
+<a name="line163"></a>		$this->limitOffset = $offset;
+<a name="line164"></a>		return $this;
+<a name="line165"></a>	}
+<a name="line166"></a>	
+<a name="line167"></a>	
+<a name="line168"></a>	/**
+<a name="line169"></a>	 * Return array of parameters in key => value format
+<a name="line170"></a>	 *
+<a name="line171"></a>	 * @return array Parameters in key => value format
+<a name="line172"></a>	 */
+<a name="line173"></a>	public function params()
+<a name="line174"></a>	{
+<a name="line175"></a>		$params = array();
+<a name="line176"></a>		foreach($this->conditions as $i => $data) {
+<a name="line177"></a>			if(isset($data['conditions']) && is_array($data['conditions'])) {
+<a name="line178"></a>				foreach($data['conditions'] as $field => $value) {
+<a name="line179"></a>					$params[$field] = $value;
+<a name="line180"></a>				}
+<a name="line181"></a>			}
+<a name="line182"></a>		}
+<a name="line183"></a>		return $params;
+<a name="line184"></a>	}
+<a name="line185"></a>	
+<a name="line186"></a>	
+<a name="line187"></a>	
+<a name="line188"></a>	
+<a name="line189"></a>	
+<a name="line190"></a>	// ===================================================================
+<a name="line191"></a>	
+<a name="line192"></a>	/**
+<a name="line193"></a>	 * SPL Countable function
+<a name="line194"></a>	 * Called automatically when attribute is used in a 'count()' function call
+<a name="line195"></a>	 *
+<a name="line196"></a>	 * @return int
+<a name="line197"></a>	 */
+<a name="line198"></a>	public function count()
+<a name="line199"></a>	{
+<a name="line200"></a>		// Execute query and return count
+<a name="line201"></a>		$result = $this->execute();
+<a name="line202"></a>		return ($result !== false) ? count($result) : 0;
+<a name="line203"></a>	}
+<a name="line204"></a>	
+<a name="line205"></a>	
+<a name="line206"></a>	/**
+<a name="line207"></a>	 * SPL IteratorAggregate function
+<a name="line208"></a>	 * Called automatically when attribute is used in a 'foreach' loop
+<a name="line209"></a>	 *
+<a name="line210"></a>	 * @return phpDataMapper_Query_Set
+<a name="line211"></a>	 */
+<a name="line212"></a>	public function getIterator()
+<a name="line213"></a>	{
+<a name="line214"></a>		// Execute query and return result set for iteration
+<a name="line215"></a>		$result = $this->execute();
+<a name="line216"></a>		return ($result !== false) ? $result : array();
+<a name="line217"></a>	}
+<a name="line218"></a>	
+<a name="line219"></a>	
+<a name="line220"></a>	/**
+<a name="line221"></a>	 * Convenience function passthrough for Collection
+<a name="line222"></a>	 *
+<a name="line223"></a>	 * @return array
+<a name="line224"></a>	 */
+<a name="line225"></a>	public function toArray($keyColumn = null, $valueColumn = null)
+<a name="line226"></a>	{
+<a name="line227"></a>		$result = $this->execute();
+<a name="line228"></a>		return ($result !== false) ? $result->toArray($keyColumn, $valueColumn) : array();
+<a name="line229"></a>	}
+<a name="line230"></a>	
+<a name="line231"></a>	
+<a name="line232"></a>	/**
+<a name="line233"></a>	 * Return the first entity matched by the query
+<a name="line234"></a>	 *
+<a name="line235"></a>	 * @return mixed phpDataMapper_Entity on success, boolean false on failure
+<a name="line236"></a>	 */
+<a name="line237"></a>	public function first()
+<a name="line238"></a>	{
+<a name="line239"></a>		$result = $this->limit(1)->execute();
+<a name="line240"></a>		return ($result !== false) ? $result->first() : false;
+<a name="line241"></a>	}
+<a name="line242"></a>	
+<a name="line243"></a>	
+<a name="line244"></a>	/**
+<a name="line245"></a>	 * Execute and return query as a collection
+<a name="line246"></a>	 *
+<a name="line247"></a>	 * @return mixed Collection object on success, boolean false on failure
+<a name="line248"></a>	 */
+<a name="line249"></a>	public function execute()
+<a name="line250"></a>	{
+<a name="line251"></a>		return $this->mapper()->adapterRead()->read($this);
+<a name="line252"></a>	}
+<a name="line253"></a>}</pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\phpdatamapper\query.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:25:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>Smarty_Internal_Config (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_config.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">Smarty\Smarty_Internal_Config</div>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line12" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 12</a>
+
+<h1>Class Smarty_Internal_Config</h1>
+
+<pre class="tree"><strong>Smarty_Internal_Config</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>Smarty_Internal_Config</strong></p>
+
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Config</p><p>Main class for config variables</p></div>
+
+<dl>
+<dt>Ignore.</dt>
+<dt>Subpackage:</dt>
+<dd>Config</dd>
+<dt>Author:</dt>
+<dd>Uwe Tews</dd>
+</dl>
+<hr>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>(mixed config_resource, mixed smarty, mixed data)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#buildCompiledFilepath()">buildCompiledFilepath</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#buildConfigFilepath()">buildConfigFilepath</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#compileConfigSource()">compileConfigSource</a>()</p><p class="description">Compiles the config files</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#getCompiledConfig()">getCompiledConfig</a>()</p><p class="description">Returns the compiled config fileIt checks if the config file must be compiled or just read the compiled version</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#getCompiledFilepath()">getCompiledFilepath</a>()</p><p class="description">Returns the compiled  filepath</p></td>
+</tr>
+<tr>
+<td class="type"> integer</td>
+<td class="description"><p class="name"><a href="#getCompiledTimestamp()">getCompiledTimestamp</a>()</p><p class="description">Returns the timpestamp of the compiled file</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#getConfigFilepath()">getConfigFilepath</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#getConfigSource()">getConfigSource</a>()</p><p class="description">Returns the template source codeThe template source is being read by the actual resource handler</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#getTimestamp()">getTimestamp</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#loadConfigVars()">loadConfigVars</a>(mixed sections, str scope)</p></td>
+</tr>
+<tr>
+<td class="type"> boolean</td>
+<td class="description"><p class="name"><a href="#mustCompile()">mustCompile</a>()</p><p class="description">Returns if the current config file must be compiledIt does compare the timestamps of config source and the compiled config and checks the force compile configuration</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#readConfigSource()">readConfigSource</a>()</p></td>
+</tr>
+</table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line15" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 15</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public static  void <strong>__construct</strong>(mixed config_resource, mixed smarty, mixed data)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line136" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 136</a>
+
+<h3 id="buildCompiledFilepath()">buildCompiledFilepath</h3>
+<code class="signature">public  void <strong>buildCompiledFilepath</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line75" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 75</a>
+
+<h3 id="buildConfigFilepath()">buildConfigFilepath</h3>
+<code class="signature">public  void <strong>buildConfigFilepath</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line206" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 206</a>
+
+<h3 id="compileConfigSource()">compileConfigSource</h3>
+<code class="signature">public  void <strong>compileConfigSource</strong>()</code>
+<div class="details">
+<p>Compiles the config files</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line190" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 190</a>
+
+<h3 id="getCompiledConfig()">getCompiledConfig</h3>
+<code class="signature">public  string <strong>getCompiledConfig</strong>()</code>
+<div class="details">
+<p>Returns the compiled config file</p><p>It checks if the config file must be compiled or just read the compiled version</p><dl>
+<dt>Returns:</dt>
+<dd>the compiled config file</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line130" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 130</a>
+
+<h3 id="getCompiledFilepath()">getCompiledFilepath</h3>
+<code class="signature">public  string <strong>getCompiledFilepath</strong>()</code>
+<div class="details">
+<p>Returns the compiled  filepath</p><dl>
+<dt>Returns:</dt>
+<dd>the compiled filepath</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line164" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 164</a>
+
+<h3 id="getCompiledTimestamp()">getCompiledTimestamp</h3>
+<code class="signature">public  integer <strong>getCompiledTimestamp</strong>()</code>
+<div class="details">
+<p>Returns the timpestamp of the compiled file</p><dl>
+<dt>Returns:</dt>
+<dd>the file timestamp</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line36" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 36</a>
+
+<h3 id="getConfigFilepath()">getConfigFilepath</h3>
+<code class="signature">public  void <strong>getConfigFilepath</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line105" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 105</a>
+
+<h3 id="getConfigSource()">getConfigSource</h3>
+<code class="signature">public  string <strong>getConfigSource</strong>()</code>
+<div class="details">
+<p>Returns the template source code</p><p>The template source is being read by the actual resource handler</p><dl>
+<dt>Returns:</dt>
+<dd>the template source</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line43" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 43</a>
+
+<h3 id="getTimestamp()">getTimestamp</h3>
+<code class="signature">public  void <strong>getTimestamp</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line241" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 241</a>
+
+<h3 id="loadConfigVars()">loadConfigVars</h3>
+<code class="signature">public  void <strong>loadConfigVars</strong>(mixed sections, str scope)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line177" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 177</a>
+
+<h3 id="mustCompile()">mustCompile</h3>
+<code class="signature">public  boolean <strong>mustCompile</strong>()</code>
+<div class="details">
+<p>Returns if the current config file must be compiled</p><p>It does compare the timestamps of config source and the compiled config and checks the force compile configuration</p><dl>
+<dt>Returns:</dt>
+<dd>true if the file must be compiled</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_config.php.html#line114" class="location">libraries\smarty\libs\sysplugins\smarty_internal_config.php at line 114</a>
+
+<h3 id="readConfigSource()">readConfigSource</h3>
+<code class="signature">public  void <strong>readConfigSource</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_config.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

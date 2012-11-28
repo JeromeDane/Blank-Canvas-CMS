@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:57 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\plugins\function.html_select_date.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\function.html_select_date.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\plugins\function.html_select_date.php</h1>
+<div class="comment" id="overview_description"><p>Smarty plugin</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty plugin
+<a name="line4"></a> * 
+<a name="line5"></a> * @package Smarty
+<a name="line6"></a> * @subpackage PluginsFunction
+<a name="line7"></a> */
+<a name="line8"></a>
+<a name="line9"></a>/**
+<a name="line10"></a> * Smarty {html_select_date} plugin
+<a name="line11"></a> * 
+<a name="line12"></a> * Type:     function<br>
+<a name="line13"></a> * Name:     html_select_date<br>
+<a name="line14"></a> * Purpose:  Prints the dropdowns for date selection.
+<a name="line15"></a> * 
+<a name="line16"></a> * ChangeLog:<br>
+<a name="line17"></a> *            - 1.0 initial release
+<a name="line18"></a> *            - 1.1 added support for +/- N syntax for begin
+<a name="line19"></a> *                 and end year values. (Monte)
+<a name="line20"></a> *            - 1.2 added support for yyyy-mm-dd syntax for
+<a name="line21"></a> *                 time value. (Jan Rosier)
+<a name="line22"></a> *            - 1.3 added support for choosing format for
+<a name="line23"></a> *                 month values (Gary Loescher)
+<a name="line24"></a> *            - 1.3.1 added support for choosing format for
+<a name="line25"></a> *                 day values (Marcus Bointon)
+<a name="line26"></a> *            - 1.3.2 support negative timestamps, force year
+<a name="line27"></a> *              dropdown to include given date unless explicitly set (Monte)
+<a name="line28"></a> *            - 1.3.4 fix behaviour of 0000-00-00 00:00:00 dates to match that
+<a name="line29"></a> *              of 0000-00-00 dates (cybot, boots)
+<a name="line30"></a> * 
+<a name="line31"></a> * @link http://smarty.php.net/manual/en/language.function.html.select.date.php {html_select_date}
+<a name="line32"></a> *      (Smarty online manual)
+<a name="line33"></a> * @version 1.3.4
+<a name="line34"></a> * @author Andrei Zmievski 
+<a name="line35"></a> * @author Monte Ohrt <monte at ohrt dot com> 
+<a name="line36"></a> * @param array $params parameters
+<a name="line37"></a> * @param object $template template object
+<a name="line38"></a> * @return string 
+<a name="line39"></a> */
+<a name="line40"></a>function smarty_function_html_select_date($params, $template)
+<a name="line41"></a>{
+<a name="line42"></a>    require_once(SMARTY_PLUGINS_DIR . 'shared.escape_special_chars.php');
+<a name="line43"></a>    require_once(SMARTY_PLUGINS_DIR . 'shared.make_timestamp.php');
+<a name="line44"></a>    require_once(SMARTY_PLUGINS_DIR . 'function.html_options.php');
+<a name="line45"></a>
+<a name="line46"></a>    /* Default values. */
+<a name="line47"></a>    $prefix = "Date_";
+<a name="line48"></a>    $start_year = strftime("%Y");
+<a name="line49"></a>    $end_year = $start_year;
+<a name="line50"></a>    $display_days = true;
+<a name="line51"></a>    $display_months = true;
+<a name="line52"></a>    $display_years = true;
+<a name="line53"></a>    $month_format = "%B";
+<a name="line54"></a>    /* Write months as numbers by default  GL */
+<a name="line55"></a>    $month_value_format = "%m";
+<a name="line56"></a>    $day_format = "%02d";
+<a name="line57"></a>    /* Write day values using this format MB */
+<a name="line58"></a>    $day_value_format = "%d";
+<a name="line59"></a>    $year_as_text = false;
+<a name="line60"></a>    /* Display years in reverse order? Ie. 2000,1999,.... */
+<a name="line61"></a>    $reverse_years = false;
+<a name="line62"></a>    /* Should the select boxes be part of an array when returned from PHP?
+<a name="line63"></a>       e.g. setting it to "birthday", would create "birthday[Day]",
+<a name="line64"></a>       "birthday[Month]" & "birthday[Year]". Can be combined with prefix */
+<a name="line65"></a>    $field_array = null;
+<a name="line66"></a>    /* <select size>'s of the different <select> tags.
+<a name="line67"></a>       If not set, uses default dropdown. */
+<a name="line68"></a>    $day_size = null;
+<a name="line69"></a>    $month_size = null;
+<a name="line70"></a>    $year_size = null;
+<a name="line71"></a>    /* Unparsed attributes common to *ALL* the <select>/<input> tags.
+<a name="line72"></a>       An example might be in the template: all_extra ='class ="foo"'. */
+<a name="line73"></a>    $all_extra = null;
+<a name="line74"></a>    /* Separate attributes for the tags. */
+<a name="line75"></a>    $day_extra = null;
+<a name="line76"></a>    $month_extra = null;
+<a name="line77"></a>    $year_extra = null;
+<a name="line78"></a>    /* Order in which to display the fields.
+<a name="line79"></a>       "D" -> day, "M" -> month, "Y" -> year. */
+<a name="line80"></a>    $field_order = 'MDY';
+<a name="line81"></a>    /* String printed between the different fields. */
+<a name="line82"></a>    $field_separator = "\n";
+<a name="line83"></a>    $time = time();
+<a name="line84"></a>    $all_empty = null;
+<a name="line85"></a>    $day_empty = null;
+<a name="line86"></a>    $month_empty = null;
+<a name="line87"></a>    $year_empty = null;
+<a name="line88"></a>    $extra_attrs = '';
+<a name="line89"></a>
+<a name="line90"></a>    foreach ($params as $_key => $_value) {
+<a name="line91"></a>        switch ($_key) {
+<a name="line92"></a>            case 'prefix':
+<a name="line93"></a>            case 'time':
+<a name="line94"></a>            case 'start_year':
+<a name="line95"></a>            case 'end_year':
+<a name="line96"></a>            case 'month_format':
+<a name="line97"></a>            case 'day_format':
+<a name="line98"></a>            case 'day_value_format':
+<a name="line99"></a>            case 'field_array':
+<a name="line100"></a>            case 'day_size':
+<a name="line101"></a>            case 'month_size':
+<a name="line102"></a>            case 'year_size':
+<a name="line103"></a>            case 'all_extra':
+<a name="line104"></a>            case 'day_extra':
+<a name="line105"></a>            case 'month_extra':
+<a name="line106"></a>            case 'year_extra':
+<a name="line107"></a>            case 'field_order':
+<a name="line108"></a>            case 'field_separator':
+<a name="line109"></a>            case 'month_value_format':
+<a name="line110"></a>            case 'month_empty':
+<a name="line111"></a>            case 'day_empty':
+<a name="line112"></a>            case 'year_empty':
+<a name="line113"></a>                $$_key = (string)$_value;
+<a name="line114"></a>                break;
+<a name="line115"></a>
+<a name="line116"></a>            case 'all_empty':
+<a name="line117"></a>                $$_key = (string)$_value;
+<a name="line118"></a>                $day_empty = $month_empty = $year_empty = $all_empty;
+<a name="line119"></a>                break;
+<a name="line120"></a>
+<a name="line121"></a>            case 'display_days':
+<a name="line122"></a>            case 'display_months':
+<a name="line123"></a>            case 'display_years':
+<a name="line124"></a>            case 'year_as_text':
+<a name="line125"></a>            case 'reverse_years':
+<a name="line126"></a>                $$_key = (bool)$_value;
+<a name="line127"></a>                break;
+<a name="line128"></a>
+<a name="line129"></a>            default:
+<a name="line130"></a>                if (!is_array($_value)) {
+<a name="line131"></a>                    $extra_attrs .= ' ' . $_key . '="' . smarty_function_escape_special_chars($_value) . '"';
+<a name="line132"></a>                } else {
+<a name="line133"></a>                    trigger_error("html_select_date: extra attribute '$_key' cannot be an array", E_USER_NOTICE);
+<a name="line134"></a>                } 
+<a name="line135"></a>                break;
+<a name="line136"></a>        } 
+<a name="line137"></a>    } 
+<a name="line138"></a>
+<a name="line139"></a>    if (preg_match('!^-\d+$!', $time)) {
+<a name="line140"></a>        // negative timestamp, use date()
+<a name="line141"></a>        $time = date('Y-m-d', $time);
+<a name="line142"></a>    } 
+<a name="line143"></a>    // If $time is not in format yyyy-mm-dd
+<a name="line144"></a>    if (preg_match('/^(\d{0,4}-\d{0,2}-\d{0,2})/', $time, $found)) {
+<a name="line145"></a>        $time = $found[1];
+<a name="line146"></a>    } else {
+<a name="line147"></a>        // use smarty_make_timestamp to get an unix timestamp and
+<a name="line148"></a>        // strftime to make yyyy-mm-dd
+<a name="line149"></a>        $time = strftime('%Y-%m-%d', smarty_make_timestamp($time));
+<a name="line150"></a>    } 
+<a name="line151"></a>    // Now split this in pieces, which later can be used to set the select
+<a name="line152"></a>    $time = explode("-", $time); 
+<a name="line153"></a>    // make syntax "+N" or "-N" work with start_year and end_year
+<a name="line154"></a>    if (preg_match('!^(\+|\-)\s*(\d+)$!', $end_year, $match)) {
+<a name="line155"></a>        if ($match[1] == '+') {
+<a name="line156"></a>            $end_year = strftime('%Y') + $match[2];
+<a name="line157"></a>        } else {
+<a name="line158"></a>            $end_year = strftime('%Y') - $match[2];
+<a name="line159"></a>        } 
+<a name="line160"></a>    } 
+<a name="line161"></a>    if (preg_match('!^(\+|\-)\s*(\d+)$!', $start_year, $match)) {
+<a name="line162"></a>        if ($match[1] == '+') {
+<a name="line163"></a>            $start_year = strftime('%Y') + $match[2];
+<a name="line164"></a>        } else {
+<a name="line165"></a>            $start_year = strftime('%Y') - $match[2];
+<a name="line166"></a>        } 
+<a name="line167"></a>    } 
+<a name="line168"></a>    if (strlen($time[0]) > 0) {
+<a name="line169"></a>        if ($start_year > $time[0] && !isset($params['start_year'])) {
+<a name="line170"></a>            // force start year to include given date if not explicitly set
+<a name="line171"></a>            $start_year = $time[0];
+<a name="line172"></a>        } 
+<a name="line173"></a>        if ($end_year < $time[0] && !isset($params['end_year'])) {
+<a name="line174"></a>            // force end year to include given date if not explicitly set
+<a name="line175"></a>            $end_year = $time[0];
+<a name="line176"></a>        } 
+<a name="line177"></a>    } 
+<a name="line178"></a>
+<a name="line179"></a>    $field_order = strtoupper($field_order);
+<a name="line180"></a>
+<a name="line181"></a>    $html_result = $month_result = $day_result = $year_result = "";
+<a name="line182"></a>
+<a name="line183"></a>    $field_separator_count = -1;
+<a name="line184"></a>    if ($display_months) {
+<a name="line185"></a>        $field_separator_count++;
+<a name="line186"></a>        $month_names = array();
+<a name="line187"></a>        $month_values = array();
+<a name="line188"></a>        if (isset($month_empty)) {
+<a name="line189"></a>            $month_names[''] = $month_empty;
+<a name="line190"></a>            $month_values[''] = '';
+<a name="line191"></a>        } 
+<a name="line192"></a>        for ($i = 1; $i <= 12; $i++) {
+<a name="line193"></a>            $month_names[$i] = strftime($month_format, mktime(0, 0, 0, $i, 1, 2000));
+<a name="line194"></a>            $month_values[$i] = strftime($month_value_format, mktime(0, 0, 0, $i, 1, 2000));
+<a name="line195"></a>        } 
+<a name="line196"></a>
+<a name="line197"></a>        $month_result .= '<select name=';
+<a name="line198"></a>        if (null !== $field_array) {
+<a name="line199"></a>            $month_result .= '"' . $field_array . '[' . $prefix . 'Month]"';
+<a name="line200"></a>        } else {
+<a name="line201"></a>            $month_result .= '"' . $prefix . 'Month"';
+<a name="line202"></a>        } 
+<a name="line203"></a>        if (null !== $month_size) {
+<a name="line204"></a>            $month_result .= ' size="' . $month_size . '"';
+<a name="line205"></a>        } 
+<a name="line206"></a>        if (null !== $month_extra) {
+<a name="line207"></a>            $month_result .= ' ' . $month_extra;
+<a name="line208"></a>        } 
+<a name="line209"></a>        if (null !== $all_extra) {
+<a name="line210"></a>            $month_result .= ' ' . $all_extra;
+<a name="line211"></a>        } 
+<a name="line212"></a>        $month_result .= $extra_attrs . '>' . "\n";
+<a name="line213"></a>
+<a name="line214"></a>        $month_result .= smarty_function_html_options(array('output' => $month_names,
+<a name="line215"></a>                'values' => $month_values,
+<a name="line216"></a>                'selected' => (int)$time[1] ? strftime($month_value_format, mktime(0, 0, 0, (int)$time[1], 1, 2000)) : '',
+<a name="line217"></a>                'print_result' => false),
+<a name="line218"></a>                 $template);
+<a name="line219"></a>        $month_result .= '</select>';
+<a name="line220"></a>    } 
+<a name="line221"></a>
+<a name="line222"></a>    if ($display_days) {
+<a name="line223"></a>        $field_separator_count++;
+<a name="line224"></a>        $days = array();
+<a name="line225"></a>        if (isset($day_empty)) {
+<a name="line226"></a>            $days[''] = $day_empty;
+<a name="line227"></a>            $day_values[''] = '';
+<a name="line228"></a>        } 
+<a name="line229"></a>        for ($i = 1; $i <= 31; $i++) {
+<a name="line230"></a>            $days[] = sprintf($day_format, $i);
+<a name="line231"></a>            $day_values[] = sprintf($day_value_format, $i);
+<a name="line232"></a>        } 
+<a name="line233"></a>
+<a name="line234"></a>        $day_result .= '<select name=';
+<a name="line235"></a>        if (null !== $field_array) {
+<a name="line236"></a>            $day_result .= '"' . $field_array . '[' . $prefix . 'Day]"';
+<a name="line237"></a>        } else {
+<a name="line238"></a>            $day_result .= '"' . $prefix . 'Day"';
+<a name="line239"></a>        } 
+<a name="line240"></a>        if (null !== $day_size) {
+<a name="line241"></a>            $day_result .= ' size="' . $day_size . '"';
+<a name="line242"></a>        } 
+<a name="line243"></a>        if (null !== $all_extra) {
+<a name="line244"></a>            $day_result .= ' ' . $all_extra;
+<a name="line245"></a>        } 
+<a name="line246"></a>        if (null !== $day_extra) {
+<a name="line247"></a>            $day_result .= ' ' . $day_extra;
+<a name="line248"></a>        } 
+<a name="line249"></a>        $day_result .= $extra_attrs . '>' . "\n";
+<a name="line250"></a>        $day_result .= smarty_function_html_options(array('output' => $days,
+<a name="line251"></a>                'values' => $day_values,
+<a name="line252"></a>                'selected' => $time[2],
+<a name="line253"></a>                'print_result' => false),
+<a name="line254"></a>             $template);
+<a name="line255"></a>        $day_result .= '</select>';
+<a name="line256"></a>    } 
+<a name="line257"></a>
+<a name="line258"></a>    if ($display_years) {
+<a name="line259"></a>        $field_separator_count++;
+<a name="line260"></a>        if (null !== $field_array) {
+<a name="line261"></a>            $year_name = $field_array . '[' . $prefix . 'Year]';
+<a name="line262"></a>        } else {
+<a name="line263"></a>            $year_name = $prefix . 'Year';
+<a name="line264"></a>        } 
+<a name="line265"></a>        if ($year_as_text) {
+<a name="line266"></a>            $year_result .= '<input type="text" name="' . $year_name . '" value="' . $time[0] . '" size="4" maxlength="4"';
+<a name="line267"></a>            if (null !== $all_extra) {
+<a name="line268"></a>                $year_result .= ' ' . $all_extra;
+<a name="line269"></a>            } 
+<a name="line270"></a>            if (null !== $year_extra) {
+<a name="line271"></a>                $year_result .= ' ' . $year_extra;
+<a name="line272"></a>            } 
+<a name="line273"></a>            $year_result .= ' />';
+<a name="line274"></a>        } else {
+<a name="line275"></a>            $years = range((int)$start_year, (int)$end_year);
+<a name="line276"></a>            if ($reverse_years) {
+<a name="line277"></a>                rsort($years, SORT_NUMERIC);
+<a name="line278"></a>            } else {
+<a name="line279"></a>                sort($years, SORT_NUMERIC);
+<a name="line280"></a>            } 
+<a name="line281"></a>            $yearvals = $years;
+<a name="line282"></a>            if (isset($year_empty)) {
+<a name="line283"></a>                array_unshift($years, $year_empty);
+<a name="line284"></a>                array_unshift($yearvals, '');
+<a name="line285"></a>            } 
+<a name="line286"></a>            $year_result .= '<select name="' . $year_name . '"';
+<a name="line287"></a>            if (null !== $year_size) {
+<a name="line288"></a>                $year_result .= ' size="' . $year_size . '"';
+<a name="line289"></a>            } 
+<a name="line290"></a>            if (null !== $all_extra) {
+<a name="line291"></a>                $year_result .= ' ' . $all_extra;
+<a name="line292"></a>            } 
+<a name="line293"></a>            if (null !== $year_extra) {
+<a name="line294"></a>                $year_result .= ' ' . $year_extra;
+<a name="line295"></a>            } 
+<a name="line296"></a>            $year_result .= $extra_attrs . '>' . "\n";
+<a name="line297"></a>            $year_result .= smarty_function_html_options(array('output' => $years,
+<a name="line298"></a>                    'values' => $yearvals,
+<a name="line299"></a>                    'selected' => $time[0],
+<a name="line300"></a>                    'print_result' => false),
+<a name="line301"></a>                   $template);
+<a name="line302"></a>            $year_result .= '</select>';
+<a name="line303"></a>        } 
+<a name="line304"></a>    } 
+<a name="line305"></a>    // Loop thru the field_order field
+<a name="line306"></a>    for ($i = 0; $i <= 2; $i++) {
+<a name="line307"></a>        $c = substr($field_order, $i, 1);
+<a name="line308"></a>        switch ($c) {
+<a name="line309"></a>            case 'D':
+<a name="line310"></a>                $html_result .= $day_result;
+<a name="line311"></a>                break;
+<a name="line312"></a>
+<a name="line313"></a>            case 'M':
+<a name="line314"></a>                $html_result .= $month_result;
+<a name="line315"></a>                break;
+<a name="line316"></a>
+<a name="line317"></a>            case 'Y':
+<a name="line318"></a>                $html_result .= $year_result;
+<a name="line319"></a>                break;
+<a name="line320"></a>        } 
+<a name="line321"></a>        // Add the field seperator
+<a name="line322"></a>        if ($i < $field_separator_count) {
+<a name="line323"></a>            $html_result .= $field_separator;
+<a name="line324"></a>        } 
+<a name="line325"></a>    } 
+<a name="line326"></a>
+<a name="line327"></a>    return $html_result;
+<a name="line328"></a>}
+<a name="line329"></a>
+<a name="line330"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\function.html_select_date.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:25:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>Smarty_Internal_Function_Call_Handler (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_function_call_handler.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">Smarty\Smarty_Internal_Function_Call_Handler</div>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_function_call_handler.php.html#line13" class="location">libraries\smarty\libs\sysplugins\smarty_internal_function_call_handler.php at line 13</a>
+
+<h1>Class Smarty_Internal_Function_Call_Handler</h1>
+
+<pre class="tree"><a href="../smarty/smarty_internal_data.html">Smarty_Internal_Data</a><br>    └─<a href="../smarty/smarty_internal_template.html">Smarty_Internal_Template</a><br>       └─<strong>Smarty_Internal_Function_Call_Handler</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>Smarty_Internal_Function_Call_Handler</strong><br>extends <a href="../smarty/smarty_internal_template.html">Smarty_Internal_Template</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>This class does call function defined with the {function} tag</p></div>
+
+<hr>
+
+<table class="inherit">
+<tr><th colspan="2">Fields inherited from Smarty\Smarty_Internal_Template</th></tr>
+<tr><td><a href="../smarty/smarty_internal_template.html#block_data">block_data</a>, <a href="../smarty/smarty_internal_template.html#cache_id">cache_id</a>, <a href="../smarty/smarty_internal_template.html#cache_lifetime">cache_lifetime</a>, <a href="../smarty/smarty_internal_template.html#cached_timestamp">cached_timestamp</a>, <a href="../smarty/smarty_internal_template.html#cacher_class">cacher_class</a>, <a href="../smarty/smarty_internal_template.html#cacher_object">cacher_object</a>, <a href="../smarty/smarty_internal_template.html#caching">caching</a>, <a href="../smarty/smarty_internal_template.html#caching_type">caching_type</a>, <a href="../smarty/smarty_internal_template.html#compile_id">compile_id</a>, <a href="../smarty/smarty_internal_template.html#compiled_template">compiled_template</a>, <a href="../smarty/smarty_internal_template.html#compiler_object">compiler_object</a>, <a href="../smarty/smarty_internal_template.html#config_vars">config_vars</a>, <a href="../smarty/smarty_internal_template.html#forceNocache">forceNocache</a>, <a href="../smarty/smarty_internal_template.html#has_nocache_code">has_nocache_code</a>, <a href="../smarty/smarty_internal_template.html#mustCompile">mustCompile</a>, <a href="../smarty/smarty_internal_template.html#parent">parent</a>, <a href="../smarty/smarty_internal_template.html#plugin_data">plugin_data</a>, <a href="../smarty/smarty_internal_template.html#properties">properties</a>, <a href="../smarty/smarty_internal_template.html#rendered_content">rendered_content</a>, <a href="../smarty/smarty_internal_template.html#required_plugins">required_plugins</a>, <a href="../smarty/smarty_internal_template.html#resource_name">resource_name</a>, <a href="../smarty/smarty_internal_template.html#resource_type">resource_type</a>, <a href="../smarty/smarty_internal_template.html#saved_modifier">saved_modifier</a>, <a href="../smarty/smarty_internal_template.html#smarty">smarty</a>, <a href="../smarty/smarty_internal_template.html#suppressFileDependency">suppressFileDependency</a>, <a href="../smarty/smarty_internal_template.html#suppressHeader">suppressHeader</a>, <a href="../smarty/smarty_internal_template.html#templateUid">templateUid</a>, <a href="../smarty/smarty_internal_template.html#template_filepath">template_filepath</a>, <a href="../smarty/smarty_internal_template.html#template_resource">template_resource</a>, <a href="../smarty/smarty_internal_template.html#template_source">template_source</a>, <a href="../smarty/smarty_internal_template.html#tpl_vars">tpl_vars</a>, <a href="../smarty/smarty_internal_template.html#wrapper">wrapper</a>, <a href="../smarty/smarty_internal_template.html#write_compiled_code">write_compiled_code</a></td></tr></table>
+
+<table class="inherit">
+<tr><th colspan="2">Fields inherited from Smarty\Smarty_Internal_Data</th></tr>
+<tr><td><a href="../smarty/smarty_internal_data.html#template_class">template_class</a></td></tr></table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#call()">call</a>(mixed _name, mixed _template, mixed _params, mixed _hash, mixed _nocache)</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from Smarty\Smarty_Internal_Template</th></tr>
+<tr><td><a href="../smarty/smarty_internal_template.html#__construct()">__construct</a>, <a href="../smarty/smarty_internal_template.html#buildTemplateFilepath()">buildTemplateFilepath</a>, <a href="../smarty/smarty_internal_template.html#compileTemplateSource()">compileTemplateSource</a>, <a href="../smarty/smarty_internal_template.html#createLocalArrayVariable()">createLocalArrayVariable</a>, <a href="../smarty/smarty_internal_template.html#createPropertyHeader()">createPropertyHeader</a>, <a href="../smarty/smarty_internal_template.html#decodeProperties()">decodeProperties</a>, <a href="../smarty/smarty_internal_template.html#display()">display</a>, <a href="../smarty/smarty_internal_template.html#fetch()">fetch</a>, <a href="../smarty/smarty_internal_template.html#getCachedContent()">getCachedContent</a>, <a href="../smarty/smarty_internal_template.html#getCachedFilepath()">getCachedFilepath</a>, <a href="../smarty/smarty_internal_template.html#getCachedTimestamp()">getCachedTimestamp</a>, <a href="../smarty/smarty_internal_template.html#getCompiledFilepath()">getCompiledFilepath</a>, <a href="../smarty/smarty_internal_template.html#getCompiledTemplate()">getCompiledTemplate</a>, <a href="../smarty/smarty_internal_template.html#getCompiledTimestamp()">getCompiledTimestamp</a>, <a href="../smarty/smarty_internal_template.html#getRenderedTemplate()">getRenderedTemplate</a>, <a href="../smarty/smarty_internal_template.html#getResourceTypeName()">getResourceTypeName</a>, <a href="../smarty/smarty_internal_template.html#getTemplateFilepath()">getTemplateFilepath</a>, <a href="../smarty/smarty_internal_template.html#getTemplateSource()">getTemplateSource</a>, <a href="../smarty/smarty_internal_template.html#getTemplateTimestamp()">getTemplateTimestamp</a>, <a href="../smarty/smarty_internal_template.html#isCached()">isCached</a>, <a href="../smarty/smarty_internal_template.html#isExisting()">isExisting</a>, <a href="../smarty/smarty_internal_template.html#loadTemplateResourceHandler()">loadTemplateResourceHandler</a>, <a href="../smarty/smarty_internal_template.html#mustCompile()">mustCompile</a>, <a href="../smarty/smarty_internal_template.html#parseResourceName()">parseResourceName</a>, <a href="../smarty/smarty_internal_template.html#renderTemplate()">renderTemplate</a>, <a href="../smarty/smarty_internal_template.html#updateParentVariables()">updateParentVariables</a>, <a href="../smarty/smarty_internal_template.html#writeCachedContent()">writeCachedContent</a></td></tr></table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from Smarty\Smarty_Internal_Data</th></tr>
+<tr><td><a href="../smarty/smarty_internal_data.html#append()">append</a>, <a href="../smarty/smarty_internal_data.html#appendByRef()">appendByRef</a>, <a href="../smarty/smarty_internal_data.html#append_by_ref()">append_by_ref</a>, <a href="../smarty/smarty_internal_data.html#assign()">assign</a>, <a href="../smarty/smarty_internal_data.html#assignByRef()">assignByRef</a>, <a href="../smarty/smarty_internal_data.html#assignGlobal()">assignGlobal</a>, <a href="../smarty/smarty_internal_data.html#assign_by_ref()">assign_by_ref</a>, <a href="../smarty/smarty_internal_data.html#clearAllAssign()">clearAllAssign</a>, <a href="../smarty/smarty_internal_data.html#clearAssign()">clearAssign</a>, <a href="../smarty/smarty_internal_data.html#clearConfig()">clearConfig</a>, <a href="../smarty/smarty_internal_data.html#configLoad()">configLoad</a>, <a href="../smarty/smarty_internal_data.html#getConfigVariable()">getConfigVariable</a>, <a href="../smarty/smarty_internal_data.html#getConfigVars()">getConfigVars</a>, <a href="../smarty/smarty_internal_data.html#getStreamVariable()">getStreamVariable</a>, <a href="../smarty/smarty_internal_data.html#getTemplateVars()">getTemplateVars</a>, <a href="../smarty/smarty_internal_data.html#getVariable()">getVariable</a></td></tr></table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_function_call_handler.php.html#line14" class="location">libraries\smarty\libs\sysplugins\smarty_internal_function_call_handler.php at line 14</a>
+
+<h3 id="call()">call</h3>
+<code class="signature">public static  void <strong>call</strong>(mixed _name, mixed _template, mixed _params, mixed _hash, mixed _nocache)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_function_call_handler.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

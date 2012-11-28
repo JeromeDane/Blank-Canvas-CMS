@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:57 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\plugins\modifier.date_format.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\modifier.date_format.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\plugins\modifier.date_format.php</h1>
+<div class="comment" id="overview_description"><p>Smarty plugin</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty plugin
+<a name="line4"></a> * 
+<a name="line5"></a> * @package Smarty
+<a name="line6"></a> * @subpackage PluginsModifier
+<a name="line7"></a> */
+<a name="line8"></a>
+<a name="line9"></a>/**
+<a name="line10"></a> * Smarty date_format modifier plugin
+<a name="line11"></a> * 
+<a name="line12"></a> * Type:     modifier<br>
+<a name="line13"></a> * Name:     date_format<br>
+<a name="line14"></a> * Purpose:  format datestamps via strftime<br>
+<a name="line15"></a> * Input:<br>
+<a name="line16"></a> *          - string: input date string
+<a name="line17"></a> *          - format: strftime format for output
+<a name="line18"></a> *          - default_date: default date if $string is empty
+<a name="line19"></a> * 
+<a name="line20"></a> * @link http://smarty.php.net/manual/en/language.modifier.date.format.php date_format (Smarty online manual)
+<a name="line21"></a> * @author Monte Ohrt <monte at ohrt dot com> 
+<a name="line22"></a> * @param string $ 
+<a name="line23"></a> * @param string $ 
+<a name="line24"></a> * @param string $ 
+<a name="line25"></a> * @return string |void
+<a name="line26"></a> * @uses smarty_make_timestamp()
+<a name="line27"></a> */
+<a name="line28"></a>function smarty_modifier_date_format($string, $format = SMARTY_RESOURCE_DATE_FORMAT, $default_date = '',$formatter='auto')
+<a name="line29"></a>{
+<a name="line30"></a>    /**
+<a name="line31"></a>    * Include the {@link shared.make_timestamp.php} plugin
+<a name="line32"></a>    */
+<a name="line33"></a>    require_once(SMARTY_PLUGINS_DIR . 'shared.make_timestamp.php');
+<a name="line34"></a>    if ($string != '') {
+<a name="line35"></a>        $timestamp = smarty_make_timestamp($string);
+<a name="line36"></a>    } elseif ($default_date != '') {
+<a name="line37"></a>        $timestamp = smarty_make_timestamp($default_date);
+<a name="line38"></a>    } else {
+<a name="line39"></a>        return;
+<a name="line40"></a>    } 
+<a name="line41"></a>    if($formatter=='strftime'||($formatter=='auto'&&strpos($format,'%')!==false)) {
+<a name="line42"></a>        if (DS == '\\') {
+<a name="line43"></a>            $_win_from = array('%D', '%h', '%n', '%r', '%R', '%t', '%T');
+<a name="line44"></a>            $_win_to = array('%m/%d/%y', '%b', "\n", '%I:%M:%S %p', '%H:%M', "\t", '%H:%M:%S');
+<a name="line45"></a>            if (strpos($format, '%e') !== false) {
+<a name="line46"></a>                $_win_from[] = '%e';
+<a name="line47"></a>                $_win_to[] = sprintf('%\' 2d', date('j', $timestamp));
+<a name="line48"></a>            } 
+<a name="line49"></a>            if (strpos($format, '%l') !== false) {
+<a name="line50"></a>                $_win_from[] = '%l';
+<a name="line51"></a>                $_win_to[] = sprintf('%\' 2d', date('h', $timestamp));
+<a name="line52"></a>            } 
+<a name="line53"></a>            $format = str_replace($_win_from, $_win_to, $format);
+<a name="line54"></a>        } 
+<a name="line55"></a>        return strftime($format, $timestamp);
+<a name="line56"></a>    } else {
+<a name="line57"></a>        return date($format, $timestamp);
+<a name="line58"></a>    }
+<a name="line59"></a>} 
+<a name="line60"></a>
+<a name="line61"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\modifier.date_format.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

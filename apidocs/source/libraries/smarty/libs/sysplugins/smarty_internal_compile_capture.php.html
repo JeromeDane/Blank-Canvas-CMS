@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_compile_capture.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_capture.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_compile_capture.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Compile Capture</p><p>Compiles the {capture} tag</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty Internal Plugin Compile Capture
+<a name="line4"></a> * 
+<a name="line5"></a> * Compiles the {capture} tag
+<a name="line6"></a> * 
+<a name="line7"></a> * @package Smarty
+<a name="line8"></a> * @subpackage Compiler
+<a name="line9"></a> * @author Uwe Tews 
+<a name="line10"></a> */
+<a name="line11"></a>
+<a name="line12"></a>/**
+<a name="line13"></a> * Smarty Internal Plugin Compile Capture Class
+<a name="line14"></a> */
+<a name="line15"></a>class Smarty_Internal_Compile_Capture extends Smarty_Internal_CompileBase {
+<a name="line16"></a>	// attribute definitions
+<a name="line17"></a>    public $shorttag_order = array('name');
+<a name="line18"></a>    public $optional_attributes = array('name', 'assign', 'append'); 
+<a name="line19"></a>
+<a name="line20"></a>    /**
+<a name="line21"></a>     * Compiles code for the {capture} tag
+<a name="line22"></a>     * 
+<a name="line23"></a>     * @param array $args array with attributes from parser
+<a name="line24"></a>     * @param object $compiler compiler object
+<a name="line25"></a>     * @return string compiled code
+<a name="line26"></a>     */
+<a name="line27"></a>    public function compile($args, $compiler)
+<a name="line28"></a>    {
+<a name="line29"></a>        $this->compiler = $compiler;
+<a name="line30"></a>        // check and get attributes
+<a name="line31"></a>        $_attr = $this->_get_attributes($args);
+<a name="line32"></a>
+<a name="line33"></a>        $buffer = isset($_attr['name']) ? $_attr['name'] : "'default'";
+<a name="line34"></a>        $assign = isset($_attr['assign']) ? $_attr['assign'] : null;
+<a name="line35"></a>        $append = isset($_attr['append']) ? $_attr['append'] : null;
+<a name="line36"></a>
+<a name="line37"></a>        $this->compiler->_capture_stack[] = array($buffer, $assign, $append, $this->compiler->nocache);
+<a name="line38"></a>        // maybe nocache because of nocache variables
+<a name="line39"></a>        $this->compiler->nocache = $this->compiler->nocache | $this->compiler->tag_nocache; 
+<a name="line40"></a>        $_output = "<?php ob_start(); ?>";
+<a name="line41"></a>
+<a name="line42"></a>        return $_output;
+<a name="line43"></a>    } 
+<a name="line44"></a>} 
+<a name="line45"></a>
+<a name="line46"></a>/**
+<a name="line47"></a> * Smarty Internal Plugin Compile Captureclose Class
+<a name="line48"></a> */
+<a name="line49"></a>class Smarty_Internal_Compile_CaptureClose extends Smarty_Internal_CompileBase {
+<a name="line50"></a>    /**
+<a name="line51"></a>     * Compiles code for the {/capture} tag
+<a name="line52"></a>     * 
+<a name="line53"></a>     * @param array $args array with attributes from parser
+<a name="line54"></a>     * @param object $compiler compiler object
+<a name="line55"></a>     * @return string compiled code
+<a name="line56"></a>     */
+<a name="line57"></a>    public function compile($args, $compiler)
+<a name="line58"></a>    {
+<a name="line59"></a>        $this->compiler = $compiler; 
+<a name="line60"></a>        // check and get attributes
+<a name="line61"></a>        $_attr = $this->_get_attributes($args);
+<a name="line62"></a>        // must endblock be nocache?
+<a name="line63"></a>        if ($this->compiler->nocache) {
+<a name="line64"></a>            $this->compiler->tag_nocache = true;
+<a name="line65"></a>        } 
+<a name="line66"></a>
+<a name="line67"></a>        list($buffer, $assign, $append, $this->compiler->nocache) = array_pop($this->compiler->_capture_stack);
+<a name="line68"></a>
+<a name="line69"></a>        $_output = "<?php ";
+<a name="line70"></a>        if (isset($assign)) {
+<a name="line71"></a>            $_output .= " \$_smarty_tpl->assign($assign, ob_get_contents());";
+<a name="line72"></a>        } 
+<a name="line73"></a>        if (isset($append)) {
+<a name="line74"></a>            $_output .= " \$_smarty_tpl->append($append, ob_get_contents());";
+<a name="line75"></a>        } 
+<a name="line76"></a>        $_output .= " Smarty::\$_smarty_vars['capture'][$buffer]=ob_get_clean();?>";
+<a name="line77"></a>        return $_output;
+<a name="line78"></a>    } 
+<a name="line79"></a>} 
+<a name="line80"></a>
+<a name="line81"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_capture.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

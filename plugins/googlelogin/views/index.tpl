@@ -1,0 +1,1 @@
+<a href="{root}googlelogin/execute">login with Google account</a>

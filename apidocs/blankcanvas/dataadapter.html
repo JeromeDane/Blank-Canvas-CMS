@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:25:57 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>DataAdapter (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../blankcanvas/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../blankcanvas/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../blankcanvas\dataadapter.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">BlankCanvas\DataAdapter</div>
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line34" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 34</a>
+
+<h1>Class DataAdapter</h1>
+
+<pre class="tree"><strong>DataAdapter</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>DataAdapter</strong></p>
+
+<div class="comment" id="overview_description"><p>Data adapter for access to stored information (database)</p></div>
+
+<dl>
+<dt>Author:</dt>
+<dd>Jerome Dane</dd>
+</dl>
+<hr>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>(mixed dsn, str username, str password, mixed options)</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#connect()">connect</a>(mixed dsn, str username, str password, mixed options)</p></td>
+</tr>
+<tr>
+<td class="type"> <a href="../blankcanvas/dataresult.html">DataResult</a></td>
+<td class="description"><p class="name"><a href="#execute()">execute</a>(string sql, array parameters)</p><p class="description">Execute SQL with optional parameters and return the result</p></td>
+</tr>
+<tr>
+<td class="type"> <a href="../blankcanvas/dataresult.html">DataResult</a></td>
+<td class="description"><p class="name"><a href="#executeSelect()">executeSelect</a>(string sql, array parameters)</p><p class="description">Execute SQL select statement with optional parameters and return the result</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#getLastInsertId()">getLastInsertId</a>()</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#insert()">insert</a>(mixed tableName, mixed fields)</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#select()">select</a>(str sql, mixed parameters)</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#update()">update</a>(mixed tableName, mixed fields, bool additionalSql, mixed parameters)</p></td>
+</tr>
+</table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line98" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 98</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public  void <strong>__construct</strong>(mixed dsn, str username, str password, mixed options)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line38" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 38</a>
+
+<h3 id="connect()">connect</h3>
+<code class="signature">public static  void <strong>connect</strong>(mixed dsn, str username, str password, mixed options)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line80" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 80</a>
+
+<h3 id="execute()">execute</h3>
+<code class="signature">public  <a href="../blankcanvas/dataresult.html">DataResult</a> <strong>execute</strong>(string sql, array parameters)</code>
+<div class="details">
+<p>Execute SQL with optional parameters and return the result</p><dl>
+<dt>Parameters:</dt>
+<dd>sql - The SQL to be executed</dd>
+<dd>parameters - Optional array of PDO style parameters</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line55" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 55</a>
+
+<h3 id="executeSelect()">executeSelect</h3>
+<code class="signature">public  <a href="../blankcanvas/dataresult.html">DataResult</a> <strong>executeSelect</strong>(string sql, array parameters)</code>
+<div class="details">
+<p>Execute SQL select statement with optional parameters and return the result</p><dl>
+<dt>Parameters:</dt>
+<dd>sql - The SQL to be executed</dd>
+<dd>parameters - Optional array of PDO style parameters</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line112" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 112</a>
+
+<h3 id="getLastInsertId()">getLastInsertId</h3>
+<code class="signature">public static  void <strong>getLastInsertId</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line116" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 116</a>
+
+<h3 id="insert()">insert</h3>
+<code class="signature">public static  void <strong>insert</strong>(mixed tableName, mixed fields)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line106" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 106</a>
+
+<h3 id="select()">select</h3>
+<code class="signature">public static  void <strong>select</strong>(str sql, mixed parameters)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/blankcanvas/dataadapter_class.inc.html#line135" class="location">libraries\blankcanvas\DataAdapter_class.inc at line 135</a>
+
+<h3 id="update()">update</h3>
+<code class="signature">public static  void <strong>update</strong>(mixed tableName, mixed fields, bool additionalSql, mixed parameters)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../blankcanvas/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../blankcanvas/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../blankcanvas\dataadapter.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

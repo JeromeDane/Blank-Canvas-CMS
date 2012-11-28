@@ -1,0 +1,669 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:26:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>phpDataMapper_Base (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_base.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">phpDataMapper\phpDataMapper_Base</div>
+<a href="../source/libraries/phpdatamapper/base.php.html#line9" class="location">libraries\phpDataMapper\Base.php at line 9</a>
+
+<h1>Class phpDataMapper_Base</h1>
+
+<pre class="tree"><strong>phpDataMapper_Base</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>phpDataMapper_Base</strong></p>
+
+<div class="comment" id="overview_description"><p>Base DataMapper Model</p></div>
+
+<dl>
+<dt>See Also:</dt>
+<dd><code><a href="http://phpdatamapper.com">http://phpdatamapper.com</a></code></dd>
+<dd><code><a href="http://github.com/vlucas/phpDataMapper">http://github.com/vlucas/phpDataMapper</a></code></dd>
+</dl>
+<hr>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>(<a href="../phpdatamapper/phpdatamapper_adapter_interface.html">phpDataMapper_Adapter_Interface</a> adapter, mixed adapterRead)</p><p class="description">Constructor Method</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#adapter()">adapter</a>()</p><p class="description">Get current adapter object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#adapterRead()">adapterRead</a>()</p><p class="description">Get adapter object that will serve as the 'slave' for reads</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#all()">all</a>(array conditions)</p><p class="description">Find records with given conditions
+If all parameters are empty, find all records</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#collectionClass()">collectionClass</a>()</p><p class="description">Get collection class name to use</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#datasource()">datasource</a>()</p><p class="description">Get name of the data source</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#debug()">debug</a>(mixed entity)</p><p class="description">Prints all executed SQL queries - useful for debugging</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#delete()">delete</a>(mixed conditions)</p><p class="description">Delete items matching given conditions</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#dropDatasource()">dropDatasource</a>()</p><p class="description">Drop/delete data source
+Destructive and dangerous - drops entire data source and all data</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#entityClass()">entityClass</a>()</p><p class="description">Get entity class name to use</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#error()">error</a>(string field, mixed msg)</p><p class="description">Add an error to error messages array</p></td>
+</tr>
+<tr>
+<td class="type"> array</td>
+<td class="description"><p class="name"><a href="#errors()">errors</a>(mixed msgs)</p><p class="description">Get array of error messages</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#fieldExists()">fieldExists</a>(mixed field)</p><p class="description">Check if field exists in defined fields</p></td>
+</tr>
+<tr>
+<td class="type"> array</td>
+<td class="description"><p class="name"><a href="#fields()">fields</a>()</p><p class="description">Get formatted fields with all neccesary array keys and values.
+</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#first()">first</a>(array conditions)</p><p class="description">Find first record matching given conditions</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#get()">get</a>(int primaryKeyValue)</p><p class="description">Load record from primary key</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#getEntityRelationWithValues()">getEntityRelationWithValues</a>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</p><p class="description">Replace entity value placeholders on relation definitions
+Currently replaces 'entity.[col]' with the column value from the passed entity object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#getRelationsFor()">getRelationsFor</a>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</p><p class="description">Load defined relations</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#getResultSet()">getResultSet</a>(mixed stmt)</p><p class="description">Get result set for given PDO Statement</p></td>
+</tr>
+<tr>
+<td class="type"> boolean</td>
+<td class="description"><p class="name"><a href="#hasErrors()">hasErrors</a>(string field)</p><p class="description">Check if any errors exist</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#init()">init</a>()</p><p class="description">Initialization function, run immediately after __construct() so that the constructor is never overridden</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#insert()">insert</a>(mixed entity)</p><p class="description">Insert record</p></td>
+</tr>
+<tr>
+<td class="type"> boolean</td>
+<td class="description"><p class="name"><a href="#isEmpty()">isEmpty</a>(mixed value)</p><p class="description">Check if a value is empty, excluding 0 (annoying PHP issue)</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#loadClass()">loadClass</a>(mixed className)</p><p class="description">Attempt to load class file based on phpDataMapper naming conventions</p></td>
+</tr>
+<tr>
+<td class="type">protected  void</td>
+<td class="description"><p class="name"><a href="#loadFields()">loadFields</a>(mixed fields)</p><p class="description">Internally set fields so that classes that extend from the base have more flexibility
+in the way they define their fields.</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#logQuery()">logQuery</a>(string sql, array data)</p><p class="description">Log query</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#migrate()">migrate</a>()</p><p class="description">Migrate table structure changes from model to database</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#primaryKey()">primaryKey</a>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</p><p class="description">Get value of primary key for given row result</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#primaryKeyField()">primaryKeyField</a>()</p><p class="description">Get value of primary key for given row result</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#query()">query</a>(string sql, array binds)</p><p class="description">Find records with custom SQL query</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#queryClass()">queryClass</a>()</p><p class="description">Get query class name to use</p></td>
+</tr>
+<tr>
+<td class="type"> int</td>
+<td class="description"><p class="name"><a href="#queryCount()">queryCount</a>()</p><p class="description">Get count of all queries that have been executed</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#relations()">relations</a>()</p><p class="description">Get defined relations</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#save()">save</a>(mixed entity)</p><p class="description">Save record
+Will update if primary key found, insert if not
+Performs validation automatically before saving record</p></td>
+</tr>
+<tr>
+<td class="type">protected  void</td>
+<td class="description"><p class="name"><a href="#saveRelatedRowsFor()">saveRelatedRowsFor</a>(mixed entity, mixed fillData)</p><p class="description">Save related rows of data</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#select()">select</a>(mixed fields)</p><p class="description">Begin a new database query - get query builder
+Acts as a kind of factory to get the current adapter's query builder object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#truncateDatasource()">truncateDatasource</a>()</p><p class="description">Truncate data source
+Should delete all rows and reset serial/auto_increment keys to 0</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#update()">update</a>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</p><p class="description">Update given row object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#validate()">validate</a>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</p><p class="description">Run set validation rules on fields</p></td>
+</tr>
+</table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/phpdatamapper/base.php.html#line56" class="location">libraries\phpDataMapper\Base.php at line 56</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public  void <strong>__construct</strong>(<a href="../phpdatamapper/phpdatamapper_adapter_interface.html">phpDataMapper_Adapter_Interface</a> adapter, mixed adapterRead)</code>
+<div class="details">
+<p>Constructor Method</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line98" class="location">libraries\phpDataMapper\Base.php at line 98</a>
+
+<h3 id="adapter()">adapter</h3>
+<code class="signature">public  void <strong>adapter</strong>()</code>
+<div class="details">
+<p>Get current adapter object</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line105" class="location">libraries\phpDataMapper\Base.php at line 105</a>
+
+<h3 id="adapterRead()">adapterRead</h3>
+<code class="signature">public  void <strong>adapterRead</strong>()</code>
+<div class="details">
+<p>Get adapter object that will serve as the 'slave' for reads</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line382" class="location">libraries\phpDataMapper\Base.php at line 382</a>
+
+<h3 id="all()">all</h3>
+<code class="signature">public  void <strong>all</strong>(array conditions)</code>
+<div class="details">
+<p>Find records with given conditions
+If all parameters are empty, find all records</p><dl>
+<dt>Parameters:</dt>
+<dd>conditions - Array of conditions in column => value pairs</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line136" class="location">libraries\phpDataMapper\Base.php at line 136</a>
+
+<h3 id="collectionClass()">collectionClass</h3>
+<code class="signature">public  string <strong>collectionClass</strong>()</code>
+<div class="details">
+<p>Get collection class name to use</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line143" class="location">libraries\phpDataMapper\Base.php at line 143</a>
+
+<h3 id="datasource()">datasource</h3>
+<code class="signature">public  void <strong>datasource</strong>()</code>
+<div class="details">
+<p>Get name of the data source</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line751" class="location">libraries\phpDataMapper\Base.php at line 751</a>
+
+<h3 id="debug()">debug</h3>
+<code class="signature">public  void <strong>debug</strong>(mixed entity)</code>
+<div class="details">
+<p>Prints all executed SQL queries - useful for debugging</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line596" class="location">libraries\phpDataMapper\Base.php at line 596</a>
+
+<h3 id="delete()">delete</h3>
+<code class="signature">public  void <strong>delete</strong>(mixed conditions)</code>
+<div class="details">
+<p>Delete items matching given conditions</p><dl>
+<dt>Parameters:</dt>
+<dd>conditions - Array of conditions in column => value pairs or Entity object</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line626" class="location">libraries\phpDataMapper\Base.php at line 626</a>
+
+<h3 id="dropDatasource()">dropDatasource</h3>
+<code class="signature">public  void <strong>dropDatasource</strong>()</code>
+<div class="details">
+<p>Drop/delete data source
+Destructive and dangerous - drops entire data source and all data</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line118" class="location">libraries\phpDataMapper\Base.php at line 118</a>
+
+<h3 id="entityClass()">entityClass</h3>
+<code class="signature">public  string <strong>entityClass</strong>()</code>
+<div class="details">
+<p>Get entity class name to use</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line709" class="location">libraries\phpDataMapper\Base.php at line 709</a>
+
+<h3 id="error()">error</h3>
+<code class="signature">public  void <strong>error</strong>(string field, mixed msg)</code>
+<div class="details">
+<p>Add an error to error messages array</p><dl>
+<dt>Parameters:</dt>
+<dd>field - Field name that error message relates to</dd>
+<dd>msg - Error message text - String or array of messages</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line689" class="location">libraries\phpDataMapper\Base.php at line 689</a>
+
+<h3 id="errors()">errors</h3>
+<code class="signature">public  array <strong>errors</strong>(mixed msgs)</code>
+<div class="details">
+<p>Get array of error messages</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line254" class="location">libraries\phpDataMapper\Base.php at line 254</a>
+
+<h3 id="fieldExists()">fieldExists</h3>
+<code class="signature">public  void <strong>fieldExists</strong>(mixed field)</code>
+<div class="details">
+<p>Check if field exists in defined fields</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line153" class="location">libraries\phpDataMapper\Base.php at line 153</a>
+
+<h3 id="fields()">fields</h3>
+<code class="signature">public  array <strong>fields</strong>()</code>
+<div class="details">
+<p>Get formatted fields with all neccesary array keys and values.
+Merges defaults with defined field values to ensure all options exist for each field.</p><dl>
+<dt>Returns:</dt>
+<dd>Defined fields plus all defaults for full array of all possible options</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line391" class="location">libraries\phpDataMapper\Base.php at line 391</a>
+
+<h3 id="first()">first</h3>
+<code class="signature">public  void <strong>first</strong>(array conditions)</code>
+<div class="details">
+<p>Find first record matching given conditions</p><dl>
+<dt>Parameters:</dt>
+<dd>conditions - Array of conditions in column => value pairs</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line261" class="location">libraries\phpDataMapper\Base.php at line 261</a>
+
+<h3 id="get()">get</h3>
+<code class="signature">public  void <strong>get</strong>(int primaryKeyValue)</code>
+<div class="details">
+<p>Load record from primary key</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line312" class="location">libraries\phpDataMapper\Base.php at line 312</a>
+
+<h3 id="getEntityRelationWithValues()">getEntityRelationWithValues</h3>
+<code class="signature">public  void <strong>getEntityRelationWithValues</strong>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</code>
+<div class="details">
+<p>Replace entity value placeholders on relation definitions
+Currently replaces 'entity.[col]' with the column value from the passed entity object</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line276" class="location">libraries\phpDataMapper\Base.php at line 276</a>
+
+<h3 id="getRelationsFor()">getRelationsFor</h3>
+<code class="signature">public  void <strong>getRelationsFor</strong>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</code>
+<div class="details">
+<p>Load defined relations</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line334" class="location">libraries\phpDataMapper\Base.php at line 334</a>
+
+<h3 id="getResultSet()">getResultSet</h3>
+<code class="signature">public  void <strong>getResultSet</strong>(mixed stmt)</code>
+<div class="details">
+<p>Get result set for given PDO Statement</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line677" class="location">libraries\phpDataMapper\Base.php at line 677</a>
+
+<h3 id="hasErrors()">hasErrors</h3>
+<code class="signature">public  boolean <strong>hasErrors</strong>(string field)</code>
+<div class="details">
+<p>Check if any errors exist</p><dl>
+<dt>Parameters:</dt>
+<dd>field - OPTIONAL field name</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line91" class="location">libraries\phpDataMapper\Base.php at line 91</a>
+
+<h3 id="init()">init</h3>
+<code class="signature">public  void <strong>init</strong>()</code>
+<div class="details">
+<p>Initialization function, run immediately after __construct() so that the constructor is never overridden</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line516" class="location">libraries\phpDataMapper\Base.php at line 516</a>
+
+<h3 id="insert()">insert</h3>
+<code class="signature">public  void <strong>insert</strong>(mixed entity)</code>
+<div class="details">
+<p>Insert record</p><dl>
+<dt>Parameters:</dt>
+<dd>entity - Entity object or array of field => value pairs</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line667" class="location">libraries\phpDataMapper\Base.php at line 667</a>
+
+<h3 id="isEmpty()">isEmpty</h3>
+<code class="signature">public  boolean <strong>isEmpty</strong>(mixed value)</code>
+<div class="details">
+<p>Check if a value is empty, excluding 0 (annoying PHP issue)</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line724" class="location">libraries\phpDataMapper\Base.php at line 724</a>
+
+<h3 id="loadClass()">loadClass</h3>
+<code class="signature">public static  void <strong>loadClass</strong>(mixed className)</code>
+<div class="details">
+<p>Attempt to load class file based on phpDataMapper naming conventions</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line167" class="location">libraries\phpDataMapper\Base.php at line 167</a>
+
+<h3 id="loadFields()">loadFields</h3>
+<code class="signature">protected  void <strong>loadFields</strong>(mixed fields)</code>
+<div class="details">
+<p>Internally set fields so that classes that extend from the base have more flexibility
+in the way they define their fields.</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line773" class="location">libraries\phpDataMapper\Base.php at line 773</a>
+
+<h3 id="logQuery()">logQuery</h3>
+<code class="signature">public static  void <strong>logQuery</strong>(string sql, array data)</code>
+<div class="details">
+<p>Log query</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line657" class="location">libraries\phpDataMapper\Base.php at line 657</a>
+
+<h3 id="migrate()">migrate</h3>
+<code class="signature">public  void <strong>migrate</strong>()</code>
+<div class="details">
+<p>Migrate table structure changes from model to database</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line239" class="location">libraries\phpDataMapper\Base.php at line 239</a>
+
+<h3 id="primaryKey()">primaryKey</h3>
+<code class="signature">public  void <strong>primaryKey</strong>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</code>
+<div class="details">
+<p>Get value of primary key for given row result</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line247" class="location">libraries\phpDataMapper\Base.php at line 247</a>
+
+<h3 id="primaryKeyField()">primaryKeyField</h3>
+<code class="signature">public  void <strong>primaryKeyField</strong>()</code>
+<div class="details">
+<p>Get value of primary key for given row result</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line408" class="location">libraries\phpDataMapper\Base.php at line 408</a>
+
+<h3 id="query()">query</h3>
+<code class="signature">public  void <strong>query</strong>(string sql, array binds)</code>
+<div class="details">
+<p>Find records with custom SQL query</p><dl>
+<dt>Parameters:</dt>
+<dd>sql - SQL query to execute</dd>
+<dd>binds - Array of bound parameters to use as values for query</dd>
+<dt>Throws:</dt>
+<dd><a href="../phpdatamapper/phpdatamapper_exception.html">phpDataMapper_Exception</a></dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line127" class="location">libraries\phpDataMapper\Base.php at line 127</a>
+
+<h3 id="queryClass()">queryClass</h3>
+<code class="signature">public  string <strong>queryClass</strong>()</code>
+<div class="details">
+<p>Get query class name to use</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line763" class="location">libraries\phpDataMapper\Base.php at line 763</a>
+
+<h3 id="queryCount()">queryCount</h3>
+<code class="signature">public  int <strong>queryCount</strong>()</code>
+<div class="details">
+<p>Get count of all queries that have been executed</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line229" class="location">libraries\phpDataMapper\Base.php at line 229</a>
+
+<h3 id="relations()">relations</h3>
+<code class="signature">public  void <strong>relations</strong>()</code>
+<div class="details">
+<p>Get defined relations</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line485" class="location">libraries\phpDataMapper\Base.php at line 485</a>
+
+<h3 id="save()">save</h3>
+<code class="signature">public  void <strong>save</strong>(mixed entity)</code>
+<div class="details">
+<p>Save record
+Will update if primary key found, insert if not
+Performs validation automatically before saving record</p><dl>
+<dt>Parameters:</dt>
+<dd>entity - Entity object or array of field => value pairs</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line443" class="location">libraries\phpDataMapper\Base.php at line 443</a>
+
+<h3 id="saveRelatedRowsFor()">saveRelatedRowsFor</h3>
+<code class="signature">protected  void <strong>saveRelatedRowsFor</strong>(mixed entity, mixed fillData)</code>
+<div class="details">
+<p>Save related rows of data</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line434" class="location">libraries\phpDataMapper\Base.php at line 434</a>
+
+<h3 id="select()">select</h3>
+<code class="signature">public  void <strong>select</strong>(mixed fields)</code>
+<div class="details">
+<p>Begin a new database query - get query builder
+Acts as a kind of factory to get the current adapter's query builder object</p><dl>
+<dt>Parameters:</dt>
+<dd>fields - String for single field or array of fields</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line618" class="location">libraries\phpDataMapper\Base.php at line 618</a>
+
+<h3 id="truncateDatasource()">truncateDatasource</h3>
+<code class="signature">public  void <strong>truncateDatasource</strong>()</code>
+<div class="details">
+<p>Truncate data source
+Should delete all rows and reset serial/auto_increment keys to 0</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line564" class="location">libraries\phpDataMapper\Base.php at line 564</a>
+
+<h3 id="update()">update</h3>
+<code class="signature">public  void <strong>update</strong>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</code>
+<div class="details">
+<p>Update given row object</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/base.php.html#line635" class="location">libraries\phpDataMapper\Base.php at line 635</a>
+
+<h3 id="validate()">validate</h3>
+<code class="signature">public  void <strong>validate</strong>(<a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> entity)</code>
+<div class="details">
+<p>Run set validation rules on fields</p><dl>
+<dt>Todo:</dt>
+<dd>A LOT more to do here... More validation, break up into classes with rules, etc.</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_base.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

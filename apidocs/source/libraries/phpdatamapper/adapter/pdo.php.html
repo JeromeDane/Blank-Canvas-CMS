@@ -1,0 +1,712 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:56 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\phpDataMapper\Adapter\PDO.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\phpdatamapper\adapter\pdo.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\phpDataMapper\Adapter\PDO.php</h1>
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>require_once(dirname(__FILE__) . '/Interface.php');
+<a name="line3"></a>/**
+<a name="line4"></a> * Base PDO adapter
+<a name="line5"></a> *
+<a name="line6"></a> * @package phpDataMapper
+<a name="line7"></a> * @link http://phpdatamapper.com
+<a name="line8"></a> * @link http://github.com/vlucas/phpDataMapper
+<a name="line9"></a> */
+<a name="line10"></a>abstract class phpDataMapper_Adapter_PDO implements phpDataMapper_Adapter_Interface
+<a name="line11"></a>{
+<a name="line12"></a>	// Format for date columns, formatted for PHP's date() function
+<a name="line13"></a>	protected $format_date;
+<a name="line14"></a>	protected $format_time;
+<a name="line15"></a>	protected $format_datetime;
+<a name="line16"></a>	
+<a name="line17"></a>	
+<a name="line18"></a>	// Connection details
+<a name="line19"></a>	protected $connection;
+<a name="line20"></a>	protected $host;
+<a name="line21"></a>	protected $database;
+<a name="line22"></a>	protected $username;
+<a name="line23"></a>	protected $password;
+<a name="line24"></a>	protected $options;
+<a name="line25"></a>	
+<a name="line26"></a>	
+<a name="line27"></a>    /**
+<a name="line28"></a>    * @param mixed $host Host string or pre-existing PDO object
+<a name="line29"></a>	* @param string $database Optional if $host is PDO object
+<a name="line30"></a>    * @param string $username Optional if $host is PDO object
+<a name="line31"></a>    * @param string $password Optional if $host is PDO object
+<a name="line32"></a>    * @param array $options
+<a name="line33"></a>    * @return void
+<a name="line34"></a>    */
+<a name="line35"></a>    public function __construct($host, $database = null, $username = null, $password = null, array $options = array())
+<a name="line36"></a>    {
+<a name="line37"></a>    	if($host instanceof PDO) {
+<a name="line38"></a>    		$this->connection = $host;
+<a name="line39"></a>    	} else {
+<a name="line40"></a>			$this->host = $host;
+<a name="line41"></a>			$this->database = $database;
+<a name="line42"></a>			$this->username = $username;
+<a name="line43"></a>			$this->password = $password;
+<a name="line44"></a>			$this->options = $options;
+<a name="line45"></a>			
+<a name="line46"></a>			// Establish connection
+<a name="line47"></a>			try {
+<a name="line48"></a>				$this->connection = new PDO($this->dsn(), $this->username, $this->password, $this->options);
+<a name="line49"></a>				// Throw exceptions by default
+<a name="line50"></a>				$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+<a name="line51"></a>			/*
+<a name="line52"></a>			} catch(PDOException $e) {
+<a name="line53"></a>				if($e->getCode() == 1049) {
+<a name="line54"></a>					// Database not found, try connection with no db specified
+<a name="line55"></a>					$this->connection = new PDO($this->getDsn(), $this->username, $this->password, $this->options);
+<a name="line56"></a>				} else {
+<a name="line57"></a>					throw new phpDataMapper_Exception($e->getMessage());
+<a name="line58"></a>				}
+<a name="line59"></a>			*/
+<a name="line60"></a>			} catch(Exception $e) {
+<a name="line61"></a>				throw new phpDataMapper_Exception($e->getMessage());
+<a name="line62"></a>			}
+<a name="line63"></a>    	}
+<a name="line64"></a>    }
+<a name="line65"></a>	
+<a name="line66"></a>	
+<a name="line67"></a>	/**
+<a name="line68"></a>	 * Get database connection
+<a name="line69"></a>	 *
+<a name="line70"></a>	 * @return object PDO
+<a name="line71"></a>	 */
+<a name="line72"></a>	public function connection()
+<a name="line73"></a>	{
+<a name="line74"></a>		return $this->connection;
+<a name="line75"></a>	}
+<a name="line76"></a>	
+<a name="line77"></a>	
+<a name="line78"></a>	/**
+<a name="line79"></a>	 * Get DSN string for PDO to connect with
+<a name="line80"></a>	 *
+<a name="line81"></a>	 * @return string
+<a name="line82"></a>	 */
+<a name="line83"></a>	public function dsn()
+<a name="line84"></a>	{
+<a name="line85"></a>		throw new BadMethodCallException("Error: Method " . __FUNCTION__ . " must be defined in the adapter");
+<a name="line86"></a>	}
+<a name="line87"></a>	
+<a name="line88"></a>	
+<a name="line89"></a>	/**
+<a name="line90"></a>	 * Get database format
+<a name="line91"></a>	 *
+<a name="line92"></a>	 * @return string Date format for PHP's date() function
+<a name="line93"></a>	 */
+<a name="line94"></a>	public function dateFormat()
+<a name="line95"></a>	{
+<a name="line96"></a>		return $this->format_date;
+<a name="line97"></a>	}
+<a name="line98"></a>	
+<a name="line99"></a>	
+<a name="line100"></a>	/**
+<a name="line101"></a>	 * Get database time format
+<a name="line102"></a>	 *
+<a name="line103"></a>	 * @return string Time format for PHP's date() function
+<a name="line104"></a>	 */
+<a name="line105"></a>	public function timeFormat()
+<a name="line106"></a>	{
+<a name="line107"></a>		return $this->format_time;
+<a name="line108"></a>	}
+<a name="line109"></a>	
+<a name="line110"></a>	
+<a name="line111"></a>	/**
+<a name="line112"></a>	 * Get database format
+<a name="line113"></a>	 *
+<a name="line114"></a>	 * @return string DateTime format for PHP's date() function
+<a name="line115"></a>	 */
+<a name="line116"></a>	public function dateTimeFormat()
+<a name="line117"></a>	{
+<a name="line118"></a>		return $this->format_datetime;
+<a name="line119"></a>	}
+<a name="line120"></a>	
+<a name="line121"></a>	
+<a name="line122"></a>	/**
+<a name="line123"></a>	 * Escape/quote direct user input
+<a name="line124"></a>	 *
+<a name="line125"></a>	 * @param string $string
+<a name="line126"></a>	 */
+<a name="line127"></a>	public function escape($string)
+<a name="line128"></a>	{
+<a name="line129"></a>		return $this->connection()->quote($string);
+<a name="line130"></a>	}
+<a name="line131"></a>	
+<a name="line132"></a>	
+<a name="line133"></a>	/**
+<a name="line134"></a>	 * Migrate table structure changes to database
+<a name="line135"></a>	 * @param String $table Table name
+<a name="line136"></a>	 * @param Array $fields Fields and their attributes as defined in the mapper
+<a name="line137"></a>	 */
+<a name="line138"></a>	public function migrate($table, array $fields)
+<a name="line139"></a>	{
+<a name="line140"></a>		// Get current fields for table
+<a name="line141"></a>		$tableExists = false;
+<a name="line142"></a>		$tableColumns = $this->getColumnsForTable($table, $this->database);
+<a name="line143"></a>		
+<a name="line144"></a>		if($tableColumns) {
+<a name="line145"></a>			$tableExists = true;
+<a name="line146"></a>		}
+<a name="line147"></a>		if($tableExists) {
+<a name="line148"></a>			// Update table
+<a name="line149"></a>			$this->migrateTableUpdate($table, $fields);
+<a name="line150"></a>		} else {
+<a name="line151"></a>			// Create table
+<a name="line152"></a>			$this->migrateTableCreate($table, $fields);
+<a name="line153"></a>		}
+<a name="line154"></a>	}
+<a name="line155"></a>	
+<a name="line156"></a>	
+<a name="line157"></a>	/**
+<a name="line158"></a>	 * Execute a CREATE TABLE command
+<a name="line159"></a>	 */
+<a name="line160"></a>	public function migrateTableCreate($table, array $formattedFields)
+<a name="line161"></a>	{
+<a name="line162"></a>		/*
+<a name="line163"></a>			STEPS:
+<a name="line164"></a>			* Use fields to get column syntax
+<a name="line165"></a>			* Use column syntax array to get table syntax
+<a name="line166"></a>			* Run SQL
+<a name="line167"></a>		*/
+<a name="line168"></a>		
+<a name="line169"></a>		// Prepare fields and get syntax for each
+<a name="line170"></a>		$columnsSyntax = array();
+<a name="line171"></a>		foreach($formattedFields as $fieldName => $fieldInfo) {
+<a name="line172"></a>			$columnsSyntax[$fieldName] = $this->migrateSyntaxFieldCreate($fieldName, $fieldInfo);
+<a name="line173"></a>		}
+<a name="line174"></a>		
+<a name="line175"></a>		// Get syntax for table with fields/columns
+<a name="line176"></a>		$sql = $this->migrateSyntaxTableCreate($table, $formattedFields, $columnsSyntax);
+<a name="line177"></a>		
+<a name="line178"></a>		// Add query to log
+<a name="line179"></a>		phpDataMapper_Base::logQuery($sql);
+<a name="line180"></a>		
+<a name="line181"></a>		$this->connection()->exec($sql);
+<a name="line182"></a>		return true;
+<a name="line183"></a>	}
+<a name="line184"></a>	
+<a name="line185"></a>	
+<a name="line186"></a>	/**
+<a name="line187"></a>	 * Execute an ALTER/UPDATE TABLE command
+<a name="line188"></a>	 */
+<a name="line189"></a>	public function migrateTableUpdate($table, array $formattedFields)
+<a name="line190"></a>	{
+<a name="line191"></a>		/*
+<a name="line192"></a>			STEPS:
+<a name="line193"></a>			* Use fields to get column syntax
+<a name="line194"></a>			* Use column syntax array to get table syntax
+<a name="line195"></a>			* Run SQL
+<a name="line196"></a>		*/
+<a name="line197"></a>		
+<a name="line198"></a>		// Prepare fields and get syntax for each
+<a name="line199"></a>		$tableColumns = $this->getColumnsForTable($table, $this->database);
+<a name="line200"></a>		$updateFormattedFields = array();
+<a name="line201"></a>		foreach($tableColumns as $fieldName => $columnInfo) {
+<a name="line202"></a>			if(isset($formattedFields[$fieldName])) {
+<a name="line203"></a>				// TODO: Need to do a more exact comparison and make this non-mysql specific
+<a name="line204"></a>				if (
+<a name="line205"></a>						$this->_fieldTypeMap[$formattedFields[$fieldName]['type']] != $columnInfo['DATA_TYPE'] ||
+<a name="line206"></a>						$formattedFields[$fieldName]['default'] !== $columnInfo['COLUMN_DEFAULT']
+<a name="line207"></a>					) {
+<a name="line208"></a>					$updateFormattedFields[$fieldName] = $formattedFields[$fieldName];
+<a name="line209"></a>				}
+<a name="line210"></a>				
+<a name="line211"></a>				unset($formattedFields[$fieldName]);
+<a name="line212"></a>			}
+<a name="line213"></a>		}
+<a name="line214"></a>		
+<a name="line215"></a>		$columnsSyntax = array();
+<a name="line216"></a>		// Update fields whose options have changed
+<a name="line217"></a>		foreach($updateFormattedFields as $fieldName => $fieldInfo) {
+<a name="line218"></a>			$columnsSyntax[$fieldName] = $this->migrateSyntaxFieldUpdate($fieldName, $fieldInfo, false);
+<a name="line219"></a>		}
+<a name="line220"></a>		// Add fields that are missing from current ones
+<a name="line221"></a>		foreach($formattedFields as $fieldName => $fieldInfo) {
+<a name="line222"></a>			$columnsSyntax[$fieldName] = $this->migrateSyntaxFieldUpdate($fieldName, $fieldInfo, true);
+<a name="line223"></a>		}
+<a name="line224"></a>		
+<a name="line225"></a>		// Get syntax for table with fields/columns
+<a name="line226"></a>		if ( !empty($columnsSyntax) ) {
+<a name="line227"></a>			$sql = $this->migrateSyntaxTableUpdate($table, $formattedFields, $columnsSyntax);
+<a name="line228"></a>			
+<a name="line229"></a>			// Add query to log
+<a name="line230"></a>			phpDataMapper_Base::logQuery($sql);
+<a name="line231"></a>			
+<a name="line232"></a>			// Run SQL
+<a name="line233"></a>			$this->connection()->exec($sql);
+<a name="line234"></a>		}
+<a name="line235"></a>		return true;
+<a name="line236"></a>	}
+<a name="line237"></a>	
+<a name="line238"></a>	
+<a name="line239"></a>	/**
+<a name="line240"></a>	 * Prepare an SQL statement
+<a name="line241"></a>	 */
+<a name="line242"></a>	public function prepare($sql)
+<a name="line243"></a>	{
+<a name="line244"></a>		return $this->connection()->prepare($sql);
+<a name="line245"></a>	}
+<a name="line246"></a>	
+<a name="line247"></a>	/**
+<a name="line248"></a>	 * Create new row object with set properties
+<a name="line249"></a>	 */
+<a name="line250"></a>	public function create($source, array $data)
+<a name="line251"></a>	{
+<a name="line252"></a>		$binds = $this->statementBinds($data);
+<a name="line253"></a>		// build the statement
+<a name="line254"></a>		$sql = "INSERT INTO " . $source .
+<a name="line255"></a>			" (" . implode(', ', array_keys($data)) . ")" .
+<a name="line256"></a>			" VALUES(:" . implode(', :', array_keys($binds)) . ")";
+<a name="line257"></a>		
+<a name="line258"></a>		// Add query to log
+<a name="line259"></a>		phpDataMapper_Base::logQuery($sql, $binds);
+<a name="line260"></a>		
+<a name="line261"></a>		// Prepare update query
+<a name="line262"></a>		$stmt = $this->connection()->prepare($sql);
+<a name="line263"></a>		
+<a name="line264"></a>		if($stmt) {
+<a name="line265"></a>			// Execute
+<a name="line266"></a>			if($stmt->execute($binds)) {
+<a name="line267"></a>				$result = $this->connection()->lastInsertId();
+<a name="line268"></a>			} else {
+<a name="line269"></a>				$result = false;
+<a name="line270"></a>			}
+<a name="line271"></a>		} else {
+<a name="line272"></a>			$result = false;
+<a name="line273"></a>		}
+<a name="line274"></a>		
+<a name="line275"></a>		return $result;
+<a name="line276"></a>	}
+<a name="line277"></a>	
+<a name="line278"></a>	
+<a name="line279"></a>	/**
+<a name="line280"></a>	 * Build a select statement in SQL
+<a name="line281"></a>	 * Can be overridden by adapters for custom syntax
+<a name="line282"></a>	 *
+<a name="line283"></a>	 * @todo Add support for JOINs
+<a name="line284"></a>	 */
+<a name="line285"></a>	public function read(phpDataMapper_Query $query)
+<a name="line286"></a>	{
+<a name="line287"></a>		$conditions = $this->statementConditions($query->conditions);
+<a name="line288"></a>		$binds = $this->statementBinds($query->params());
+<a name="line289"></a>		$order = array();
+<a name="line290"></a>		if($query->order) {
+<a name="line291"></a>			foreach($query->order as $oField => $oSort) {
+<a name="line292"></a>				$order[] = $oField . " " . $oSort;
+<a name="line293"></a>			}
+<a name="line294"></a>		}
+<a name="line295"></a>		
+<a name="line296"></a>		$sql = "
+<a name="line297"></a>			SELECT " . $this->statementFields($query->fields) . "
+<a name="line298"></a>			FROM " . $query->source . "
+<a name="line299"></a>			" . ($conditions ? 'WHERE ' . $conditions : '') . "
+<a name="line300"></a>			" . ($query->group ? 'GROUP BY ' . implode(', ', $query->group) : '') . "
+<a name="line301"></a>			" . ($order ? 'ORDER BY ' . implode(', ', $order) : '') . "
+<a name="line302"></a>			" . ($query->limit ? 'LIMIT ' . $query->limit : '') . " " . ($query->limit && $query->limitOffset ? 'OFFSET ' . $query->limitOffset: '') . "
+<a name="line303"></a>			";
+<a name="line304"></a>		
+<a name="line305"></a>		// Unset any NULL values in binds (compared as "IS NULL" and "IS NOT NULL" in SQL instead)
+<a name="line306"></a>		if($binds && count($binds) > 0) {
+<a name="line307"></a>			foreach($binds as $field => $value) {
+<a name="line308"></a>				if(null === $value) {
+<a name="line309"></a>					unset($binds[$field]);
+<a name="line310"></a>				}
+<a name="line311"></a>			}
+<a name="line312"></a>		}
+<a name="line313"></a>		
+<a name="line314"></a>		// Add query to log
+<a name="line315"></a>		phpDataMapper_Base::logQuery($sql, $binds);
+<a name="line316"></a>		
+<a name="line317"></a>		// Prepare update query
+<a name="line318"></a>		$stmt = $this->connection()->prepare($sql);
+<a name="line319"></a>		
+<a name="line320"></a>		if($stmt) {
+<a name="line321"></a>			// Execute
+<a name="line322"></a>			if($stmt->execute($binds)) {
+<a name="line323"></a>				$result = $this->toCollection($query, $stmt);
+<a name="line324"></a>			} else {
+<a name="line325"></a>				$result = false;
+<a name="line326"></a>			}
+<a name="line327"></a>		} else {
+<a name="line328"></a>			$result = false;
+<a name="line329"></a>		}
+<a name="line330"></a>		
+<a name="line331"></a>		return $result;
+<a name="line332"></a>	}
+<a name="line333"></a>	
+<a name="line334"></a>	/**
+<a name="line335"></a>	 * Update entity
+<a name="line336"></a>	 */
+<a name="line337"></a>	public function update($source, array $data, array $where = array())
+<a name="line338"></a>	{
+<a name="line339"></a>		// Get "col = :col" pairs for the update query
+<a name="line340"></a>		$placeholders = array();
+<a name="line341"></a>		$binds = array();
+<a name="line342"></a>		foreach($data as $field => $value) {
+<a name="line343"></a>			$placeholders[] = $field . " = :" . $field . "";
+<a name="line344"></a>			$binds[$field] = $value;
+<a name="line345"></a>		}
+<a name="line346"></a>		
+<a name="line347"></a>		// Where clauses
+<a name="line348"></a>		$sqlWheres = array();
+<a name="line349"></a>		if(count($where) > 0) {
+<a name="line350"></a>			foreach($where as $wField => $wValue) {
+<a name="line351"></a>				$sqlWheres[] = $wField . " = :w_" . $wField;
+<a name="line352"></a>				$binds['w_' . $wField] = $wValue;
+<a name="line353"></a>			}
+<a name="line354"></a>		}
+<a name="line355"></a>		
+<a name="line356"></a>		// Ensure there are actually updated values on THIS table
+<a name="line357"></a>		if(count($binds) > 0) {
+<a name="line358"></a>			// Build the query
+<a name="line359"></a>			$sql = "UPDATE " . $source .
+<a name="line360"></a>				" SET " . implode(', ', $placeholders) .
+<a name="line361"></a>				" WHERE " . implode(' AND ', $sqlWheres);
+<a name="line362"></a>			
+<a name="line363"></a>			// Add query to log
+<a name="line364"></a>			phpDataMapper_Base::logQuery($sql, $binds);
+<a name="line365"></a>			
+<a name="line366"></a>			// Prepare update query
+<a name="line367"></a>			$stmt = $this->connection()->prepare($sql);
+<a name="line368"></a>			
+<a name="line369"></a>			if($stmt) {
+<a name="line370"></a>				// Execute
+<a name="line371"></a>				if($stmt->execute($binds)) {
+<a name="line372"></a>					$result = true;
+<a name="line373"></a>				} else {
+<a name="line374"></a>					$result = false;
+<a name="line375"></a>				}
+<a name="line376"></a>			} else {
+<a name="line377"></a>				$result = false;
+<a name="line378"></a>			}
+<a name="line379"></a>		} else {
+<a name="line380"></a>			$result = false;
+<a name="line381"></a>		}
+<a name="line382"></a>		
+<a name="line383"></a>		return $result;
+<a name="line384"></a>	}
+<a name="line385"></a>	
+<a name="line386"></a>	
+<a name="line387"></a>	/**
+<a name="line388"></a>	 * Delete entities matching given conditions
+<a name="line389"></a>	 *
+<a name="line390"></a>	 * @param string $source Name of data source
+<a name="line391"></a>	 * @param array $conditions Array of conditions in column => value pairs
+<a name="line392"></a>	 */
+<a name="line393"></a>	public function delete($source, array $data)
+<a name="line394"></a>	{
+<a name="line395"></a>		$binds = $this->statementBinds($data);
+<a name="line396"></a>		$conditions = $this->statementConditions($data);
+<a name="line397"></a>		
+<a name="line398"></a>		$sql = "DELETE FROM " . $source . "";
+<a name="line399"></a>		$sql .= ($conditions ? ' WHERE ' . $conditions : '');
+<a name="line400"></a>		
+<a name="line401"></a>		// Add query to log
+<a name="line402"></a>		phpDataMapper_Base::logQuery($sql, $binds);
+<a name="line403"></a>		
+<a name="line404"></a>		$stmt = $this->connection()->prepare($sql);
+<a name="line405"></a>		if($stmt) {
+<a name="line406"></a>			// Execute
+<a name="line407"></a>			if($stmt->execute($binds)) {
+<a name="line408"></a>				$result = true;
+<a name="line409"></a>			} else {
+<a name="line410"></a>				$result = false;
+<a name="line411"></a>			}
+<a name="line412"></a>		} else {
+<a name="line413"></a>			$result = false;
+<a name="line414"></a>		}
+<a name="line415"></a>		return $result;
+<a name="line416"></a>	}
+<a name="line417"></a>	
+<a name="line418"></a>	
+<a name="line419"></a>	/**
+<a name="line420"></a>	 * Truncate a database table
+<a name="line421"></a>	 * Should delete all rows and reset serial/auto_increment keys to 0
+<a name="line422"></a>	 */
+<a name="line423"></a>	public function truncateDatasource($source) {
+<a name="line424"></a>		$sql = "TRUNCATE TABLE " . $source;
+<a name="line425"></a>		
+<a name="line426"></a>		// Add query to log
+<a name="line427"></a>		phpDataMapper_Base::logQuery($sql);
+<a name="line428"></a>		
+<a name="line429"></a>		return $this->connection()->exec($sql);
+<a name="line430"></a>	}
+<a name="line431"></a>	
+<a name="line432"></a>	
+<a name="line433"></a>	/**
+<a name="line434"></a>	 * Drop a database table
+<a name="line435"></a>	 * Destructive and dangerous - drops entire table and all data
+<a name="line436"></a>	 */
+<a name="line437"></a>	public function dropDatasource($source) {
+<a name="line438"></a>		$sql = "DROP TABLE " . $source;
+<a name="line439"></a>		
+<a name="line440"></a>		// Add query to log
+<a name="line441"></a>		phpDataMapper_Base::logQuery($sql);
+<a name="line442"></a>		
+<a name="line443"></a>		return $this->connection()->exec($sql);
+<a name="line444"></a>	}
+<a name="line445"></a>	
+<a name="line446"></a>	
+<a name="line447"></a>	/**
+<a name="line448"></a>	 * Create a database
+<a name="line449"></a> 	 * Will throw errors if user does not have proper permissions
+<a name="line450"></a>	 */
+<a name="line451"></a>	public function createDatabase($database) {
+<a name="line452"></a>		$sql = "CREATE DATABASE " . $database;
+<a name="line453"></a>		
+<a name="line454"></a>		// Add query to log
+<a name="line455"></a>		phpDataMapper_Base::logQuery($sql);
+<a name="line456"></a>		
+<a name="line457"></a>		return $this->connection()->exec($sql);
+<a name="line458"></a>	}
+<a name="line459"></a>	
+<a name="line460"></a>	
+<a name="line461"></a>	/**
+<a name="line462"></a>	 * Drop a database table
+<a name="line463"></a>	 * Destructive and dangerous - drops entire table and all data
+<a name="line464"></a>	 * Will throw errors if user does not have proper permissions
+<a name="line465"></a>	 */
+<a name="line466"></a>	public function dropDatabase($database) {
+<a name="line467"></a>		$sql = "DROP DATABASE " . $database;
+<a name="line468"></a>		
+<a name="line469"></a>		// Add query to log
+<a name="line470"></a>		phpDataMapper_Base::logQuery($sql);
+<a name="line471"></a>		
+<a name="line472"></a>		return $this->connection()->exec($sql);
+<a name="line473"></a>	}
+<a name="line474"></a>	
+<a name="line475"></a>	
+<a name="line476"></a>	/**
+<a name="line477"></a>	 * Return fields as a string for a query statement
+<a name="line478"></a>	 */
+<a name="line479"></a>	public function statementFields(array $fields = array())
+<a name="line480"></a>	{
+<a name="line481"></a>		return count($fields) > 0 ? implode(', ', $fields) : "*";
+<a name="line482"></a>	}
+<a name="line483"></a>	
+<a name="line484"></a>	
+<a name="line485"></a>	/**
+<a name="line486"></a>	 * Builds an SQL string given conditions
+<a name="line487"></a>	 */
+<a name="line488"></a>	public function statementConditions(array $conditions = array())
+<a name="line489"></a>	{
+<a name="line490"></a>		if(count($conditions) == 0) { return; }
+<a name="line491"></a>		
+<a name="line492"></a>		$sqlStatement = "";
+<a name="line493"></a>		$defaultColOperators = array(0 => '', 1 => '=');
+<a name="line494"></a>		$ci = 0;
+<a name="line495"></a>		$loopOnce = false;
+<a name="line496"></a>		foreach($conditions as $condition) {
+<a name="line497"></a>			if(is_array($condition) && isset($condition['conditions'])) {
+<a name="line498"></a>				$subConditions = $condition['conditions'];
+<a name="line499"></a>			} else {
+<a name="line500"></a>				$subConditions = $conditions;
+<a name="line501"></a>				$loopOnce = true;
+<a name="line502"></a>			}
+<a name="line503"></a>			$sqlWhere = array();
+<a name="line504"></a>			foreach($subConditions as $column => $value) {
+<a name="line505"></a>				// Column name with comparison operator
+<a name="line506"></a>				$colData = explode(' ', $column);
+<a name="line507"></a>				if ( count( $colData ) > 2 ) {
+<a name="line508"></a>					$operator = array_pop( $colData );
+<a name="line509"></a>					$colData = array( join(' ', $colData), $operator );
+<a name="line510"></a>				}
+<a name="line511"></a>				$col = $colData[0];
+<a name="line512"></a>				
+<a name="line513"></a>				// Array of values, assume IN clause
+<a name="line514"></a>				if(is_array($value)) {
+<a name="line515"></a>					$sqlWhere[] = $col . " IN('" . implode("', '", $value) . "')";
+<a name="line516"></a>				
+<a name="line517"></a>				// NULL value
+<a name="line518"></a>				} elseif(is_null($value)) {
+<a name="line519"></a>					$sqlWhere[] = $col . " IS NULL";
+<a name="line520"></a>				
+<a name="line521"></a>				// Standard string value
+<a name="line522"></a>				} else {
+<a name="line523"></a>					$colComparison = isset($colData[1]) ? $colData[1] : '=';
+<a name="line524"></a>					$columnSql = $col . ' ' . $colComparison;
+<a name="line525"></a>					
+<a name="line526"></a>					// Add to binds array and add to WHERE clause
+<a name="line527"></a>					$colParam = preg_replace('/\W+/', '_', $col) . $ci;
+<a name="line528"></a>					$sqlWhere[] = $columnSql . " :" . $colParam . "";
+<a name="line529"></a>				}
+<a name="line530"></a>				
+<a name="line531"></a>				// Increment ensures column name distinction
+<a name="line532"></a>				$ci++;
+<a name="line533"></a>			}
+<a name="line534"></a>			if ( $sqlStatement != "" ) {
+<a name="line535"></a>				$sqlStatement .= " " . (isset($condition['setType']) ? $condition['setType'] : 'AND') . " ";
+<a name="line536"></a>			}
+<a name="line537"></a>			//var_dump($condition);
+<a name="line538"></a>			$sqlStatement .= join(" " . (isset($condition['type']) ? $condition['type'] : 'AND') . " ", $sqlWhere );
+<a name="line539"></a>			
+<a name="line540"></a>			if($loopOnce) { break; }
+<a name="line541"></a>		}
+<a name="line542"></a>		
+<a name="line543"></a>		return $sqlStatement;
+<a name="line544"></a>	}
+<a name="line545"></a>	
+<a name="line546"></a>	
+<a name="line547"></a>	/**
+<a name="line548"></a>	 * Returns array of binds to pass to query function
+<a name="line549"></a>	 */
+<a name="line550"></a>	public function statementBinds(array $conditions = array())
+<a name="line551"></a>	{
+<a name="line552"></a>		if(count($conditions) == 0) { return; }
+<a name="line553"></a>		
+<a name="line554"></a>		$binds = array();
+<a name="line555"></a>		$ci = 0;
+<a name="line556"></a>		$loopOnce = false;
+<a name="line557"></a>		foreach($conditions as $condition) {
+<a name="line558"></a>			if(is_array($condition) && isset($condition['conditions'])) {
+<a name="line559"></a>				$subConditions = $condition['conditions'];
+<a name="line560"></a>			} else {
+<a name="line561"></a>				$subConditions = $conditions;
+<a name="line562"></a>				$loopOnce = true;
+<a name="line563"></a>			}
+<a name="line564"></a>			foreach($subConditions as $column => $value) {
+<a name="line565"></a>				// Can't bind array of values
+<a name="line566"></a>				if(!is_array($value) && !is_object($value)) {
+<a name="line567"></a>					// Column name with comparison operator
+<a name="line568"></a>					$colData = explode(' ', $column);
+<a name="line569"></a>					if ( count( $colData ) > 2 ) {
+<a name="line570"></a>						$operator = array_pop( $colData );
+<a name="line571"></a>						$colData = array( join(' ', $colData), $operator );
+<a name="line572"></a>					}
+<a name="line573"></a>					$col = $colData[0];
+<a name="line574"></a>					$colParam = preg_replace('/\W+/', '_', $col) . $ci;
+<a name="line575"></a>					
+<a name="line576"></a>					// Add to binds array and add to WHERE clause
+<a name="line577"></a>					$binds[$colParam] = $value;
+<a name="line578"></a>				}
+<a name="line579"></a>				
+<a name="line580"></a>				// Increment ensures column name distinction
+<a name="line581"></a>				$ci++;
+<a name="line582"></a>			}
+<a name="line583"></a>			if($loopOnce) { break; }
+<a name="line584"></a>		}
+<a name="line585"></a>		return $binds;
+<a name="line586"></a>	}
+<a name="line587"></a>	
+<a name="line588"></a>	
+<a name="line589"></a>	/**
+<a name="line590"></a>	 * Return result set for current query
+<a name="line591"></a>	 */
+<a name="line592"></a>	public function toCollection(phpDataMapper_Query $query, $stmt)
+<a name="line593"></a>	{
+<a name="line594"></a>		$mapper = $query->mapper();
+<a name="line595"></a>		if($stmt instanceof PDOStatement) {
+<a name="line596"></a>			$results = array();
+<a name="line597"></a>			$resultsIdentities = array();
+<a name="line598"></a>			
+<a name="line599"></a>			// Set object to fetch results into
+<a name="line600"></a>			$stmt->setFetchMode(PDO::FETCH_CLASS, $mapper->entityClass());
+<a name="line601"></a>			
+<a name="line602"></a>			// Fetch all results into new DataMapper_Result class
+<a name="line603"></a>			while($row = $stmt->fetch(PDO::FETCH_CLASS)) {
+<a name="line604"></a>				
+<a name="line605"></a>				// Load relations for this row
+<a name="line606"></a>				$relations = $mapper->getRelationsFor($row);
+<a name="line607"></a>				if($relations && is_array($relations) && count($relations) > 0) {
+<a name="line608"></a>					foreach($relations as $relationCol => $relationObj) {
+<a name="line609"></a>						$row->$relationCol = $relationObj;
+<a name="line610"></a>					}
+<a name="line611"></a>				}
+<a name="line612"></a>				
+<a name="line613"></a>				// Store in array for ResultSet
+<a name="line614"></a>				$results[] = $row;
+<a name="line615"></a>				
+<a name="line616"></a>				// Store primary key of each unique record in set
+<a name="line617"></a>				$pk = $mapper->primaryKey($row);
+<a name="line618"></a>				if(!in_array($pk, $resultsIdentities) && !empty($pk)) {
+<a name="line619"></a>					$resultsIdentities[] = $pk;
+<a name="line620"></a>				}
+<a name="line621"></a>				
+<a name="line622"></a>				// Mark row as loaded
+<a name="line623"></a>				$row->loaded(true);
+<a name="line624"></a>			}
+<a name="line625"></a>			// Ensure set is closed
+<a name="line626"></a>			$stmt->closeCursor();
+<a name="line627"></a>			
+<a name="line628"></a>			$collectionClass = $mapper->collectionClass();
+<a name="line629"></a>			return new $collectionClass($results, $resultsIdentities);
+<a name="line630"></a>			
+<a name="line631"></a>		} else {
+<a name="line632"></a>			$mapper->addError(__METHOD__ . " - Unable to execute query " . implode(' | ', $this->adapterRead()->errorInfo()));
+<a name="line633"></a>			return array();
+<a name="line634"></a>		}
+<a name="line635"></a>	}
+<a name="line636"></a>	
+<a name="line637"></a>	
+<a name="line638"></a>	/**
+<a name="line639"></a>	 * Bind array of field/value data to given statement
+<a name="line640"></a>	 *
+<a name="line641"></a>	 * @param PDOStatement $stmt
+<a name="line642"></a>	 * @param array $binds
+<a name="line643"></a>	 */
+<a name="line644"></a>	protected function bindValues($stmt, array $binds)
+<a name="line645"></a>	{
+<a name="line646"></a>		// Bind each value to the given prepared statement
+<a name="line647"></a>		foreach($binds as $field => $value) {
+<a name="line648"></a>			$stmt->bindValue($field, $value);
+<a name="line649"></a>		}
+<a name="line650"></a>		return true;
+<a name="line651"></a>	}
+<a name="line652"></a>}</pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\phpdatamapper\adapter\pdo.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

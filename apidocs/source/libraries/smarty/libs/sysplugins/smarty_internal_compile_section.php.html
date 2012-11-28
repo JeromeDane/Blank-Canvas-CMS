@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_compile_section.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_section.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_compile_section.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Compile Section</p><p>Compiles the {section} {sectionelse} {/section} tags</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty Internal Plugin Compile Section
+<a name="line4"></a> * 
+<a name="line5"></a> * Compiles the {section} {sectionelse} {/section} tags
+<a name="line6"></a> * 
+<a name="line7"></a> * @package Smarty
+<a name="line8"></a> * @subpackage Compiler
+<a name="line9"></a> * @author Uwe Tews 
+<a name="line10"></a> */
+<a name="line11"></a>
+<a name="line12"></a>/**
+<a name="line13"></a> * Smarty Internal Plugin Compile Section Class
+<a name="line14"></a> */
+<a name="line15"></a>class Smarty_Internal_Compile_Section extends Smarty_Internal_CompileBase {
+<a name="line16"></a>	// attribute definitions
+<a name="line17"></a>    public $required_attributes = array('name', 'loop');
+<a name="line18"></a>   	public $shorttag_order = array('name', 'loop');
+<a name="line19"></a>    public $optional_attributes = array('start', 'step', 'max', 'show'); 
+<a name="line20"></a>
+<a name="line21"></a>    /**
+<a name="line22"></a>     * Compiles code for the {section} tag
+<a name="line23"></a>     * 
+<a name="line24"></a>     * @param array $args array with attributes from parser
+<a name="line25"></a>     * @param object $compiler compiler object
+<a name="line26"></a>     * @return string compiled code
+<a name="line27"></a>     */
+<a name="line28"></a>    public function compile($args, $compiler)
+<a name="line29"></a>    {
+<a name="line30"></a>        $this->compiler = $compiler;
+<a name="line31"></a>        // check and get attributes
+<a name="line32"></a>        $_attr = $this->_get_attributes($args);
+<a name="line33"></a>
+<a name="line34"></a>        $this->_open_tag('section', array('section',$this->compiler->nocache));
+<a name="line35"></a>        // maybe nocache because of nocache variables
+<a name="line36"></a>        $this->compiler->nocache = $this->compiler->nocache | $this->compiler->tag_nocache;
+<a name="line37"></a>
+<a name="line38"></a>        $output = "<?php ";
+<a name="line39"></a>
+<a name="line40"></a>        $section_name = $_attr['name'];
+<a name="line41"></a>        
+<a name="line42"></a>        $output .= "unset(\$_smarty_tpl->tpl_vars['smarty']->value['section'][$section_name]);\n";
+<a name="line43"></a>        $section_props = "\$_smarty_tpl->tpl_vars['smarty']->value['section'][$section_name]";
+<a name="line44"></a>
+<a name="line45"></a>        foreach ($_attr as $attr_name => $attr_value) {
+<a name="line46"></a>            switch ($attr_name) {
+<a name="line47"></a>                case 'loop':
+<a name="line48"></a>                    $output .= "{$section_props}['loop'] = is_array(\$_loop=$attr_value) ? count(\$_loop) : max(0, (int)\$_loop); unset(\$_loop);\n";
+<a name="line49"></a>                    break;
+<a name="line50"></a>
+<a name="line51"></a>                case 'show':
+<a name="line52"></a>                    if (is_bool($attr_value))
+<a name="line53"></a>                        $show_attr_value = $attr_value ? 'true' : 'false';
+<a name="line54"></a>                    else
+<a name="line55"></a>                        $show_attr_value = "(bool)$attr_value";
+<a name="line56"></a>                    $output .= "{$section_props}['show'] = $show_attr_value;\n";
+<a name="line57"></a>                    break;
+<a name="line58"></a>
+<a name="line59"></a>                case 'name':
+<a name="line60"></a>                    $output .= "{$section_props}['$attr_name'] = $attr_value;\n";
+<a name="line61"></a>                    break;
+<a name="line62"></a>
+<a name="line63"></a>                case 'max':
+<a name="line64"></a>                case 'start':
+<a name="line65"></a>                    $output .= "{$section_props}['$attr_name'] = (int)$attr_value;\n";
+<a name="line66"></a>                    break;
+<a name="line67"></a>
+<a name="line68"></a>                case 'step':
+<a name="line69"></a>                    $output .= "{$section_props}['$attr_name'] = ((int)$attr_value) == 0 ? 1 : (int)$attr_value;\n";
+<a name="line70"></a>                    break;
+<a name="line71"></a>            } 
+<a name="line72"></a>        } 
+<a name="line73"></a>
+<a name="line74"></a>        if (!isset($_attr['show']))
+<a name="line75"></a>            $output .= "{$section_props}['show'] = true;\n";
+<a name="line76"></a>
+<a name="line77"></a>        if (!isset($_attr['loop']))
+<a name="line78"></a>            $output .= "{$section_props}['loop'] = 1;\n";
+<a name="line79"></a>
+<a name="line80"></a>        if (!isset($_attr['max']))
+<a name="line81"></a>            $output .= "{$section_props}['max'] = {$section_props}['loop'];\n";
+<a name="line82"></a>        else
+<a name="line83"></a>            $output .= "if ({$section_props}['max'] < 0)\n" . "    {$section_props}['max'] = {$section_props}['loop'];\n";
+<a name="line84"></a>
+<a name="line85"></a>        if (!isset($_attr['step']))
+<a name="line86"></a>            $output .= "{$section_props}['step'] = 1;\n";
+<a name="line87"></a>
+<a name="line88"></a>        if (!isset($_attr['start']))
+<a name="line89"></a>            $output .= "{$section_props}['start'] = {$section_props}['step'] > 0 ? 0 : {$section_props}['loop']-1;\n";
+<a name="line90"></a>        else {
+<a name="line91"></a>            $output .= "if ({$section_props}['start'] < 0)\n" . "    {$section_props}['start'] = max({$section_props}['step'] > 0 ? 0 : -1, {$section_props}['loop'] + {$section_props}['start']);\n" . "else\n" . "    {$section_props}['start'] = min({$section_props}['start'], {$section_props}['step'] > 0 ? {$section_props}['loop'] : {$section_props}['loop']-1);\n";
+<a name="line92"></a>        } 
+<a name="line93"></a>
+<a name="line94"></a>        $output .= "if ({$section_props}['show']) {\n";
+<a name="line95"></a>        if (!isset($_attr['start']) && !isset($_attr['step']) && !isset($_attr['max'])) {
+<a name="line96"></a>            $output .= "    {$section_props}['total'] = {$section_props}['loop'];\n";
+<a name="line97"></a>        } else {
+<a name="line98"></a>            $output .= "    {$section_props}['total'] = min(ceil(({$section_props}['step'] > 0 ? {$section_props}['loop'] - {$section_props}['start'] : {$section_props}['start']+1)/abs({$section_props}['step'])), {$section_props}['max']);\n";
+<a name="line99"></a>        } 
+<a name="line100"></a>        $output .= "    if ({$section_props}['total'] == 0)\n" . "        {$section_props}['show'] = false;\n" . "} else\n" . "    {$section_props}['total'] = 0;\n";
+<a name="line101"></a>
+<a name="line102"></a>        $output .= "if ({$section_props}['show']):\n";
+<a name="line103"></a>        $output .= "
+<a name="line104"></a>            for ({$section_props}['index'] = {$section_props}['start'], {$section_props}['iteration'] = 1;
+<a name="line105"></a>                 {$section_props}['iteration'] <= {$section_props}['total'];
+<a name="line106"></a>                 {$section_props}['index'] += {$section_props}['step'], {$section_props}['iteration']++):\n";
+<a name="line107"></a>        $output .= "{$section_props}['rownum'] = {$section_props}['iteration'];\n";
+<a name="line108"></a>        $output .= "{$section_props}['index_prev'] = {$section_props}['index'] - {$section_props}['step'];\n";
+<a name="line109"></a>        $output .= "{$section_props}['index_next'] = {$section_props}['index'] + {$section_props}['step'];\n";
+<a name="line110"></a>        $output .= "{$section_props}['first']      = ({$section_props}['iteration'] == 1);\n";
+<a name="line111"></a>        $output .= "{$section_props}['last']       = ({$section_props}['iteration'] == {$section_props}['total']);\n";
+<a name="line112"></a>
+<a name="line113"></a>        $output .= "?>";
+<a name="line114"></a>        return $output;
+<a name="line115"></a>    } 
+<a name="line116"></a>} 
+<a name="line117"></a>
+<a name="line118"></a>/**
+<a name="line119"></a>* Smarty Internal Plugin Compile Sectionelse Class
+<a name="line120"></a>*/
+<a name="line121"></a>class Smarty_Internal_Compile_Sectionelse extends Smarty_Internal_CompileBase {
+<a name="line122"></a>    /**
+<a name="line123"></a>     * Compiles code for the {sectionelse} tag
+<a name="line124"></a>     * 
+<a name="line125"></a>     * @param array $args array with attributes from parser
+<a name="line126"></a>     * @param object $compiler compiler object
+<a name="line127"></a>     * @return string compiled code
+<a name="line128"></a>     */
+<a name="line129"></a>    public function compile($args, $compiler)
+<a name="line130"></a>    {
+<a name="line131"></a>        $this->compiler = $compiler; 
+<a name="line132"></a>        // check and get attributes
+<a name="line133"></a>        $_attr = $this->_get_attributes($args);
+<a name="line134"></a>
+<a name="line135"></a>        list($_open_tag, $nocache) = $this->_close_tag(array('section'));
+<a name="line136"></a>        $this->_open_tag('sectionelse',array('sectionelse', $nocache));
+<a name="line137"></a>
+<a name="line138"></a>        return "<?php endfor; else: ?>";
+<a name="line139"></a>    } 
+<a name="line140"></a>} 
+<a name="line141"></a>
+<a name="line142"></a>/**
+<a name="line143"></a> * Smarty Internal Plugin Compile Sectionclose Class
+<a name="line144"></a> */
+<a name="line145"></a>class Smarty_Internal_Compile_Sectionclose extends Smarty_Internal_CompileBase {
+<a name="line146"></a>    /**
+<a name="line147"></a>     * Compiles code for the {/section} tag
+<a name="line148"></a>     * 
+<a name="line149"></a>     * @param array $args array with attributes from parser
+<a name="line150"></a>     * @param object $compiler compiler object
+<a name="line151"></a>     * @return string compiled code
+<a name="line152"></a>     */
+<a name="line153"></a>    public function compile($args, $compiler)
+<a name="line154"></a>    {
+<a name="line155"></a>        $this->compiler = $compiler; 
+<a name="line156"></a>        // check and get attributes
+<a name="line157"></a>        $_attr = $this->_get_attributes($args);
+<a name="line158"></a>
+<a name="line159"></a>        // must endblock be nocache?
+<a name="line160"></a>        if ($this->compiler->nocache) {
+<a name="line161"></a>                 $this->compiler->tag_nocache = true;
+<a name="line162"></a>        }
+<a name="line163"></a>
+<a name="line164"></a>        list($_open_tag, $this->compiler->nocache) = $this->_close_tag(array('section', 'sectionelse'));
+<a name="line165"></a>
+<a name="line166"></a>        if ($_open_tag == 'sectionelse')
+<a name="line167"></a>            return "<?php endif; ?>";
+<a name="line168"></a>        else
+<a name="line169"></a>            return "<?php endfor; endif; ?>";
+<a name="line170"></a>    } 
+<a name="line171"></a>} 
+<a name="line172"></a>
+<a name="line173"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_section.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

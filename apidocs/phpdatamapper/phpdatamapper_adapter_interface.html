@@ -1,0 +1,295 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:26:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>phpDataMapper_Adapter_Interface (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_adapter_interface.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">phpDataMapper\phpDataMapper_Adapter_Interface</div>
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line8" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 8</a>
+
+<h1>Interface phpDataMapper_Adapter_Interface</h1>
+
+<pre class="tree"><strong>phpDataMapper_Adapter_Interface</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  interface <strong>phpDataMapper_Adapter_Interface</strong></p>
+
+<div class="comment" id="overview_description"><p>Adapter Interface</p></div>
+
+<dl>
+<dt>See Also:</dt>
+<dd><code><a href="http://phpdatamapper.com">http://phpdatamapper.com</a></code></dd>
+</dl>
+<hr>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>(mixed host, string datasource, string username, string password, array options)</p><p class="description"></p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#connection()">connection</a>()</p><p class="description">Get database connection</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#create()">create</a>(mixed source, mixed data)</p><p class="description">Insert entity</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#createDatabase()">createDatabase</a>(mixed database)</p><p class="description">Create a database
+Will throw errors if user does not have proper permissions</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#dateFormat()">dateFormat</a>()</p><p class="description">Get database DATE format for PHP date() function</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#dateTimeFormat()">dateTimeFormat</a>()</p><p class="description">Get database full DATETIME for PHP date() function</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#delete()">delete</a>(mixed source, mixed where)</p><p class="description">Delete entity</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#dropDatabase()">dropDatabase</a>(mixed database)</p><p class="description">Drop an entire database
+Destructive and dangerous - drops entire table and all data
+Will throw errors if user does not have proper permissions</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#dropDatasource()">dropDatasource</a>(mixed source)</p><p class="description">Drop/delete data source (table for SQL)
+Destructive and dangerous - drops entire data source and all data</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#escape()">escape</a>(string string)</p><p class="description">Escape/quote direct user input</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#read()">read</a>(<a href="../phpdatamapper/phpdatamapper_query.html">phpDataMapper_Query</a> query)</p><p class="description">Read from data source using given query object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#timeFormat()">timeFormat</a>()</p><p class="description">Get database TIME format for PHP date() function</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#truncateDatasource()">truncateDatasource</a>(mixed source)</p><p class="description">Truncate data source (table for SQL)
+Should delete all rows and reset serial/auto_increment keys to 0</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#update()">update</a>(mixed source, mixed data, mixed where)</p><p class="description">Update entity</p></td>
+</tr>
+</table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line18" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 18</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public  void <strong>__construct</strong>(mixed host, string datasource, string username, string password, array options)</code>
+<div class="details">
+<p></p><dl>
+<dt>Parameters:</dt>
+<dd>host - Host string or pre-existing PDO object</dd>
+<dd>datasource - Optional if $host is PDO object</dd>
+<dd>username - Optional if $host is PDO object</dd>
+<dd>password - Optional if $host is PDO object</dd>
+<dd></dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line24" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 24</a>
+
+<h3 id="connection()">connection</h3>
+<code class="signature">public  void <strong>connection</strong>()</code>
+<div class="details">
+<p>Get database connection</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line56" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 56</a>
+
+<h3 id="create()">create</h3>
+<code class="signature">public  void <strong>create</strong>(mixed source, mixed data)</code>
+<div class="details">
+<p>Insert entity</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line94" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 94</a>
+
+<h3 id="createDatabase()">createDatabase</h3>
+<code class="signature">public  void <strong>createDatabase</strong>(mixed database)</code>
+<div class="details">
+<p>Create a database
+Will throw errors if user does not have proper permissions</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line30" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 30</a>
+
+<h3 id="dateFormat()">dateFormat</h3>
+<code class="signature">public  void <strong>dateFormat</strong>()</code>
+<div class="details">
+<p>Get database DATE format for PHP date() function</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line42" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 42</a>
+
+<h3 id="dateTimeFormat()">dateTimeFormat</h3>
+<code class="signature">public  void <strong>dateTimeFormat</strong>()</code>
+<div class="details">
+<p>Get database full DATETIME for PHP date() function</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line74" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 74</a>
+
+<h3 id="delete()">delete</h3>
+<code class="signature">public  void <strong>delete</strong>(mixed source, mixed where)</code>
+<div class="details">
+<p>Delete entity</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line102" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 102</a>
+
+<h3 id="dropDatabase()">dropDatabase</h3>
+<code class="signature">public  void <strong>dropDatabase</strong>(mixed database)</code>
+<div class="details">
+<p>Drop an entire database
+Destructive and dangerous - drops entire table and all data
+Will throw errors if user does not have proper permissions</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line87" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 87</a>
+
+<h3 id="dropDatasource()">dropDatasource</h3>
+<code class="signature">public  void <strong>dropDatasource</strong>(mixed source)</code>
+<div class="details">
+<p>Drop/delete data source (table for SQL)
+Destructive and dangerous - drops entire data source and all data</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line50" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 50</a>
+
+<h3 id="escape()">escape</h3>
+<code class="signature">public  void <strong>escape</strong>(string string)</code>
+<div class="details">
+<p>Escape/quote direct user input</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line62" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 62</a>
+
+<h3 id="read()">read</h3>
+<code class="signature">public  void <strong>read</strong>(<a href="../phpdatamapper/phpdatamapper_query.html">phpDataMapper_Query</a> query)</code>
+<div class="details">
+<p>Read from data source using given query object</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line36" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 36</a>
+
+<h3 id="timeFormat()">timeFormat</h3>
+<code class="signature">public  void <strong>timeFormat</strong>()</code>
+<div class="details">
+<p>Get database TIME format for PHP date() function</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line81" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 81</a>
+
+<h3 id="truncateDatasource()">truncateDatasource</h3>
+<code class="signature">public  void <strong>truncateDatasource</strong>(mixed source)</code>
+<div class="details">
+<p>Truncate data source (table for SQL)
+Should delete all rows and reset serial/auto_increment keys to 0</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/adapter/interface.php.html#line68" class="location">libraries\phpDataMapper\Adapter\Interface.php at line 68</a>
+
+<h3 id="update()">update</h3>
+<code class="signature">public  void <strong>update</strong>(mixed source, mixed data, mixed where)</code>
+<div class="details">
+<p>Update entity</p></div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_adapter_interface.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

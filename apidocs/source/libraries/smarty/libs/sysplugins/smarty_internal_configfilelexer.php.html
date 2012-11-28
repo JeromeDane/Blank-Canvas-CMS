@@ -1,0 +1,588 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_configfilelexer.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_configfilelexer.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_configfilelexer.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Configfilelexer</p><p>This is the lexer to break the config file source into tokens</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a>* Smarty Internal Plugin Configfilelexer
+<a name="line4"></a>*
+<a name="line5"></a>* This is the lexer to break the config file source into tokens 
+<a name="line6"></a>* @package Smarty
+<a name="line7"></a>* @subpackage Config
+<a name="line8"></a>* @author Uwe Tews 
+<a name="line9"></a>*/
+<a name="line10"></a>/**
+<a name="line11"></a>* Smarty Internal Plugin Configfilelexer
+<a name="line12"></a>*/
+<a name="line13"></a>class Smarty_Internal_Configfilelexer
+<a name="line14"></a>{
+<a name="line15"></a>
+<a name="line16"></a>    public $data;
+<a name="line17"></a>    public $counter;
+<a name="line18"></a>    public $token;
+<a name="line19"></a>    public $value;
+<a name="line20"></a>    public $node;
+<a name="line21"></a>    public $line;
+<a name="line22"></a>    private $state = 1;
+<a name="line23"></a>    public $smarty_token_names = array (		// Text for parser error messages
+<a name="line24"></a>   				);
+<a name="line25"></a>    				
+<a name="line26"></a>    				
+<a name="line27"></a>    function __construct($data, $smarty)
+<a name="line28"></a>    {
+<a name="line29"></a>        // set instance object
+<a name="line30"></a>        self::instance($this); 
+<a name="line31"></a>        $this->data = $data . "\n"; //now all lines are \n-terminated
+<a name="line32"></a>        $this->counter = 0;
+<a name="line33"></a>        $this->line = 1;
+<a name="line34"></a>        $this->smarty = $smarty; 
+<a name="line35"></a>     }
+<a name="line36"></a>    public static function &instance($new_instance = null)
+<a name="line37"></a>    {
+<a name="line38"></a>        static $instance = null;
+<a name="line39"></a>        if (isset($new_instance) && is_object($new_instance))
+<a name="line40"></a>            $instance = $new_instance;
+<a name="line41"></a>        return $instance;
+<a name="line42"></a>    } 
+<a name="line43"></a>
+<a name="line44"></a>
+<a name="line45"></a>
+<a name="line46"></a>    private $_yy_state = 1;
+<a name="line47"></a>    private $_yy_stack = array();
+<a name="line48"></a>
+<a name="line49"></a>    function yylex()
+<a name="line50"></a>    {
+<a name="line51"></a>        return $this->{'yylex' . $this->_yy_state}();
+<a name="line52"></a>    }
+<a name="line53"></a>
+<a name="line54"></a>    function yypushstate($state)
+<a name="line55"></a>    {
+<a name="line56"></a>        array_push($this->_yy_stack, $this->_yy_state);
+<a name="line57"></a>        $this->_yy_state = $state;
+<a name="line58"></a>    }
+<a name="line59"></a>
+<a name="line60"></a>    function yypopstate()
+<a name="line61"></a>    {
+<a name="line62"></a>        $this->_yy_state = array_pop($this->_yy_stack);
+<a name="line63"></a>    }
+<a name="line64"></a>
+<a name="line65"></a>    function yybegin($state)
+<a name="line66"></a>    {
+<a name="line67"></a>        $this->_yy_state = $state;
+<a name="line68"></a>    }
+<a name="line69"></a>
+<a name="line70"></a>
+<a name="line71"></a>
+<a name="line72"></a>
+<a name="line73"></a>    function yylex1()
+<a name="line74"></a>    {
+<a name="line75"></a>        $tokenMap = array (
+<a name="line76"></a>              1 => 0,
+<a name="line77"></a>              2 => 0,
+<a name="line78"></a>              3 => 0,
+<a name="line79"></a>              4 => 0,
+<a name="line80"></a>              5 => 0,
+<a name="line81"></a>              6 => 0,
+<a name="line82"></a>              7 => 0,
+<a name="line83"></a>            );
+<a name="line84"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line85"></a>            return false; // end of input
+<a name="line86"></a>        }
+<a name="line87"></a>        $yy_global_pattern = "/^(#)|^(\\[)|^(\\])|^(=)|^([ \t\r]+)|^(\n)|^([0-9]*[a-zA-Z_]\\w*)/iS";
+<a name="line88"></a>
+<a name="line89"></a>        do {
+<a name="line90"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line91"></a>                $yysubmatches = $yymatches;
+<a name="line92"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line93"></a>                if (!count($yymatches)) {
+<a name="line94"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line95"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line96"></a>                        $this->counter, 5) . '... state START');
+<a name="line97"></a>                }
+<a name="line98"></a>                next($yymatches); // skip global match
+<a name="line99"></a>                $this->token = key($yymatches); // token number
+<a name="line100"></a>                if ($tokenMap[$this->token]) {
+<a name="line101"></a>                    // extract sub-patterns for passing to lex function
+<a name="line102"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line103"></a>                        $tokenMap[$this->token]);
+<a name="line104"></a>                } else {
+<a name="line105"></a>                    $yysubmatches = array();
+<a name="line106"></a>                }
+<a name="line107"></a>                $this->value = current($yymatches); // token value
+<a name="line108"></a>                $r = $this->{'yy_r1_' . $this->token}($yysubmatches);
+<a name="line109"></a>                if ($r === null) {
+<a name="line110"></a>                    $this->counter += strlen($this->value);
+<a name="line111"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line112"></a>                    // accept this token
+<a name="line113"></a>                    return true;
+<a name="line114"></a>                } elseif ($r === true) {
+<a name="line115"></a>                    // we have changed state
+<a name="line116"></a>                    // process this token in the new state
+<a name="line117"></a>                    return $this->yylex();
+<a name="line118"></a>                } elseif ($r === false) {
+<a name="line119"></a>                    $this->counter += strlen($this->value);
+<a name="line120"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line121"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line122"></a>                        return false; // end of input
+<a name="line123"></a>                    }
+<a name="line124"></a>                    // skip this token
+<a name="line125"></a>                    continue;
+<a name="line126"></a>                }            } else {
+<a name="line127"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line128"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line129"></a>            }
+<a name="line130"></a>            break;
+<a name="line131"></a>        } while (true);
+<a name="line132"></a>
+<a name="line133"></a>    } // end function
+<a name="line134"></a>
+<a name="line135"></a>
+<a name="line136"></a>    const START = 1;
+<a name="line137"></a>    function yy_r1_1($yy_subpatterns)
+<a name="line138"></a>    {
+<a name="line139"></a>
+<a name="line140"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_COMMENTSTART;
+<a name="line141"></a>    $this->yypushstate(self::COMMENT);
+<a name="line142"></a>    }
+<a name="line143"></a>    function yy_r1_2($yy_subpatterns)
+<a name="line144"></a>    {
+<a name="line145"></a>
+<a name="line146"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_OPENB;
+<a name="line147"></a>    $this->yypushstate(self::SECTION);
+<a name="line148"></a>    }
+<a name="line149"></a>    function yy_r1_3($yy_subpatterns)
+<a name="line150"></a>    {
+<a name="line151"></a>
+<a name="line152"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_CLOSEB;
+<a name="line153"></a>    }
+<a name="line154"></a>    function yy_r1_4($yy_subpatterns)
+<a name="line155"></a>    {
+<a name="line156"></a>
+<a name="line157"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_EQUAL;
+<a name="line158"></a>    $this->yypushstate(self::VALUE);
+<a name="line159"></a>    }
+<a name="line160"></a>    function yy_r1_5($yy_subpatterns)
+<a name="line161"></a>    {
+<a name="line162"></a>
+<a name="line163"></a>    return false;
+<a name="line164"></a>    }
+<a name="line165"></a>    function yy_r1_6($yy_subpatterns)
+<a name="line166"></a>    {
+<a name="line167"></a>
+<a name="line168"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_NEWLINE;
+<a name="line169"></a>    }
+<a name="line170"></a>    function yy_r1_7($yy_subpatterns)
+<a name="line171"></a>    {
+<a name="line172"></a>
+<a name="line173"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_ID;
+<a name="line174"></a>    }
+<a name="line175"></a>
+<a name="line176"></a>
+<a name="line177"></a>
+<a name="line178"></a>    function yylex2()
+<a name="line179"></a>    {
+<a name="line180"></a>        $tokenMap = array (
+<a name="line181"></a>              1 => 0,
+<a name="line182"></a>              2 => 0,
+<a name="line183"></a>              3 => 0,
+<a name="line184"></a>              4 => 0,
+<a name="line185"></a>              5 => 0,
+<a name="line186"></a>              6 => 0,
+<a name="line187"></a>              7 => 0,
+<a name="line188"></a>              8 => 0,
+<a name="line189"></a>              9 => 0,
+<a name="line190"></a>            );
+<a name="line191"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line192"></a>            return false; // end of input
+<a name="line193"></a>        }
+<a name="line194"></a>        $yy_global_pattern = "/^([ \t\r]+)|^(\\d+\\.\\d+(?=[ \t\r]*[\n#]))|^(\\d+(?=[ \t\r]*[\n#]))|^('[^'\\\\]*(?:\\\\.[^'\\\\]*)*'(?=[ \t\r]*[\n#]))|^(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"(?=[ \t\r]*[\n#]))|^(\"\"\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"\"\"(?=[ \t\r]*[\n#]))|^([a-zA-Z]+(?=[ \t\r]*[\n#]))|^([^\n]+?(?=[ \t\r]*\n))|^(\n)/iS";
+<a name="line195"></a>
+<a name="line196"></a>        do {
+<a name="line197"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line198"></a>                $yysubmatches = $yymatches;
+<a name="line199"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line200"></a>                if (!count($yymatches)) {
+<a name="line201"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line202"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line203"></a>                        $this->counter, 5) . '... state VALUE');
+<a name="line204"></a>                }
+<a name="line205"></a>                next($yymatches); // skip global match
+<a name="line206"></a>                $this->token = key($yymatches); // token number
+<a name="line207"></a>                if ($tokenMap[$this->token]) {
+<a name="line208"></a>                    // extract sub-patterns for passing to lex function
+<a name="line209"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line210"></a>                        $tokenMap[$this->token]);
+<a name="line211"></a>                } else {
+<a name="line212"></a>                    $yysubmatches = array();
+<a name="line213"></a>                }
+<a name="line214"></a>                $this->value = current($yymatches); // token value
+<a name="line215"></a>                $r = $this->{'yy_r2_' . $this->token}($yysubmatches);
+<a name="line216"></a>                if ($r === null) {
+<a name="line217"></a>                    $this->counter += strlen($this->value);
+<a name="line218"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line219"></a>                    // accept this token
+<a name="line220"></a>                    return true;
+<a name="line221"></a>                } elseif ($r === true) {
+<a name="line222"></a>                    // we have changed state
+<a name="line223"></a>                    // process this token in the new state
+<a name="line224"></a>                    return $this->yylex();
+<a name="line225"></a>                } elseif ($r === false) {
+<a name="line226"></a>                    $this->counter += strlen($this->value);
+<a name="line227"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line228"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line229"></a>                        return false; // end of input
+<a name="line230"></a>                    }
+<a name="line231"></a>                    // skip this token
+<a name="line232"></a>                    continue;
+<a name="line233"></a>                }            } else {
+<a name="line234"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line235"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line236"></a>            }
+<a name="line237"></a>            break;
+<a name="line238"></a>        } while (true);
+<a name="line239"></a>
+<a name="line240"></a>    } // end function
+<a name="line241"></a>
+<a name="line242"></a>
+<a name="line243"></a>    const VALUE = 2;
+<a name="line244"></a>    function yy_r2_1($yy_subpatterns)
+<a name="line245"></a>    {
+<a name="line246"></a>
+<a name="line247"></a>    return false;
+<a name="line248"></a>    }
+<a name="line249"></a>    function yy_r2_2($yy_subpatterns)
+<a name="line250"></a>    {
+<a name="line251"></a>
+<a name="line252"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_FLOAT;
+<a name="line253"></a>    $this->yypopstate();
+<a name="line254"></a>    }
+<a name="line255"></a>    function yy_r2_3($yy_subpatterns)
+<a name="line256"></a>    {
+<a name="line257"></a>
+<a name="line258"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_INT;
+<a name="line259"></a>    $this->yypopstate();
+<a name="line260"></a>    }
+<a name="line261"></a>    function yy_r2_4($yy_subpatterns)
+<a name="line262"></a>    {
+<a name="line263"></a>
+<a name="line264"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_SINGLE_QUOTED_STRING;
+<a name="line265"></a>    $this->yypopstate();
+<a name="line266"></a>    }
+<a name="line267"></a>    function yy_r2_5($yy_subpatterns)
+<a name="line268"></a>    {
+<a name="line269"></a>
+<a name="line270"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_DOUBLE_QUOTED_STRING;
+<a name="line271"></a>    $this->yypopstate();
+<a name="line272"></a>    }
+<a name="line273"></a>    function yy_r2_6($yy_subpatterns)
+<a name="line274"></a>    {
+<a name="line275"></a>
+<a name="line276"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_TRIPPLE_DOUBLE_QUOTED_STRING;
+<a name="line277"></a>    $this->yypopstate();
+<a name="line278"></a>    }
+<a name="line279"></a>    function yy_r2_7($yy_subpatterns)
+<a name="line280"></a>    {
+<a name="line281"></a>
+<a name="line282"></a>    if (!$this->smarty->config_booleanize || !in_array(strtolower($this->value), Array("true", "false", "on", "off", "yes", "no")) ) {
+<a name="line283"></a>        $this->yypopstate();
+<a name="line284"></a>        $this->yypushstate(self::NAKED_STRING_VALUE);
+<a name="line285"></a>        return true; //reprocess in new state
+<a name="line286"></a>    } else {
+<a name="line287"></a>        $this->token = Smarty_Internal_Configfileparser::TPC_BOOL;
+<a name="line288"></a>        $this->yypopstate();
+<a name="line289"></a>    }
+<a name="line290"></a>    }
+<a name="line291"></a>    function yy_r2_8($yy_subpatterns)
+<a name="line292"></a>    {
+<a name="line293"></a>
+<a name="line294"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_NAKED_STRING;
+<a name="line295"></a>    $this->yypopstate();
+<a name="line296"></a>    }
+<a name="line297"></a>    function yy_r2_9($yy_subpatterns)
+<a name="line298"></a>    {
+<a name="line299"></a>
+<a name="line300"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_NAKED_STRING;
+<a name="line301"></a>    $this->value = "";
+<a name="line302"></a>    $this->yypopstate();
+<a name="line303"></a>    }
+<a name="line304"></a>
+<a name="line305"></a>
+<a name="line306"></a>
+<a name="line307"></a>    function yylex3()
+<a name="line308"></a>    {
+<a name="line309"></a>        $tokenMap = array (
+<a name="line310"></a>              1 => 0,
+<a name="line311"></a>            );
+<a name="line312"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line313"></a>            return false; // end of input
+<a name="line314"></a>        }
+<a name="line315"></a>        $yy_global_pattern = "/^([^\n]+?(?=[ \t\r]*\n))/iS";
+<a name="line316"></a>
+<a name="line317"></a>        do {
+<a name="line318"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line319"></a>                $yysubmatches = $yymatches;
+<a name="line320"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line321"></a>                if (!count($yymatches)) {
+<a name="line322"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line323"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line324"></a>                        $this->counter, 5) . '... state NAKED_STRING_VALUE');
+<a name="line325"></a>                }
+<a name="line326"></a>                next($yymatches); // skip global match
+<a name="line327"></a>                $this->token = key($yymatches); // token number
+<a name="line328"></a>                if ($tokenMap[$this->token]) {
+<a name="line329"></a>                    // extract sub-patterns for passing to lex function
+<a name="line330"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line331"></a>                        $tokenMap[$this->token]);
+<a name="line332"></a>                } else {
+<a name="line333"></a>                    $yysubmatches = array();
+<a name="line334"></a>                }
+<a name="line335"></a>                $this->value = current($yymatches); // token value
+<a name="line336"></a>                $r = $this->{'yy_r3_' . $this->token}($yysubmatches);
+<a name="line337"></a>                if ($r === null) {
+<a name="line338"></a>                    $this->counter += strlen($this->value);
+<a name="line339"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line340"></a>                    // accept this token
+<a name="line341"></a>                    return true;
+<a name="line342"></a>                } elseif ($r === true) {
+<a name="line343"></a>                    // we have changed state
+<a name="line344"></a>                    // process this token in the new state
+<a name="line345"></a>                    return $this->yylex();
+<a name="line346"></a>                } elseif ($r === false) {
+<a name="line347"></a>                    $this->counter += strlen($this->value);
+<a name="line348"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line349"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line350"></a>                        return false; // end of input
+<a name="line351"></a>                    }
+<a name="line352"></a>                    // skip this token
+<a name="line353"></a>                    continue;
+<a name="line354"></a>                }            } else {
+<a name="line355"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line356"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line357"></a>            }
+<a name="line358"></a>            break;
+<a name="line359"></a>        } while (true);
+<a name="line360"></a>
+<a name="line361"></a>    } // end function
+<a name="line362"></a>
+<a name="line363"></a>
+<a name="line364"></a>    const NAKED_STRING_VALUE = 3;
+<a name="line365"></a>    function yy_r3_1($yy_subpatterns)
+<a name="line366"></a>    {
+<a name="line367"></a>
+<a name="line368"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_NAKED_STRING;
+<a name="line369"></a>    $this->yypopstate();
+<a name="line370"></a>    }
+<a name="line371"></a>
+<a name="line372"></a>
+<a name="line373"></a>
+<a name="line374"></a>    function yylex4()
+<a name="line375"></a>    {
+<a name="line376"></a>        $tokenMap = array (
+<a name="line377"></a>              1 => 0,
+<a name="line378"></a>              2 => 0,
+<a name="line379"></a>              3 => 0,
+<a name="line380"></a>            );
+<a name="line381"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line382"></a>            return false; // end of input
+<a name="line383"></a>        }
+<a name="line384"></a>        $yy_global_pattern = "/^([ \t\r]+)|^([^\n]+?(?=[ \t\r]*\n))|^(\n)/iS";
+<a name="line385"></a>
+<a name="line386"></a>        do {
+<a name="line387"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line388"></a>                $yysubmatches = $yymatches;
+<a name="line389"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line390"></a>                if (!count($yymatches)) {
+<a name="line391"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line392"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line393"></a>                        $this->counter, 5) . '... state COMMENT');
+<a name="line394"></a>                }
+<a name="line395"></a>                next($yymatches); // skip global match
+<a name="line396"></a>                $this->token = key($yymatches); // token number
+<a name="line397"></a>                if ($tokenMap[$this->token]) {
+<a name="line398"></a>                    // extract sub-patterns for passing to lex function
+<a name="line399"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line400"></a>                        $tokenMap[$this->token]);
+<a name="line401"></a>                } else {
+<a name="line402"></a>                    $yysubmatches = array();
+<a name="line403"></a>                }
+<a name="line404"></a>                $this->value = current($yymatches); // token value
+<a name="line405"></a>                $r = $this->{'yy_r4_' . $this->token}($yysubmatches);
+<a name="line406"></a>                if ($r === null) {
+<a name="line407"></a>                    $this->counter += strlen($this->value);
+<a name="line408"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line409"></a>                    // accept this token
+<a name="line410"></a>                    return true;
+<a name="line411"></a>                } elseif ($r === true) {
+<a name="line412"></a>                    // we have changed state
+<a name="line413"></a>                    // process this token in the new state
+<a name="line414"></a>                    return $this->yylex();
+<a name="line415"></a>                } elseif ($r === false) {
+<a name="line416"></a>                    $this->counter += strlen($this->value);
+<a name="line417"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line418"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line419"></a>                        return false; // end of input
+<a name="line420"></a>                    }
+<a name="line421"></a>                    // skip this token
+<a name="line422"></a>                    continue;
+<a name="line423"></a>                }            } else {
+<a name="line424"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line425"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line426"></a>            }
+<a name="line427"></a>            break;
+<a name="line428"></a>        } while (true);
+<a name="line429"></a>
+<a name="line430"></a>    } // end function
+<a name="line431"></a>
+<a name="line432"></a>
+<a name="line433"></a>    const COMMENT = 4;
+<a name="line434"></a>    function yy_r4_1($yy_subpatterns)
+<a name="line435"></a>    {
+<a name="line436"></a>
+<a name="line437"></a>    return false;
+<a name="line438"></a>    }
+<a name="line439"></a>    function yy_r4_2($yy_subpatterns)
+<a name="line440"></a>    {
+<a name="line441"></a>
+<a name="line442"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_NAKED_STRING;
+<a name="line443"></a>    }
+<a name="line444"></a>    function yy_r4_3($yy_subpatterns)
+<a name="line445"></a>    {
+<a name="line446"></a>
+<a name="line447"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_NEWLINE;
+<a name="line448"></a>    $this->yypopstate();
+<a name="line449"></a>    }
+<a name="line450"></a>
+<a name="line451"></a>
+<a name="line452"></a>
+<a name="line453"></a>    function yylex5()
+<a name="line454"></a>    {
+<a name="line455"></a>        $tokenMap = array (
+<a name="line456"></a>              1 => 0,
+<a name="line457"></a>              2 => 0,
+<a name="line458"></a>            );
+<a name="line459"></a>        if ($this->counter >= strlen($this->data)) {
+<a name="line460"></a>            return false; // end of input
+<a name="line461"></a>        }
+<a name="line462"></a>        $yy_global_pattern = "/^(\\.)|^(.*?(?=[\.=[\]\r\n]))/iS";
+<a name="line463"></a>
+<a name="line464"></a>        do {
+<a name="line465"></a>            if (preg_match($yy_global_pattern, substr($this->data, $this->counter), $yymatches)) {
+<a name="line466"></a>                $yysubmatches = $yymatches;
+<a name="line467"></a>                $yymatches = array_filter($yymatches, 'strlen'); // remove empty sub-patterns
+<a name="line468"></a>                if (!count($yymatches)) {
+<a name="line469"></a>                    throw new Exception('Error: lexing failed because a rule matched' .
+<a name="line470"></a>                        'an empty string.  Input "' . substr($this->data,
+<a name="line471"></a>                        $this->counter, 5) . '... state SECTION');
+<a name="line472"></a>                }
+<a name="line473"></a>                next($yymatches); // skip global match
+<a name="line474"></a>                $this->token = key($yymatches); // token number
+<a name="line475"></a>                if ($tokenMap[$this->token]) {
+<a name="line476"></a>                    // extract sub-patterns for passing to lex function
+<a name="line477"></a>                    $yysubmatches = array_slice($yysubmatches, $this->token + 1,
+<a name="line478"></a>                        $tokenMap[$this->token]);
+<a name="line479"></a>                } else {
+<a name="line480"></a>                    $yysubmatches = array();
+<a name="line481"></a>                }
+<a name="line482"></a>                $this->value = current($yymatches); // token value
+<a name="line483"></a>                $r = $this->{'yy_r5_' . $this->token}($yysubmatches);
+<a name="line484"></a>                if ($r === null) {
+<a name="line485"></a>                    $this->counter += strlen($this->value);
+<a name="line486"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line487"></a>                    // accept this token
+<a name="line488"></a>                    return true;
+<a name="line489"></a>                } elseif ($r === true) {
+<a name="line490"></a>                    // we have changed state
+<a name="line491"></a>                    // process this token in the new state
+<a name="line492"></a>                    return $this->yylex();
+<a name="line493"></a>                } elseif ($r === false) {
+<a name="line494"></a>                    $this->counter += strlen($this->value);
+<a name="line495"></a>                    $this->line += substr_count($this->value, "\n");
+<a name="line496"></a>                    if ($this->counter >= strlen($this->data)) {
+<a name="line497"></a>                        return false; // end of input
+<a name="line498"></a>                    }
+<a name="line499"></a>                    // skip this token
+<a name="line500"></a>                    continue;
+<a name="line501"></a>                }            } else {
+<a name="line502"></a>                throw new Exception('Unexpected input at line' . $this->line .
+<a name="line503"></a>                    ': ' . $this->data[$this->counter]);
+<a name="line504"></a>            }
+<a name="line505"></a>            break;
+<a name="line506"></a>        } while (true);
+<a name="line507"></a>
+<a name="line508"></a>    } // end function
+<a name="line509"></a>
+<a name="line510"></a>
+<a name="line511"></a>    const SECTION = 5;
+<a name="line512"></a>    function yy_r5_1($yy_subpatterns)
+<a name="line513"></a>    {
+<a name="line514"></a>
+<a name="line515"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_DOT;
+<a name="line516"></a>    }
+<a name="line517"></a>    function yy_r5_2($yy_subpatterns)
+<a name="line518"></a>    {
+<a name="line519"></a>
+<a name="line520"></a>    $this->token = Smarty_Internal_Configfileparser::TPC_SECTION;
+<a name="line521"></a>    $this->yypopstate();
+<a name="line522"></a>    }
+<a name="line523"></a>
+<a name="line524"></a>
+<a name="line525"></a>}
+<a name="line526"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_configfilelexer.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

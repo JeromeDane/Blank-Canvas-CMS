@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:57 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\plugins\function.math.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\function.math.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\plugins\function.math.php</h1>
+<div class="comment" id="overview_description"><p>Smarty plugin</p><p>This plugin is only for Smarty2 BC</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty plugin
+<a name="line4"></a> *
+<a name="line5"></a> * This plugin is only for Smarty2 BC
+<a name="line6"></a> * @package Smarty
+<a name="line7"></a> * @subpackage PluginsFunction
+<a name="line8"></a> */
+<a name="line9"></a>
+<a name="line10"></a>/**
+<a name="line11"></a> * Smarty {math} function plugin
+<a name="line12"></a> *
+<a name="line13"></a> * Type:     function<br>
+<a name="line14"></a> * Name:     math<br>
+<a name="line15"></a> * Purpose:  handle math computations in template<br>
+<a name="line16"></a> * @link http://smarty.php.net/manual/en/language.function.math.php {math}
+<a name="line17"></a> *          (Smarty online manual)
+<a name="line18"></a> * @author   Monte Ohrt <monte at ohrt dot com>
+<a name="line19"></a> * @param array $params parameters
+<a name="line20"></a> * @param object $template template object
+<a name="line21"></a> * @return string|null
+<a name="line22"></a> */
+<a name="line23"></a>function smarty_function_math($params, $template)
+<a name="line24"></a>{
+<a name="line25"></a>    // be sure equation parameter is present
+<a name="line26"></a>    if (empty($params['equation'])) {
+<a name="line27"></a>        trigger_error("math: missing equation parameter",E_USER_WARNING);
+<a name="line28"></a>        return;
+<a name="line29"></a>    }
+<a name="line30"></a>
+<a name="line31"></a>    $equation = $params['equation'];
+<a name="line32"></a>
+<a name="line33"></a>    // make sure parenthesis are balanced
+<a name="line34"></a>    if (substr_count($equation,"(") != substr_count($equation,")")) {
+<a name="line35"></a>        trigger_error("math: unbalanced parenthesis",E_USER_WARNING);
+<a name="line36"></a>        return;
+<a name="line37"></a>    }
+<a name="line38"></a>
+<a name="line39"></a>    // match all vars in equation, make sure all are passed
+<a name="line40"></a>    preg_match_all("!(?:0x[a-fA-F0-9]+)|([a-zA-Z][a-zA-Z0-9_]*)!",$equation, $match);
+<a name="line41"></a>    $allowed_funcs = array('int','abs','ceil','cos','exp','floor','log','log10',
+<a name="line42"></a>                           'max','min','pi','pow','rand','round','sin','sqrt','srand','tan');
+<a name="line43"></a>    
+<a name="line44"></a>    foreach($match[1] as $curr_var) {
+<a name="line45"></a>        if ($curr_var && !in_array($curr_var, array_keys($params)) && !in_array($curr_var, $allowed_funcs)) {
+<a name="line46"></a>            trigger_error("math: function call $curr_var not allowed",E_USER_WARNING);
+<a name="line47"></a>            return;
+<a name="line48"></a>        }
+<a name="line49"></a>    }
+<a name="line50"></a>
+<a name="line51"></a>    foreach($params as $key => $val) {
+<a name="line52"></a>        if ($key != "equation" && $key != "format" && $key != "assign") {
+<a name="line53"></a>            // make sure value is not empty
+<a name="line54"></a>            if (strlen($val)==0) {
+<a name="line55"></a>                trigger_error("math: parameter $key is empty",E_USER_WARNING);
+<a name="line56"></a>                return;
+<a name="line57"></a>            }
+<a name="line58"></a>            if (!is_numeric($val)) {
+<a name="line59"></a>                trigger_error("math: parameter $key: is not numeric",E_USER_WARNING);
+<a name="line60"></a>                return;
+<a name="line61"></a>            }
+<a name="line62"></a>            $equation = preg_replace("/\b$key\b/", " \$params['$key'] ", $equation);
+<a name="line63"></a>        }
+<a name="line64"></a>    }
+<a name="line65"></a>    $smarty_math_result = null;
+<a name="line66"></a>    eval("\$smarty_math_result = ".$equation.";");
+<a name="line67"></a>
+<a name="line68"></a>    if (empty($params['format'])) {
+<a name="line69"></a>        if (empty($params['assign'])) {
+<a name="line70"></a>            return $smarty_math_result;
+<a name="line71"></a>        } else {
+<a name="line72"></a>            $template->assign($params['assign'],$smarty_math_result);
+<a name="line73"></a>        }
+<a name="line74"></a>    } else {
+<a name="line75"></a>        if (empty($params['assign'])){
+<a name="line76"></a>            printf($params['format'],$smarty_math_result);
+<a name="line77"></a>        } else {
+<a name="line78"></a>            $template->assign($params['assign'],sprintf($params['format'],$smarty_math_result));
+<a name="line79"></a>        }
+<a name="line80"></a>    }
+<a name="line81"></a>}
+<a name="line82"></a>
+<a name="line83"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\function.math.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

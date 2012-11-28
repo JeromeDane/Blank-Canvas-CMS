@@ -1,0 +1,405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:25:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>Smarty_Internal_Data (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_data.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">Smarty\Smarty_Internal_Data</div>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line16" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 16</a>
+
+<h1>Class Smarty_Internal_Data</h1>
+
+<pre class="tree"><strong>Smarty_Internal_Data</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>Smarty_Internal_Data</strong></p>
+
+<div class="comment" id="overview_description"><p>Base class with template and variable methodes</p></div>
+
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#template_class">$template_class</a></p></td>
+</tr>
+</table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#append()">append</a>(array tpl_var, mixed value, boolean merge, boolean nocache)</p><p class="description">appends values to template variables</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#appendByRef()">appendByRef</a>(string tpl_var, mixed value, boolean merge)</p><p class="description">appends values to template variables by reference</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#append_by_ref()">append_by_ref</a>(string tpl_var, mixed value, boolean merge)</p><p class="description"></p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#assign()">assign</a>(array tpl_var, mixed value, boolean nocache, boolean scope)</p><p class="description">assigns a Smarty variable</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#assignByRef()">assignByRef</a>(string tpl_var, mixed value, boolean nocache)</p><p class="description">assigns values to template variables by reference</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#assignGlobal()">assignGlobal</a>(string varname, mixed value, boolean nocache)</p><p class="description">assigns a global Smarty variable</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#assign_by_ref()">assign_by_ref</a>(string tpl_var, mixed value)</p><p class="description">wrapper function for Smarty 2 BC</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#clearAllAssign()">clearAllAssign</a>()</p><p class="description">clear all the assigned template variables.</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#clearAssign()">clearAssign</a>(string tpl_var)</p><p class="description">clear the given assigned template variable.</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#clearConfig()">clearConfig</a>(string varname)</p><p class="description">Deassigns a single or all config variables</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#configLoad()">configLoad</a>(string config_file, mixed sections)</p><p class="description">load a config file, optionally load just selected sections</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#getConfigVariable()">getConfigVariable</a>(mixed _variable, string variable)</p><p class="description">gets  a config variable</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#getConfigVars()">getConfigVars</a>(string varname, bool search_parents)</p><p class="description">Returns a single or all config variables</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#getStreamVariable()">getStreamVariable</a>(string variable)</p><p class="description">gets  a stream variable</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#getTemplateVars()">getTemplateVars</a>(string varname, mixed _ptr, bool search_parents)</p><p class="description">Returns a single or all template variables</p></td>
+</tr>
+<tr>
+<td class="type"> object</td>
+<td class="description"><p class="name"><a href="#getVariable()">getVariable</a>(mixed _variable, object _ptr, boolean search_parents, bool error_enable, string variable)</p><p class="description">gets the object of a Smarty variable</p></td>
+</tr>
+</table>
+
+<h2 id="detail_field">Field Detail</h2>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line18" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 18</a>
+
+<h3 id="template_class">template_class</h3>
+<code class="signature">public  mixed <strong>$template_class</strong> = 'Smarty_Internal_Template'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line92" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 92</a>
+
+<h3 id="append()">append</h3>
+<code class="signature">public  void <strong>append</strong>(array tpl_var, mixed value, boolean merge, boolean nocache)</code>
+<div class="details">
+<p>appends values to template variables</p><dl>
+<dt>Parameters:</dt>
+<dd> - |string $tpl_var the template variable name(s)</dd>
+<dd>value - the value to append</dd>
+<dd>merge - flag if array elements shall be merged</dd>
+<dd>nocache - if true any output of this variable will be not cached</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line149" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 149</a>
+
+<h3 id="appendByRef()">appendByRef</h3>
+<code class="signature">public  void <strong>appendByRef</strong>(string tpl_var, mixed value, boolean merge)</code>
+<div class="details">
+<p>appends values to template variables by reference</p><dl>
+<dt>Parameters:</dt>
+<dd>tpl_var - the template variable name</dd>
+<dd> - &$value the referenced value to append</dd>
+<dd>merge - flag if array elements shall be merged</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line174" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 174</a>
+
+<h3 id="append_by_ref()">append_by_ref</h3>
+<code class="signature">public  void <strong>append_by_ref</strong>(string tpl_var, mixed value, boolean merge)</code>
+<div class="details">
+<p></p><dl>
+<dt>Parameters:</dt>
+<dd>tpl_var - the template variable name</dd>
+<dd> - &$value the referenced value to append</dd>
+<dd>merge - flag if array elements shall be merged</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line28" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 28</a>
+
+<h3 id="assign()">assign</h3>
+<code class="signature">public  void <strong>assign</strong>(array tpl_var, mixed value, boolean nocache, boolean scope)</code>
+<div class="details">
+<p>assigns a Smarty variable</p><dl>
+<dt>Parameters:</dt>
+<dd> - |string $tpl_var the template variable name(s)</dd>
+<dd>value - the value to assign</dd>
+<dd>nocache - if true any output of this variable will be not cached</dd>
+<dd>scope - the scope the variable will have (local,parent or root)</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line64" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 64</a>
+
+<h3 id="assignByRef()">assignByRef</h3>
+<code class="signature">public  void <strong>assignByRef</strong>(string tpl_var, mixed value, boolean nocache)</code>
+<div class="details">
+<p>assigns values to template variables by reference</p><dl>
+<dt>Parameters:</dt>
+<dd>tpl_var - the template variable name</dd>
+<dd> - &$value the referenced value to assign</dd>
+<dd>nocache - if true any output of this variable will be not cached</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line51" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 51</a>
+
+<h3 id="assignGlobal()">assignGlobal</h3>
+<code class="signature">public  void <strong>assignGlobal</strong>(string varname, mixed value, boolean nocache)</code>
+<div class="details">
+<p>assigns a global Smarty variable</p><dl>
+<dt>Parameters:</dt>
+<dd>varname - the global variable name</dd>
+<dd>value - the value to assign</dd>
+<dd>nocache - if true any output of this variable will be not cached</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line78" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 78</a>
+
+<h3 id="assign_by_ref()">assign_by_ref</h3>
+<code class="signature">public  void <strong>assign_by_ref</strong>(string tpl_var, mixed value)</code>
+<div class="details">
+<p>wrapper function for Smarty 2 BC</p><dl>
+<dt>Parameters:</dt>
+<dd>tpl_var - the template variable name</dd>
+<dd> - &$value the referenced value to assign</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line242" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 242</a>
+
+<h3 id="clearAllAssign()">clearAllAssign</h3>
+<code class="signature">public  void <strong>clearAllAssign</strong>()</code>
+<div class="details">
+<p>clear all the assigned template variables.</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line228" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 228</a>
+
+<h3 id="clearAssign()">clearAssign</h3>
+<code class="signature">public  void <strong>clearAssign</strong>(string tpl_var)</code>
+<div class="details">
+<p>clear the given assigned template variable.</p><dl>
+<dt>Parameters:</dt>
+<dd> - |array $tpl_var the template variable(s) to clear</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line386" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 386</a>
+
+<h3 id="clearConfig()">clearConfig</h3>
+<code class="signature">public  void <strong>clearConfig</strong>(string varname)</code>
+<div class="details">
+<p>Deassigns a single or all config variables</p><dl>
+<dt>Parameters:</dt>
+<dd>varname - variable name or null</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line253" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 253</a>
+
+<h3 id="configLoad()">configLoad</h3>
+<code class="signature">public  void <strong>configLoad</strong>(string config_file, mixed sections)</code>
+<div class="details">
+<p>load a config file, optionally load just selected sections</p><dl>
+<dt>Parameters:</dt>
+<dd>config_file - filename</dd>
+<dd>sections - array of section names, single section or null</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line304" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 304</a>
+
+<h3 id="getConfigVariable()">getConfigVariable</h3>
+<code class="signature">public  mixed <strong>getConfigVariable</strong>(mixed _variable, string variable)</code>
+<div class="details">
+<p>gets  a config variable</p><dl>
+<dt>Parameters:</dt>
+<dd>variable - the name of the config variable</dd>
+<dt>Returns:</dt>
+<dd>the value of the config variable</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line354" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 354</a>
+
+<h3 id="getConfigVars()">getConfigVars</h3>
+<code class="signature">public  string <strong>getConfigVars</strong>(string varname, bool search_parents)</code>
+<div class="details">
+<p>Returns a single or all config variables</p><dl>
+<dt>Parameters:</dt>
+<dd>varname - variable name or null</dd>
+<dt>Returns:</dt>
+<dd>variable value or or array of variables</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line330" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 330</a>
+
+<h3 id="getStreamVariable()">getStreamVariable</h3>
+<code class="signature">public  mixed <strong>getStreamVariable</strong>(string variable)</code>
+<div class="details">
+<p>gets  a stream variable</p><dl>
+<dt>Parameters:</dt>
+<dd>variable - the stream of the variable</dd>
+<dt>Returns:</dt>
+<dd>the value of the stream variable</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line186" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 186</a>
+
+<h3 id="getTemplateVars()">getTemplateVars</h3>
+<code class="signature">public  string <strong>getTemplateVars</strong>(string varname, mixed _ptr, bool search_parents)</code>
+<div class="details">
+<p>Returns a single or all template variables</p><dl>
+<dt>Parameters:</dt>
+<dd>varname - variable name or null</dd>
+<dt>Returns:</dt>
+<dd>variable value or or array of variables</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_data.php.html#line268" class="location">libraries\smarty\libs\sysplugins\smarty_internal_data.php at line 268</a>
+
+<h3 id="getVariable()">getVariable</h3>
+<code class="signature">public  object <strong>getVariable</strong>(mixed _variable, object _ptr, boolean search_parents, bool error_enable, string variable)</code>
+<div class="details">
+<p>gets the object of a Smarty variable</p><dl>
+<dt>Parameters:</dt>
+<dd>variable - the name of the Smarty variable</dd>
+<dd>_ptr - optional pointer to data object</dd>
+<dd>search_parents - search also in parent data</dd>
+<dt>Returns:</dt>
+<dd>the object of the variable</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_data.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

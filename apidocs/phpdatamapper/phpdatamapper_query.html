@@ -1,0 +1,468 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:26:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>phpDataMapper_Query (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_query.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">phpDataMapper\phpDataMapper_Query</div>
+<a href="../source/libraries/phpdatamapper/query.php.html#line9" class="location">libraries\phpDataMapper\Query.php at line 9</a>
+
+<h1>Class phpDataMapper_Query</h1>
+
+<pre class="tree"><strong>phpDataMapper_Query</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>phpDataMapper_Query</strong></p>
+
+<div class="comment" id="overview_description"><p>Query Object - Used to build adapter-independent queries PHP-style</p></div>
+
+<dl>
+<dt>Author:</dt>
+<dd>Vance Lucas <vance@vancelucas.com></dd>
+<dt>See Also:</dt>
+<dd><code><a href="http://phpdatamapper.com">http://phpdatamapper.com</a></code></dd>
+</dl>
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#conditions">$conditions</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#fields">$fields</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#group">$group</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#limit">$limit</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#limitOffset">$limitOffset</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#order">$order</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#source">$source</a></p></td>
+</tr>
+</table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>(<a href="../phpdatamapper/phpdatamapper_base.html">phpDataMapper_Base</a> mapper)</p><p class="description">Constructor Method</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#all()">all</a>(array conditions)</p><p class="description">Find records with given conditions
+If all parameters are empty, find all records</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#andWhere()">andWhere</a>(mixed conditions)</p></td>
+</tr>
+<tr>
+<td class="type"> int</td>
+<td class="description"><p class="name"><a href="#count()">count</a>()</p><p class="description">SPL Countable function
+Called automatically when attribute is used in a 'count()' function call</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#execute()">execute</a>()</p><p class="description">Execute and return query as a collection</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#first()">first</a>()</p><p class="description">Return the first entity matched by the query</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#from()">from</a>(string source)</p><p class="description">From</p></td>
+</tr>
+<tr>
+<td class="type"> phpDataMapper_Query_Set</td>
+<td class="description"><p class="name"><a href="#getIterator()">getIterator</a>()</p><p class="description">SPL IteratorAggregate function
+Called automatically when attribute is used in a 'foreach' loop</p></td>
+</tr>
+<tr>
+<td class="type"> $this</td>
+<td class="description"><p class="name"><a href="#group()">group</a>(array fields)</p><p class="description">GROUP BY clause</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#limit()">limit</a>(int limit, int offset)</p><p class="description">Limit executed query to specified amount of rows
+Implemented at adapter-level for databases that support it</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#mapper()">mapper</a>()</p><p class="description">Get current adapter object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#orWhere()">orWhere</a>(mixed conditions)</p></td>
+</tr>
+<tr>
+<td class="type"> $this</td>
+<td class="description"><p class="name"><a href="#order()">order</a>(array fields)</p><p class="description">ORDER BY columns</p></td>
+</tr>
+<tr>
+<td class="type"> array</td>
+<td class="description"><p class="name"><a href="#params()">params</a>()</p><p class="description">Return array of parameters in key => value format</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#select()">select</a>(mixed fields, string source)</p><p class="description">Called from mapper's select() function</p></td>
+</tr>
+<tr>
+<td class="type"> array</td>
+<td class="description"><p class="name"><a href="#toArray()">toArray</a>(mixed keyColumn, mixed valueColumn)</p><p class="description">Convenience function passthrough for Collection</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#where()">where</a>(array conditions, string type, string setType)</p><p class="description">WHERE conditions</p></td>
+</tr>
+</table>
+
+<h2 id="detail_field">Field Detail</h2>
+<a href="../source/libraries/phpdatamapper/query.php.html#line16" class="location">libraries\phpDataMapper\Query.php at line 16</a>
+
+<h3 id="conditions">conditions</h3>
+<code class="signature">public  mixed <strong>$conditions</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line14" class="location">libraries\phpDataMapper\Query.php at line 14</a>
+
+<h3 id="fields">fields</h3>
+<code class="signature">public  mixed <strong>$fields</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line18" class="location">libraries\phpDataMapper\Query.php at line 18</a>
+
+<h3 id="group">group</h3>
+<code class="signature">public  mixed <strong>$group</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line19" class="location">libraries\phpDataMapper\Query.php at line 19</a>
+
+<h3 id="limit">limit</h3>
+<code class="signature">public  mixed <strong>$limit</strong></code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line20" class="location">libraries\phpDataMapper\Query.php at line 20</a>
+
+<h3 id="limitOffset">limitOffset</h3>
+<code class="signature">public  mixed <strong>$limitOffset</strong></code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line17" class="location">libraries\phpDataMapper\Query.php at line 17</a>
+
+<h3 id="order">order</h3>
+<code class="signature">public  mixed <strong>$order</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line15" class="location">libraries\phpDataMapper\Query.php at line 15</a>
+
+<h3 id="source">source</h3>
+<code class="signature">public  mixed <strong>$source</strong></code>
+<div class="details">
+</div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/phpdatamapper/query.php.html#line26" class="location">libraries\phpDataMapper\Query.php at line 26</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public  void <strong>__construct</strong>(<a href="../phpdatamapper/phpdatamapper_base.html">phpDataMapper_Base</a> mapper)</code>
+<div class="details">
+<p>Constructor Method</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line77" class="location">libraries\phpDataMapper\Query.php at line 77</a>
+
+<h3 id="all()">all</h3>
+<code class="signature">public  void <strong>all</strong>(array conditions)</code>
+<div class="details">
+<p>Find records with given conditions
+If all parameters are empty, find all records</p><dl>
+<dt>Parameters:</dt>
+<dd>conditions - Array of conditions in column => value pairs</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line104" class="location">libraries\phpDataMapper\Query.php at line 104</a>
+
+<h3 id="andWhere()">andWhere</h3>
+<code class="signature">public  void <strong>andWhere</strong>(mixed conditions)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line198" class="location">libraries\phpDataMapper\Query.php at line 198</a>
+
+<h3 id="count()">count</h3>
+<code class="signature">public  int <strong>count</strong>()</code>
+<div class="details">
+<p>SPL Countable function
+Called automatically when attribute is used in a 'count()' function call</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line249" class="location">libraries\phpDataMapper\Query.php at line 249</a>
+
+<h3 id="execute()">execute</h3>
+<code class="signature">public  mixed <strong>execute</strong>()</code>
+<div class="details">
+<p>Execute and return query as a collection</p><dl>
+<dt>Returns:</dt>
+<dd>Collection object on success, boolean false on failure</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line237" class="location">libraries\phpDataMapper\Query.php at line 237</a>
+
+<h3 id="first()">first</h3>
+<code class="signature">public  mixed <strong>first</strong>()</code>
+<div class="details">
+<p>Return the first entity matched by the query</p><dl>
+<dt>Returns:</dt>
+<dd>phpDataMapper_Entity on success, boolean false on failure</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line64" class="location">libraries\phpDataMapper\Query.php at line 64</a>
+
+<h3 id="from()">from</h3>
+<code class="signature">public  void <strong>from</strong>(string source)</code>
+<div class="details">
+<p>From</p><dl>
+<dt>Parameters:</dt>
+<dd>source - Name of the data source to perform a query on</dd>
+<dt>Todo:</dt>
+<dd>Support multiple sources/joins</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line212" class="location">libraries\phpDataMapper\Query.php at line 212</a>
+
+<h3 id="getIterator()">getIterator</h3>
+<code class="signature">public  phpDataMapper_Query_Set <strong>getIterator</strong>()</code>
+<div class="details">
+<p>SPL IteratorAggregate function
+Called automatically when attribute is used in a 'foreach' loop</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line143" class="location">libraries\phpDataMapper\Query.php at line 143</a>
+
+<h3 id="group()">group</h3>
+<code class="signature">public  $this <strong>group</strong>(array fields)</code>
+<div class="details">
+<p>GROUP BY clause</p><dl>
+<dt>Parameters:</dt>
+<dd>fields - Array of field names to use for grouping</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line160" class="location">libraries\phpDataMapper\Query.php at line 160</a>
+
+<h3 id="limit()">limit</h3>
+<code class="signature">public  void <strong>limit</strong>(int limit, int offset)</code>
+<div class="details">
+<p>Limit executed query to specified amount of rows
+Implemented at adapter-level for databases that support it</p><dl>
+<dt>Parameters:</dt>
+<dd>limit - Number of records to return</dd>
+<dd>offset - Row to start at for limited result set</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line35" class="location">libraries\phpDataMapper\Query.php at line 35</a>
+
+<h3 id="mapper()">mapper</h3>
+<code class="signature">public  void <strong>mapper</strong>()</code>
+<div class="details">
+<p>Get current adapter object</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line100" class="location">libraries\phpDataMapper\Query.php at line 100</a>
+
+<h3 id="orWhere()">orWhere</h3>
+<code class="signature">public  void <strong>orWhere</strong>(mixed conditions)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line116" class="location">libraries\phpDataMapper\Query.php at line 116</a>
+
+<h3 id="order()">order</h3>
+<code class="signature">public  $this <strong>order</strong>(array fields)</code>
+<div class="details">
+<p>ORDER BY columns</p><dl>
+<dt>Parameters:</dt>
+<dd>fields - Array of field names to use for sorting</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line173" class="location">libraries\phpDataMapper\Query.php at line 173</a>
+
+<h3 id="params()">params</h3>
+<code class="signature">public  array <strong>params</strong>()</code>
+<div class="details">
+<p>Return array of parameters in key => value format</p><dl>
+<dt>Returns:</dt>
+<dd>Parameters in key => value format</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line48" class="location">libraries\phpDataMapper\Query.php at line 48</a>
+
+<h3 id="select()">select</h3>
+<code class="signature">public  string <strong>select</strong>(mixed fields, string source)</code>
+<div class="details">
+<p>Called from mapper's select() function</p><dl>
+<dt>Parameters:</dt>
+<dd>fields - (optional)</dd>
+<dd>source - Data source name</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line225" class="location">libraries\phpDataMapper\Query.php at line 225</a>
+
+<h3 id="toArray()">toArray</h3>
+<code class="signature">public  array <strong>toArray</strong>(mixed keyColumn, mixed valueColumn)</code>
+<div class="details">
+<p>Convenience function passthrough for Collection</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/query.php.html#line90" class="location">libraries\phpDataMapper\Query.php at line 90</a>
+
+<h3 id="where()">where</h3>
+<code class="signature">public  void <strong>where</strong>(array conditions, string type, string setType)</code>
+<div class="details">
+<p>WHERE conditions</p><dl>
+<dt>Parameters:</dt>
+<dd>conditions - Array of conditions for this clause</dd>
+<dd>type - Keyword that will separate each condition - "AND", "OR"</dd>
+<dd>setType - Keyword that will separate the whole set of conditions - "AND", "OR"</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_query.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

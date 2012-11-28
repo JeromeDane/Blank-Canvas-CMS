@@ -1,0 +1,29 @@
+.googleloginbutton {
+	border:1px solid #666;
+	padding:3px 6px 4px 6px;
+	font-weight:bold;
+	padding-left:26px;
+	position:relative;
+	color:#333;
+	font-size:.9em;
+	background: #ddd;
+	background: #ddd -moz-linear-gradient(top,  #eee,  #ccc);
+	background: #ddd -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ccc));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc');
+	text-decoration:none;
+}
+.googleloginbutton:hover {
+	text-decoration:none;
+}
+.googleloginbutton:active {
+	background: #ddd -moz-linear-gradient(top,  #ccc,  #eee);
+	background: #ddd -webkit-gradient(linear, left top, left bottom, from(#ccc), to(#eee));
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cccccc', endColorstr='#eeeeee');
+}
+.googleloginbutton img {
+	position:absolute;
+	top:3px; 
+	left:6px;	
+	height:14px;
+	width:14px;
+}

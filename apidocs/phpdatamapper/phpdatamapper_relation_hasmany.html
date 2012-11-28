@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:26:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>phpDataMapper_Relation_HasMany (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_relation_hasmany.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">phpDataMapper\phpDataMapper_Relation_HasMany</div>
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line10" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 10</a>
+
+<h1>Class phpDataMapper_Relation_HasMany</h1>
+
+<pre class="tree"><a href="../phpdatamapper/phpdatamapper_relation.html">phpDataMapper_Relation</a><br>    └─<strong>phpDataMapper_Relation_HasMany</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>phpDataMapper_Relation_HasMany</strong><br>extends <a href="../phpdatamapper/phpdatamapper_relation.html">phpDataMapper_Relation</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>DataMapper class for 'has many' relations</p></div>
+
+<dl>
+<dt>Author:</dt>
+<dd>Vance Lucas <vance@vancelucas.com></dd>
+<dt>See Also:</dt>
+<dd><code><a href="http://phpdatamapper.com">http://phpdatamapper.com</a></code></dd>
+</dl>
+<hr>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> <a href="../phpdatamapper/phpdatamapper_query.html">phpDataMapper_Query</a></td>
+<td class="description"><p class="name"><a href="#all()">all</a>()</p><p class="description">Load records with current relation data</p></td>
+</tr>
+<tr>
+<td class="type"> int</td>
+<td class="description"><p class="name"><a href="#count()">count</a>()</p><p class="description">SPL Countable function
+Called automatically when attribute is used in a 'count()' function call</p></td>
+</tr>
+<tr>
+<td class="type"> <a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a></td>
+<td class="description"><p class="name"><a href="#first()">first</a>()</p><p class="description">Find first record in the set</p></td>
+</tr>
+<tr>
+<td class="type"> phpDataMapper_Model_ResultSet</td>
+<td class="description"><p class="name"><a href="#getIterator()">getIterator</a>()</p><p class="description">SPL IteratorAggregate function
+Called automatically when attribute is used in a 'foreach' loop</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#offsetExists()">offsetExists</a>(mixed key)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#offsetGet()">offsetGet</a>(mixed key)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#offsetSet()">offsetSet</a>(mixed key, mixed value)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#offsetUnset()">offsetUnset</a>(mixed key)</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from phpDataMapper\phpDataMapper_Relation</th></tr>
+<tr><td><a href="../phpdatamapper/phpdatamapper_relation.html#__construct()">__construct</a>, <a href="../phpdatamapper/phpdatamapper_relation.html#all()">all</a>, <a href="../phpdatamapper/phpdatamapper_relation.html#conditions()">conditions</a>, <a href="../phpdatamapper/phpdatamapper_relation.html#execute()">execute</a>, <a href="../phpdatamapper/phpdatamapper_relation.html#mapper()">mapper</a>, <a href="../phpdatamapper/phpdatamapper_relation.html#relationOrder()">relationOrder</a></td></tr></table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line17" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 17</a>
+
+<h3 id="all()">all</h3>
+<code class="signature">public  <a href="../phpdatamapper/phpdatamapper_query.html">phpDataMapper_Query</a> <strong>all</strong>()</code>
+<div class="details">
+<p>Load records with current relation data</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line40" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 40</a>
+
+<h3 id="count()">count</h3>
+<code class="signature">public  int <strong>count</strong>()</code>
+<div class="details">
+<p>SPL Countable function
+Called automatically when attribute is used in a 'count()' function call</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line28" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 28</a>
+
+<h3 id="first()">first</h3>
+<code class="signature">public  <a href="../phpdatamapper/phpdatamapper_entity.html">phpDataMapper_Entity</a> <strong>first</strong>()</code>
+<div class="details">
+<p>Find first record in the set</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line53" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 53</a>
+
+<h3 id="getIterator()">getIterator</h3>
+<code class="signature">public  phpDataMapper_Model_ResultSet <strong>getIterator</strong>()</code>
+<div class="details">
+<p>SPL IteratorAggregate function
+Called automatically when attribute is used in a 'foreach' loop</p></div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line72" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 72</a>
+
+<h3 id="offsetExists()">offsetExists</h3>
+<code class="signature">public  void <strong>offsetExists</strong>(mixed key)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line77" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 77</a>
+
+<h3 id="offsetGet()">offsetGet</h3>
+<code class="signature">public  void <strong>offsetGet</strong>(mixed key)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line82" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 82</a>
+
+<h3 id="offsetSet()">offsetSet</h3>
+<code class="signature">public  void <strong>offsetSet</strong>(mixed key, mixed value)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/phpdatamapper/relation/hasmany.php.html#line92" class="location">libraries\phpDataMapper\Relation\HasMany.php at line 92</a>
+
+<h3 id="offsetUnset()">offsetUnset</h3>
+<code class="signature">public  void <strong>offsetUnset</strong>(mixed key)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../phpdatamapper/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../phpdatamapper/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../phpdatamapper\phpdatamapper_relation_hasmany.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

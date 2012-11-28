@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_compile_for.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_for.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_compile_for.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Compile For</p><p>Compiles the {for} {forelse} {/for} tags</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty Internal Plugin Compile For
+<a name="line4"></a> * 
+<a name="line5"></a> * Compiles the {for} {forelse} {/for} tags
+<a name="line6"></a> * 
+<a name="line7"></a> * @package Smarty
+<a name="line8"></a> * @subpackage Compiler
+<a name="line9"></a> * @author Uwe Tews 
+<a name="line10"></a> */
+<a name="line11"></a>
+<a name="line12"></a>/**
+<a name="line13"></a> * Smarty Internal Plugin Compile For Class
+<a name="line14"></a> */
+<a name="line15"></a>class Smarty_Internal_Compile_For extends Smarty_Internal_CompileBase {
+<a name="line16"></a>    /**
+<a name="line17"></a>     * Compiles code for the {for} tag
+<a name="line18"></a>     * 
+<a name="line19"></a>     * Smarty 3 does implement two different sytaxes:
+<a name="line20"></a>     * 
+<a name="line21"></a>     * - {for $var in $array}
+<a name="line22"></a>     * For looping over arrays or iterators
+<a name="line23"></a>     * 
+<a name="line24"></a>     * - {for $x=0; $x<$y; $x++}
+<a name="line25"></a>     * For general loops
+<a name="line26"></a>     * 
+<a name="line27"></a>     * The parser is gereration different sets of attribute by which this compiler can 
+<a name="line28"></a>     * determin which syntax is used.
+<a name="line29"></a>     * 
+<a name="line30"></a>     * @param array $args array with attributes from parser
+<a name="line31"></a>     * @param object $compiler compiler object
+<a name="line32"></a>     * @param array $parameter array with compilation parameter
+<a name="line33"></a>     * @return string compiled code
+<a name="line34"></a>     */
+<a name="line35"></a>    public function compile($args, $compiler, $parameter)
+<a name="line36"></a>    {
+<a name="line37"></a>        $this->compiler = $compiler; 
+<a name="line38"></a>        if ($parameter == 0) {
+<a name="line39"></a>        	$this->required_attributes = array('start','to');
+<a name="line40"></a>        	$this->optional_attributes = array('max','step');
+<a name="line41"></a>        } else {
+<a name="line42"></a>        	$this->required_attributes = array('start','ifexp','var','step');
+<a name="line43"></a>        	$this->optional_attributes = array();
+<a name="line44"></a>        }
+<a name="line45"></a>        // check and get attributes
+<a name="line46"></a>        $_attr = $this->_get_attributes($args);
+<a name="line47"></a>
+<a name="line48"></a>        $local_vars = array();
+<a name="line49"></a>
+<a name="line50"></a>        $output = "<?php ";
+<a name="line51"></a>        if ($parameter == 1) {
+<a name="line52"></a>            foreach ($_attr['start'] as $_statement) {
+<a name="line53"></a>                $output .= " \$_smarty_tpl->tpl_vars[$_statement[var]] = new Smarty_Variable;";
+<a name="line54"></a>                $output .= " \$_smarty_tpl->tpl_vars[$_statement[var]]->value = $_statement[value];\n";
+<a name="line55"></a>                $compiler->local_var[$_statement['var']] = true;
+<a name="line56"></a>                $local_vars[] = $_statement['var'];
+<a name="line57"></a>            } 
+<a name="line58"></a>            $output .= "  if ($_attr[ifexp]){ for (\$_foo=true;$_attr[ifexp]; \$_smarty_tpl->tpl_vars[$_attr[var]]->value$_attr[step]){\n";
+<a name="line59"></a>        } else {
+<a name="line60"></a>            $_statement = $_attr['start'];
+<a name="line61"></a>            $output .= "\$_smarty_tpl->tpl_vars[$_statement[var]] = new Smarty_Variable;";
+<a name="line62"></a>            $compiler->local_var[$_statement['var']] = true;
+<a name="line63"></a>            $local_vars[] = $_statement['var'];
+<a name="line64"></a>            if (isset($_attr['step'])) {
+<a name="line65"></a>                $output .= "\$_smarty_tpl->tpl_vars[$_statement[var]]->step = $_attr[step];";
+<a name="line66"></a>            } else {
+<a name="line67"></a>                $output .= "\$_smarty_tpl->tpl_vars[$_statement[var]]->step = 1;";
+<a name="line68"></a>            } 
+<a name="line69"></a>            if (isset($_attr['max'])) {
+<a name="line70"></a>                $output .= "\$_smarty_tpl->tpl_vars[$_statement[var]]->total = (int)min(ceil((\$_smarty_tpl->tpl_vars[$_statement[var]]->step > 0 ? $_attr[to]+1 - ($_statement[value]) : $_statement[value]-($_attr[to])+1)/abs(\$_smarty_tpl->tpl_vars[$_statement[var]]->step)),$_attr[max]);\n";
+<a name="line71"></a>            } else {
+<a name="line72"></a>                $output .= "\$_smarty_tpl->tpl_vars[$_statement[var]]->total = (int)ceil((\$_smarty_tpl->tpl_vars[$_statement[var]]->step > 0 ? $_attr[to]+1 - ($_statement[value]) : $_statement[value]-($_attr[to])+1)/abs(\$_smarty_tpl->tpl_vars[$_statement[var]]->step));\n";
+<a name="line73"></a>            } 
+<a name="line74"></a>            $output .= "if (\$_smarty_tpl->tpl_vars[$_statement[var]]->total > 0){\n";
+<a name="line75"></a>            $output .= "for (\$_smarty_tpl->tpl_vars[$_statement[var]]->value = $_statement[value], \$_smarty_tpl->tpl_vars[$_statement[var]]->iteration = 1;\$_smarty_tpl->tpl_vars[$_statement[var]]->iteration <= \$_smarty_tpl->tpl_vars[$_statement[var]]->total;\$_smarty_tpl->tpl_vars[$_statement[var]]->value += \$_smarty_tpl->tpl_vars[$_statement[var]]->step, \$_smarty_tpl->tpl_vars[$_statement[var]]->iteration++){\n";
+<a name="line76"></a>            $output .= "\$_smarty_tpl->tpl_vars[$_statement[var]]->first = \$_smarty_tpl->tpl_vars[$_statement[var]]->iteration == 1;";
+<a name="line77"></a>            $output .= "\$_smarty_tpl->tpl_vars[$_statement[var]]->last = \$_smarty_tpl->tpl_vars[$_statement[var]]->iteration == \$_smarty_tpl->tpl_vars[$_statement[var]]->total;";
+<a name="line78"></a>        } 
+<a name="line79"></a>        $output .= "?>";
+<a name="line80"></a>
+<a name="line81"></a>        $this->_open_tag('for', array('for', $this->compiler->nocache, $local_vars)); 
+<a name="line82"></a>        // maybe nocache because of nocache variables
+<a name="line83"></a>        $this->compiler->nocache = $this->compiler->nocache | $this->compiler->tag_nocache; 
+<a name="line84"></a>        // return compiled code
+<a name="line85"></a>        return $output;
+<a name="line86"></a>    } 
+<a name="line87"></a>} 
+<a name="line88"></a>
+<a name="line89"></a>/**
+<a name="line90"></a> * Smarty Internal Plugin Compile Forelse Class
+<a name="line91"></a> */
+<a name="line92"></a>class Smarty_Internal_Compile_Forelse extends Smarty_Internal_CompileBase {
+<a name="line93"></a>    /**
+<a name="line94"></a>     * Compiles code for the {forelse} tag
+<a name="line95"></a>     * 
+<a name="line96"></a>     * @param array $args array with attributes from parser
+<a name="line97"></a>     * @param object $compiler compiler object
+<a name="line98"></a>     * @param array $parameter array with compilation parameter
+<a name="line99"></a>     * @return string compiled code
+<a name="line100"></a>     */
+<a name="line101"></a>    public function compile($args, $compiler, $parameter)
+<a name="line102"></a>    {
+<a name="line103"></a>        $this->compiler = $compiler; 
+<a name="line104"></a>        // check and get attributes
+<a name="line105"></a>        $_attr  = $this->_get_attributes($args);
+<a name="line106"></a>
+<a name="line107"></a>        list($_open_tag, $nocache, $local_vars) = $this->_close_tag(array('for'));
+<a name="line108"></a>        $this->_open_tag('forelse', array('forelse', $nocache, $local_vars));
+<a name="line109"></a>        return "<?php }} else { ?>";
+<a name="line110"></a>    } 
+<a name="line111"></a>} 
+<a name="line112"></a>
+<a name="line113"></a>/**
+<a name="line114"></a> * Smarty Internal Plugin Compile Forclose Class
+<a name="line115"></a> */
+<a name="line116"></a>class Smarty_Internal_Compile_Forclose extends Smarty_Internal_CompileBase {
+<a name="line117"></a>    /**
+<a name="line118"></a>     * Compiles code for the {/for} tag
+<a name="line119"></a>     * 
+<a name="line120"></a>     * @param array $args array with attributes from parser
+<a name="line121"></a>     * @param object $compiler compiler object
+<a name="line122"></a>     * @param array $parameter array with compilation parameter
+<a name="line123"></a>     * @return string compiled code
+<a name="line124"></a>     */
+<a name="line125"></a>    public function compile($args, $compiler, $parameter)
+<a name="line126"></a>    {
+<a name="line127"></a>        $this->compiler = $compiler; 
+<a name="line128"></a>        // check and get attributes
+<a name="line129"></a>        $_attr  = $this->_get_attributes($args); 
+<a name="line130"></a>        // must endblock be nocache?
+<a name="line131"></a>        if ($this->compiler->nocache) {
+<a name="line132"></a>            $this->compiler->tag_nocache = true;
+<a name="line133"></a>        } 
+<a name="line134"></a>
+<a name="line135"></a>        list($_open_tag, $this->compiler->nocache, $local_vars) = $this->_close_tag(array('for', 'forelse'));
+<a name="line136"></a>
+<a name="line137"></a>        foreach ($local_vars as $var) {
+<a name="line138"></a>            unset($compiler->local_var[$var]);
+<a name="line139"></a>        } 
+<a name="line140"></a>        if ($_open_tag == 'forelse')
+<a name="line141"></a>            return "<?php }  ?>";
+<a name="line142"></a>        else
+<a name="line143"></a>            return "<?php }} ?>";
+<a name="line144"></a>    } 
+<a name="line145"></a>} 
+<a name="line146"></a>
+<a name="line147"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_for.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:25:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>Smarty_Internal_Register (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_register.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">Smarty\Smarty_Internal_Register</div>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line15" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 15</a>
+
+<h1>Class Smarty_Internal_Register</h1>
+
+<pre class="tree"><strong>Smarty_Internal_Register</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>Smarty_Internal_Register</strong></p>
+
+<div class="comment" id="overview_description"><p>Class for register/unregister methods</p></div>
+
+<hr>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>(mixed smarty)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#registerClass()">registerClass</a>(mixed class_name, string class_impl, string class)</p><p class="description">Registers static classes to be used in templates</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#registerDefaultPluginHandler()">registerDefaultPluginHandler</a>(mixed callback, $callback mixed)</p><p class="description">Registers a default plugin handler</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#registerDefaultTemplateHandler()">registerDefaultTemplateHandler</a>(mixed callback, $callback mixed)</p><p class="description">Registers a default template handler</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#registerObject()">registerObject</a>(mixed object_name, object object_impl, mixed allowed, mixed block_methods, mixed object, boolean smarty_args)</p><p class="description">Registers object to be used in templates</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#registerPlugin()">registerPlugin</a>(string type, string tag, callback callback, boolean cacheable, array cache_attr)</p><p class="description">Registers plugin to be used in templates</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#registerResource()">registerResource</a>(string type, array callback)</p><p class="description">Registers a resource to fetch a template</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#unregisterPlugin()">unregisterPlugin</a>(string type, string tag)</p><p class="description">Unregister Plugin</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#unregisterResource()">unregisterResource</a>(string type)</p><p class="description">Unregisters a resource</p></td>
+</tr>
+</table>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line17" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 17</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public  void <strong>__construct</strong>(mixed smarty)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line117" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 117</a>
+
+<h3 id="registerClass()">registerClass</h3>
+<code class="signature">public  void <strong>registerClass</strong>(mixed class_name, string class_impl, string class)</code>
+<div class="details">
+<p>Registers static classes to be used in templates</p><dl>
+<dt>Parameters:</dt>
+<dd>class - name of template class</dd>
+<dd>class_impl - the referenced PHP class to register</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line132" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 132</a>
+
+<h3 id="registerDefaultPluginHandler()">registerDefaultPluginHandler</h3>
+<code class="signature">public  void <strong>registerDefaultPluginHandler</strong>(mixed callback, $callback mixed)</code>
+<div class="details">
+<p>Registers a default plugin handler</p><dl>
+<dt>Parameters:</dt>
+<dd>mixed - string | array $plugin class/methode name</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line146" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 146</a>
+
+<h3 id="registerDefaultTemplateHandler()">registerDefaultTemplateHandler</h3>
+<code class="signature">public  void <strong>registerDefaultTemplateHandler</strong>(mixed callback, $callback mixed)</code>
+<div class="details">
+<p>Registers a default template handler</p><dl>
+<dt>Parameters:</dt>
+<dd>mixed - string | array class/method name</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line88" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 88</a>
+
+<h3 id="registerObject()">registerObject</h3>
+<code class="signature">public  void <strong>registerObject</strong>(mixed object_name, object object_impl, mixed allowed, mixed block_methods, mixed object, boolean smarty_args)</code>
+<div class="details">
+<p>Registers object to be used in templates</p><dl>
+<dt>Parameters:</dt>
+<dd>object - name of template object</dd>
+<dd> - &$object_impl the referenced PHP object to register</dd>
+<dd> - null | array $allowed list of allowed methods (empty = all)</dd>
+<dd>smarty_args - smarty argument format, else traditional</dd>
+<dd> - null | array $block_functs list of methods that are block format</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line31" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 31</a>
+
+<h3 id="registerPlugin()">registerPlugin</h3>
+<code class="signature">public  void <strong>registerPlugin</strong>(string type, string tag, callback callback, boolean cacheable, array cache_attr)</code>
+<div class="details">
+<p>Registers plugin to be used in templates</p><dl>
+<dt>Parameters:</dt>
+<dd>type - plugin type</dd>
+<dd>tag - name of template tag</dd>
+<dd>callback - PHP callback to register</dd>
+<dd>cacheable - if true (default) this fuction is cachable</dd>
+<dd>cache_attr - caching attributes if any</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line61" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 61</a>
+
+<h3 id="registerResource()">registerResource</h3>
+<code class="signature">public  void <strong>registerResource</strong>(string type, array callback)</code>
+<div class="details">
+<p>Registers a resource to fetch a template</p><dl>
+<dt>Parameters:</dt>
+<dd>type - name of resource type</dd>
+<dd>callback - array of callbacks to handle resource</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line48" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 48</a>
+
+<h3 id="unregisterPlugin()">unregisterPlugin</h3>
+<code class="signature">public  void <strong>unregisterPlugin</strong>(string type, string tag)</code>
+<div class="details">
+<p>Unregister Plugin</p><dl>
+<dt>Parameters:</dt>
+<dd>type - of plugin</dd>
+<dd>tag - name of plugin</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/sysplugins/smarty_internal_register.php.html#line71" class="location">libraries\smarty\libs\sysplugins\smarty_internal_register.php at line 71</a>
+
+<h3 id="unregisterResource()">unregisterResource</h3>
+<code class="signature">public  void <strong>unregisterResource</strong>(string type)</code>
+<div class="details">
+<p>Unregisters a resource</p><dl>
+<dt>Parameters:</dt>
+<dd>type - name of resource type</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../smarty/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../smarty/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../smarty\smarty_internal_register.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

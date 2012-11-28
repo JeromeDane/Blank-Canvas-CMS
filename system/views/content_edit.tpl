@@ -1,0 +1,1 @@
+<h1>Edit {$content.name}</h1>

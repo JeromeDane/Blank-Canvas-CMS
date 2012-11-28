@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_compile_extends.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_extends.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_compile_extends.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Compile extend</p><p>Compiles the {extends} tag</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>
+<a name="line3"></a>/**
+<a name="line4"></a> * Smarty Internal Plugin Compile extend
+<a name="line5"></a> * 
+<a name="line6"></a> * Compiles the {extends} tag
+<a name="line7"></a> * 
+<a name="line8"></a> * @package Smarty
+<a name="line9"></a> * @subpackage Compiler
+<a name="line10"></a> * @author Uwe Tews 
+<a name="line11"></a> */
+<a name="line12"></a>
+<a name="line13"></a>/**
+<a name="line14"></a> * Smarty Internal Plugin Compile extend Class
+<a name="line15"></a> */
+<a name="line16"></a>class Smarty_Internal_Compile_Extends extends Smarty_Internal_CompileBase {
+<a name="line17"></a>	// attribute definitions
+<a name="line18"></a>    public $required_attributes = array('file');
+<a name="line19"></a>    public $shorttag_order = array('file');
+<a name="line20"></a>
+<a name="line21"></a>    /**
+<a name="line22"></a>     * Compiles code for the {extends} tag
+<a name="line23"></a>     * 
+<a name="line24"></a>     * @param array $args array with attributes from parser
+<a name="line25"></a>     * @param object $compiler compiler object
+<a name="line26"></a>     * @return string compiled code
+<a name="line27"></a>     */
+<a name="line28"></a>    public function compile($args, $compiler)
+<a name="line29"></a>    {
+<a name="line30"></a>        $this->compiler = $compiler;
+<a name="line31"></a>        $this->smarty = $compiler->smarty;
+<a name="line32"></a>        $this->_rdl = preg_quote($this->smarty->right_delimiter);
+<a name="line33"></a>        $this->_ldl = preg_quote($this->smarty->left_delimiter);
+<a name="line34"></a>        $filepath = $compiler->template->getTemplateFilepath();
+<a name="line35"></a>        // check and get attributes
+<a name="line36"></a>        $_attr = $this->_get_attributes($args);
+<a name="line37"></a>        if ($_attr['nocache'] === true) {
+<a name="line38"></a>        	$this->compiler->trigger_template_error('nocache option not allowed', $this->compiler->lex->taglineno);
+<a name="line39"></a>        }
+<a name="line40"></a>
+<a name="line41"></a>        $_smarty_tpl = $compiler->template; 
+<a name="line42"></a>        $include_file = null;
+<a name="line43"></a>        if (strpos($_attr['file'],'$_tmp') !== false) {
+<a name="line44"></a>        	$this->compiler->trigger_template_error('illegal value for file attribute', $this->compiler->lex->taglineno);
+<a name="line45"></a>        }
+<a name="line46"></a>        eval('$include_file = ' . $_attr['file'] . ';'); 
+<a name="line47"></a>        // create template object
+<a name="line48"></a>        $_template = new $compiler->smarty->template_class($include_file, $this->smarty, $compiler->template); 
+<a name="line49"></a>        // save file dependency
+<a name="line50"></a>        if (in_array($_template->resource_type,array('eval','string'))) {
+<a name="line51"></a>        	$template_sha1 = sha1($include_file);
+<a name="line52"></a>    	} else {
+<a name="line53"></a>        	$template_sha1 = sha1($_template->getTemplateFilepath());
+<a name="line54"></a>    	}
+<a name="line55"></a>        if (isset($compiler->template->properties['file_dependency'][$template_sha1])) {
+<a name="line56"></a>            $this->compiler->trigger_template_error("illegal recursive call of \"{$include_file}\"",$compiler->lex->line-1);
+<a name="line57"></a>        } 
+<a name="line58"></a>        $compiler->template->properties['file_dependency'][$template_sha1] = array($_template->getTemplateFilepath(), $_template->getTemplateTimestamp(),$_template->resource_type);
+<a name="line59"></a>        $_content = substr($compiler->template->template_source,$compiler->lex->counter-1);
+<a name="line60"></a>        if (preg_match_all("!({$this->_ldl}block\s(.+?){$this->_rdl})!", $_content, $s) !=
+<a name="line61"></a>                preg_match_all("!({$this->_ldl}/block{$this->_rdl})!", $_content, $c)) {
+<a name="line62"></a>            $this->compiler->trigger_template_error('unmatched {block} {/block} pairs');
+<a name="line63"></a>        } 
+<a name="line64"></a>        preg_match_all("!{$this->_ldl}block\s(.+?){$this->_rdl}|{$this->_ldl}/block{$this->_rdl}!", $_content, $_result, PREG_OFFSET_CAPTURE);
+<a name="line65"></a>        $_result_count = count($_result[0]);
+<a name="line66"></a>        $_start = 0;
+<a name="line67"></a>        while ($_start < $_result_count) {
+<a name="line68"></a>            $_end = 0;
+<a name="line69"></a>            $_level = 1;
+<a name="line70"></a>            while ($_level != 0) {
+<a name="line71"></a>                $_end++;
+<a name="line72"></a>                if (!strpos($_result[0][$_start + $_end][0], '/')) {
+<a name="line73"></a>                    $_level++;
+<a name="line74"></a>                } else {
+<a name="line75"></a>                    $_level--;
+<a name="line76"></a>                } 
+<a name="line77"></a>            } 
+<a name="line78"></a>            $_block_content = str_replace($this->smarty->left_delimiter . '$smarty.block.parent' . $this->smarty->right_delimiter, '%%%%SMARTY_PARENT%%%%',
+<a name="line79"></a>                substr($_content, $_result[0][$_start][1] + strlen($_result[0][$_start][0]), $_result[0][$_start + $_end][1] - $_result[0][$_start][1] - + strlen($_result[0][$_start][0])));
+<a name="line80"></a>            Smarty_Internal_Compile_Block::saveBlockData($_block_content, $_result[0][$_start][0], $compiler->template, $filepath);
+<a name="line81"></a>            $_start = $_start + $_end + 1;
+<a name="line82"></a>        } 
+<a name="line83"></a>        $compiler->template->template_source = $_template->getTemplateSource();
+<a name="line84"></a>        $compiler->template->template_filepath = $_template->getTemplateFilepath();
+<a name="line85"></a>        $compiler->abort_and_recompile = true;
+<a name="line86"></a>        return '';
+<a name="line87"></a>    } 
+<a name="line88"></a>
+<a name="line89"></a>} 
+<a name="line90"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_extends.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

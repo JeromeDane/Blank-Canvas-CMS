@@ -1,9 +1,11 @@
+**This project is no longer being maintained.** I was working on this during my consulting days, and have since moved to using Drupal rather than trying to reinvent the wheel. Feel free to use any of this code for your own projects, but if you do, please give me credit and provide a link to http://jeromedane.com 
+
 Blank Canvas CMS v3
 ============================
 
 This is the alpha pre-release development code for Blank Canvas CMS v3, the first public release, and complete rewrite based on previous experience.
 
-* [Project Home Page](http://blankcanvas.me/cms/)
+* [Project Home Page](http://jeromedane.com)
 
 
 Follow this Project

@@ -1,0 +1,541 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_data.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_data.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_data.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Data</p><p>This file contains the basic classes and methodes for template and variable creation</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>
+<a name="line3"></a>/**
+<a name="line4"></a> * Smarty Internal Plugin Data
+<a name="line5"></a> * 
+<a name="line6"></a> * This file contains the basic classes and methodes for template and variable creation
+<a name="line7"></a> * 
+<a name="line8"></a> * @package Smarty
+<a name="line9"></a> * @subpackage Templates
+<a name="line10"></a> * @author Uwe Tews 
+<a name="line11"></a> */
+<a name="line12"></a>
+<a name="line13"></a>/**
+<a name="line14"></a> * Base class with template and variable methodes
+<a name="line15"></a> */
+<a name="line16"></a>class Smarty_Internal_Data {
+<a name="line17"></a>    // class used for templates
+<a name="line18"></a>    public $template_class = 'Smarty_Internal_Template';
+<a name="line19"></a>
+<a name="line20"></a>    /**
+<a name="line21"></a>     * assigns a Smarty variable
+<a name="line22"></a>     * 
+<a name="line23"></a>     * @param array $ |string $tpl_var the template variable name(s)
+<a name="line24"></a>     * @param mixed $value the value to assign
+<a name="line25"></a>     * @param boolean $nocache if true any output of this variable will be not cached
+<a name="line26"></a>     * @param boolean $scope the scope the variable will have  (local,parent or root)
+<a name="line27"></a>     */
+<a name="line28"></a>    public function assign($tpl_var, $value = null, $nocache = false)
+<a name="line29"></a>    {
+<a name="line30"></a>        if (is_array($tpl_var)) {
+<a name="line31"></a>            foreach ($tpl_var as $_key => $_val) {
+<a name="line32"></a>                if ($_key != '') {
+<a name="line33"></a>                    $this->tpl_vars[$_key] = new Smarty_variable($_val, $nocache);
+<a name="line34"></a>                } 
+<a name="line35"></a>            } 
+<a name="line36"></a>        } else {
+<a name="line37"></a>            if ($tpl_var != '') {
+<a name="line38"></a>                $this->tpl_vars[$tpl_var] = new Smarty_variable($value, $nocache);
+<a name="line39"></a>            } 
+<a name="line40"></a>        } 
+<a name="line41"></a>    } 
+<a name="line42"></a>    /**
+<a name="line43"></a>     * assigns a global Smarty variable
+<a name="line44"></a>     * 
+<a name="line45"></a>     * @param string $varname the global variable name
+<a name="line46"></a>     * @param mixed $value the value to assign
+<a name="line47"></a>     * @param boolean $nocache if true any output of this variable will be not cached
+<a name="line48"></a>     */
+<a name="line49"></a>    public function assignGlobal($varname, $value = null, $nocache = false)
+<a name="line50"></a>    {
+<a name="line51"></a>        if ($varname != '') {
+<a name="line52"></a>            Smarty::$global_tpl_vars[$varname] = new Smarty_variable($value, $nocache);
+<a name="line53"></a>        } 
+<a name="line54"></a>    } 
+<a name="line55"></a>    /**
+<a name="line56"></a>     * assigns values to template variables by reference
+<a name="line57"></a>     * 
+<a name="line58"></a>     * @param string $tpl_var the template variable name
+<a name="line59"></a>     * @param mixed $ &$value the referenced value to assign
+<a name="line60"></a>     * @param boolean $nocache if true any output of this variable will be not cached
+<a name="line61"></a>     */
+<a name="line62"></a>    public function assignByRef($tpl_var, &$value, $nocache = false)
+<a name="line63"></a>    {
+<a name="line64"></a>        if ($tpl_var != '') {
+<a name="line65"></a>            $this->tpl_vars[$tpl_var] = new Smarty_variable(null, $nocache);
+<a name="line66"></a>            $this->tpl_vars[$tpl_var]->value = &$value;
+<a name="line67"></a>        } 
+<a name="line68"></a>    } 
+<a name="line69"></a>
+<a name="line70"></a>    /**
+<a name="line71"></a>     * wrapper function for Smarty 2 BC
+<a name="line72"></a>     * 
+<a name="line73"></a>     * @param string $tpl_var the template variable name
+<a name="line74"></a>     * @param mixed $ &$value the referenced value to assign
+<a name="line75"></a>     */
+<a name="line76"></a>    public function assign_by_ref($tpl_var, &$value)
+<a name="line77"></a>    {
+<a name="line78"></a>       	if($this->smarty->deprecation_notices)
+<a name="line79"></a>        	trigger_error("function call 'assign_by_ref' is unknown or deprecated, use 'assignByRef'", E_USER_NOTICE);
+<a name="line80"></a>        $this->assignByRef($tpl_var, $value);
+<a name="line81"></a>    } 
+<a name="line82"></a>    /**
+<a name="line83"></a>     * appends values to template variables
+<a name="line84"></a>     * 
+<a name="line85"></a>     * @param array $ |string $tpl_var the template variable name(s)
+<a name="line86"></a>     * @param mixed $value the value to append
+<a name="line87"></a>     * @param boolean $merge flag if array elements shall be merged
+<a name="line88"></a>     * @param boolean $nocache if true any output of this variable will be not cached
+<a name="line89"></a>     */
+<a name="line90"></a>    public function append($tpl_var, $value = null, $merge = false, $nocache = false)
+<a name="line91"></a>    {
+<a name="line92"></a>        if (is_array($tpl_var)) {
+<a name="line93"></a>            // $tpl_var is an array, ignore $value
+<a name="line94"></a>            foreach ($tpl_var as $_key => $_val) {
+<a name="line95"></a>                if ($_key != '') {
+<a name="line96"></a>                    if (!isset($this->tpl_vars[$_key])) {
+<a name="line97"></a>                        $tpl_var_inst = $this->getVariable($_key, null, true, false);
+<a name="line98"></a>                        if ($tpl_var_inst instanceof Undefined_Smarty_Variable) {
+<a name="line99"></a>                            $this->tpl_vars[$_key] = new Smarty_variable(null, $nocache);
+<a name="line100"></a>                        } else {
+<a name="line101"></a>                            $this->tpl_vars[$_key] = clone $tpl_var_inst;
+<a name="line102"></a>                        } 
+<a name="line103"></a>                    } 
+<a name="line104"></a>                    if (!(is_array($this->tpl_vars[$_key]->value) || $this->tpl_vars[$_key]->value instanceof ArrayAccess)) {
+<a name="line105"></a>                        settype($this->tpl_vars[$_key]->value, 'array');
+<a name="line106"></a>                    } 
+<a name="line107"></a>                    if ($merge && is_array($_val)) {
+<a name="line108"></a>                        foreach($_val as $_mkey => $_mval) {
+<a name="line109"></a>                            $this->tpl_vars[$_key]->value[$_mkey] = $_mval;
+<a name="line110"></a>                        } 
+<a name="line111"></a>                    } else {
+<a name="line112"></a>                        $this->tpl_vars[$_key]->value[] = $_val;
+<a name="line113"></a>                    } 
+<a name="line114"></a>                } 
+<a name="line115"></a>            } 
+<a name="line116"></a>        } else {
+<a name="line117"></a>            if ($tpl_var != '' && isset($value)) {
+<a name="line118"></a>                if (!isset($this->tpl_vars[$tpl_var])) {
+<a name="line119"></a>                    $tpl_var_inst = $this->getVariable($tpl_var, null, true, false);
+<a name="line120"></a>                    if ($tpl_var_inst instanceof Undefined_Smarty_Variable) {
+<a name="line121"></a>                        $this->tpl_vars[$tpl_var] = new Smarty_variable(null, $nocache);
+<a name="line122"></a>                    } else {
+<a name="line123"></a>                        $this->tpl_vars[$tpl_var] = clone $tpl_var_inst;
+<a name="line124"></a>                    } 
+<a name="line125"></a>                } 
+<a name="line126"></a>                if (!(is_array($this->tpl_vars[$tpl_var]->value) || $this->tpl_vars[$tpl_var]->value instanceof ArrayAccess)) {
+<a name="line127"></a>                    settype($this->tpl_vars[$tpl_var]->value, 'array');
+<a name="line128"></a>                } 
+<a name="line129"></a>                if ($merge && is_array($value)) {
+<a name="line130"></a>                    foreach($value as $_mkey => $_mval) {
+<a name="line131"></a>                        $this->tpl_vars[$tpl_var]->value[$_mkey] = $_mval;
+<a name="line132"></a>                    } 
+<a name="line133"></a>                } else {
+<a name="line134"></a>                    $this->tpl_vars[$tpl_var]->value[] = $value;
+<a name="line135"></a>                } 
+<a name="line136"></a>            } 
+<a name="line137"></a>        } 
+<a name="line138"></a>    } 
+<a name="line139"></a>
+<a name="line140"></a>    /**
+<a name="line141"></a>     * appends values to template variables by reference
+<a name="line142"></a>     * 
+<a name="line143"></a>     * @param string $tpl_var the template variable name
+<a name="line144"></a>     * @param mixed $ &$value the referenced value to append
+<a name="line145"></a>     * @param boolean $merge flag if array elements shall be merged
+<a name="line146"></a>     */
+<a name="line147"></a>    public function appendByRef($tpl_var, &$value, $merge = false)
+<a name="line148"></a>    {
+<a name="line149"></a>        if ($tpl_var != '' && isset($value)) {
+<a name="line150"></a>            if (!isset($this->tpl_vars[$tpl_var])) {
+<a name="line151"></a>                $this->tpl_vars[$tpl_var] = new Smarty_variable();
+<a name="line152"></a>            } 
+<a name="line153"></a>            if (!@is_array($this->tpl_vars[$tpl_var]->value)) {
+<a name="line154"></a>                settype($this->tpl_vars[$tpl_var]->value, 'array');
+<a name="line155"></a>            } 
+<a name="line156"></a>            if ($merge && is_array($value)) {
+<a name="line157"></a>                foreach($value as $_key => $_val) {
+<a name="line158"></a>                    $this->tpl_vars[$tpl_var]->value[$_key] = &$value[$_key];
+<a name="line159"></a>                } 
+<a name="line160"></a>            } else {
+<a name="line161"></a>                $this->tpl_vars[$tpl_var]->value[] = &$value;
+<a name="line162"></a>            } 
+<a name="line163"></a>        } 
+<a name="line164"></a>    } 
+<a name="line165"></a> 
+<a name="line166"></a>     /**
+<a name="line167"></a>     * 
+<a name="line168"></a>     * @param string $tpl_var the template variable name
+<a name="line169"></a>     * @param mixed $ &$value the referenced value to append
+<a name="line170"></a>     * @param boolean $merge flag if array elements shall be merged
+<a name="line171"></a>     */
+<a name="line172"></a>    public function append_by_ref($tpl_var, &$value, $merge = false)
+<a name="line173"></a>    {
+<a name="line174"></a>       	if($this->smarty->deprecation_notices)
+<a name="line175"></a>        	trigger_error("function call 'append_by_ref' is unknown or deprecated, use 'appendByRef'", E_USER_NOTICE);
+<a name="line176"></a>        $this->appendByRef($tpl_var, $value, $merge);
+<a name="line177"></a>    } 
+<a name="line178"></a>    /**
+<a name="line179"></a>     * Returns a single or all template variables
+<a name="line180"></a>     * 
+<a name="line181"></a>     * @param string $varname variable name or null
+<a name="line182"></a>     * @return string variable value or or array of variables
+<a name="line183"></a>     */
+<a name="line184"></a>    function getTemplateVars($varname = null, $_ptr = null, $search_parents = true)
+<a name="line185"></a>    {
+<a name="line186"></a>        if (isset($varname)) {
+<a name="line187"></a>            $_var = $this->getVariable($varname, $_ptr, $search_parents, false);
+<a name="line188"></a>            if (is_object($_var)) {
+<a name="line189"></a>                return $_var->value;
+<a name="line190"></a>            } else {
+<a name="line191"></a>                return null;
+<a name="line192"></a>            } 
+<a name="line193"></a>        } else {
+<a name="line194"></a>            $_result = array();
+<a name="line195"></a>            if ($_ptr === null) {
+<a name="line196"></a>                $_ptr = $this;
+<a name="line197"></a>            } while ($_ptr !== null) {
+<a name="line198"></a>                foreach ($_ptr->tpl_vars AS $key => $var) {
+<a name="line199"></a>                    if (!array_key_exists($key, $_result)) {
+<a name="line200"></a>                        $_result[$key] = $var->value;
+<a name="line201"></a>                    }
+<a name="line202"></a>                } 
+<a name="line203"></a>                // not found, try at parent
+<a name="line204"></a>                if ($search_parents) {
+<a name="line205"></a>                    $_ptr = $_ptr->parent;
+<a name="line206"></a>                } else {
+<a name="line207"></a>                    $_ptr = null;
+<a name="line208"></a>                } 
+<a name="line209"></a>            } 
+<a name="line210"></a>            if ($search_parents && isset(Smarty::$global_tpl_vars)) {
+<a name="line211"></a>                foreach (Smarty::$global_tpl_vars AS $key => $var) {
+<a name="line212"></a>                    if (!array_key_exists($key, $_result)) {
+<a name="line213"></a>                        $_result[$key] = $var->value;
+<a name="line214"></a>                    }
+<a name="line215"></a>                } 
+<a name="line216"></a>            } 
+<a name="line217"></a>            return $_result;
+<a name="line218"></a>        } 
+<a name="line219"></a>    } 
+<a name="line220"></a>
+<a name="line221"></a>    /**
+<a name="line222"></a>     * clear the given assigned template variable.
+<a name="line223"></a>     * 
+<a name="line224"></a>     * @param string $ |array $tpl_var the template variable(s) to clear
+<a name="line225"></a>     */
+<a name="line226"></a>    public function clearAssign($tpl_var)
+<a name="line227"></a>    {
+<a name="line228"></a>        if (is_array($tpl_var)) {
+<a name="line229"></a>            foreach ($tpl_var as $curr_var) {
+<a name="line230"></a>                unset($this->tpl_vars[$curr_var]);
+<a name="line231"></a>            } 
+<a name="line232"></a>        } else {
+<a name="line233"></a>            unset($this->tpl_vars[$tpl_var]);
+<a name="line234"></a>        } 
+<a name="line235"></a>    } 
+<a name="line236"></a>
+<a name="line237"></a>    /**
+<a name="line238"></a>     * clear all the assigned template variables.
+<a name="line239"></a>     */
+<a name="line240"></a>    public function clearAllAssign()
+<a name="line241"></a>    {
+<a name="line242"></a>        $this->tpl_vars = array();
+<a name="line243"></a>    } 
+<a name="line244"></a>
+<a name="line245"></a>    /**
+<a name="line246"></a>     * load a config file, optionally load just selected sections
+<a name="line247"></a>     * 
+<a name="line248"></a>     * @param string $config_file filename
+<a name="line249"></a>     * @param mixed $sections array of section names, single section or null
+<a name="line250"></a>     */
+<a name="line251"></a>    public function configLoad($config_file, $sections = null)
+<a name="line252"></a>    { 
+<a name="line253"></a>        // load Config class
+<a name="line254"></a>        $config = new Smarty_Internal_Config($config_file, $this->smarty, $this);
+<a name="line255"></a>        $config->loadConfigVars($sections);
+<a name="line256"></a>    } 
+<a name="line257"></a>
+<a name="line258"></a>    /**
+<a name="line259"></a>     * gets the object of a Smarty variable
+<a name="line260"></a>     * 
+<a name="line261"></a>     * @param string $variable the name of the Smarty variable
+<a name="line262"></a>     * @param object $_ptr optional pointer to data object
+<a name="line263"></a>     * @param boolean $search_parents search also in parent data
+<a name="line264"></a>     * @return object the object of the variable
+<a name="line265"></a>     */
+<a name="line266"></a>    public function getVariable($_variable, $_ptr = null, $search_parents = true, $error_enable = true)
+<a name="line267"></a>    {
+<a name="line268"></a>        if ($_ptr === null) {
+<a name="line269"></a>            $_ptr = $this;
+<a name="line270"></a>        } while ($_ptr !== null) {
+<a name="line271"></a>            if (isset($_ptr->tpl_vars[$_variable])) {
+<a name="line272"></a>                // found it, return it
+<a name="line273"></a>                return $_ptr->tpl_vars[$_variable];
+<a name="line274"></a>            } 
+<a name="line275"></a>            // not found, try at parent
+<a name="line276"></a>            if ($search_parents) {
+<a name="line277"></a>                $_ptr = $_ptr->parent;
+<a name="line278"></a>            } else {
+<a name="line279"></a>                $_ptr = null;
+<a name="line280"></a>            } 
+<a name="line281"></a>        } 
+<a name="line282"></a>        if (isset(Smarty::$global_tpl_vars[$_variable])) {
+<a name="line283"></a>            // found it, return it
+<a name="line284"></a>            return Smarty::$global_tpl_vars[$_variable];
+<a name="line285"></a>        } 
+<a name="line286"></a>        if ($this->smarty->error_unassigned && $error_enable) {
+<a name="line287"></a>            throw new SmartyException('Undefined Smarty variable "' . $_variable . '"');
+<a name="line288"></a>        } else {
+<a name="line289"></a>        	if ($error_enable) {
+<a name="line290"></a>				// force a notice
+<a name="line291"></a>				$x = $$_variable;
+<a name="line292"></a>        	}
+<a name="line293"></a>            return new Undefined_Smarty_Variable;
+<a name="line294"></a>        } 
+<a name="line295"></a>    } 
+<a name="line296"></a>    /**
+<a name="line297"></a>     * gets  a config variable
+<a name="line298"></a>     * 
+<a name="line299"></a>     * @param string $variable the name of the config variable
+<a name="line300"></a>     * @return mixed the value of the config variable
+<a name="line301"></a>     */
+<a name="line302"></a>    public function getConfigVariable($_variable)
+<a name="line303"></a>    {
+<a name="line304"></a>        $_ptr = $this;
+<a name="line305"></a>        while ($_ptr !== null) {
+<a name="line306"></a>            if (isset($_ptr->config_vars[$_variable])) {
+<a name="line307"></a>                // found it, return it
+<a name="line308"></a>                return $_ptr->config_vars[$_variable];
+<a name="line309"></a>            } 
+<a name="line310"></a>            // not found, try at parent
+<a name="line311"></a>            $_ptr = $_ptr->parent;
+<a name="line312"></a>        } 
+<a name="line313"></a>        if ($this->smarty->error_unassigned) {
+<a name="line314"></a>            throw new SmartyException('Undefined config variable "' . $_variable . '"');
+<a name="line315"></a>        } else {
+<a name="line316"></a>			// force a notice
+<a name="line317"></a>			$x = $$_variable;
+<a name="line318"></a>            return null;
+<a name="line319"></a>        } 
+<a name="line320"></a>    } 
+<a name="line321"></a>
+<a name="line322"></a>    /**
+<a name="line323"></a>     * gets  a stream variable
+<a name="line324"></a>     * 
+<a name="line325"></a>     * @param string $variable the stream of the variable
+<a name="line326"></a>     * @return mixed the value of the stream variable
+<a name="line327"></a>     */
+<a name="line328"></a>    public function getStreamVariable($variable)
+<a name="line329"></a>    {
+<a name="line330"></a>        $_result = '';
+<a name="line331"></a>        if ($fp = fopen($variable, 'r+')) {
+<a name="line332"></a>            while (!feof($fp)) {
+<a name="line333"></a>                $_result .= fgets($fp);
+<a name="line334"></a>            } 
+<a name="line335"></a>            fclose($fp);
+<a name="line336"></a>            return $_result;
+<a name="line337"></a>        } 
+<a name="line338"></a>
+<a name="line339"></a>        if ($this->smarty->error_unassigned) {
+<a name="line340"></a>            throw new SmartyException('Undefined stream variable "' . $variable . '"');
+<a name="line341"></a>        } else {
+<a name="line342"></a>            return null;
+<a name="line343"></a>        } 
+<a name="line344"></a>    } 
+<a name="line345"></a>
+<a name="line346"></a>    /**
+<a name="line347"></a>     * Returns a single or all config variables
+<a name="line348"></a>     * 
+<a name="line349"></a>     * @param string $varname variable name or null
+<a name="line350"></a>     * @return string variable value or or array of variables
+<a name="line351"></a>     */
+<a name="line352"></a>    function getConfigVars($varname = null, $search_parents = true)
+<a name="line353"></a>    {
+<a name="line354"></a> //   	var_dump($this);
+<a name="line355"></a>        $_ptr = $this;
+<a name="line356"></a>        $var_array = array();
+<a name="line357"></a>        while ($_ptr !== null) {
+<a name="line358"></a>        	if (isset($varname)) {
+<a name="line359"></a>            	if (isset($_ptr->config_vars[$varname])) {
+<a name="line360"></a>                	return $_ptr->config_vars[$varname];
+<a name="line361"></a>                }
+<a name="line362"></a>            } else {
+<a name="line363"></a>            	$var_array = array_merge($_ptr->config_vars, $var_array);
+<a name="line364"></a>        	} 
+<a name="line365"></a>             // not found, try at parent
+<a name="line366"></a>            if ($search_parents) {
+<a name="line367"></a>                $_ptr = $_ptr->parent;
+<a name="line368"></a>            } else {
+<a name="line369"></a>                $_ptr = null;
+<a name="line370"></a>            } 
+<a name="line371"></a>    	} 
+<a name="line372"></a>        if (isset($varname)) {
+<a name="line373"></a>    		return '';
+<a name="line374"></a>        } else {
+<a name="line375"></a>            return $var_array;
+<a name="line376"></a>        } 
+<a name="line377"></a>    } 
+<a name="line378"></a>
+<a name="line379"></a>    /**
+<a name="line380"></a>     * Deassigns a single or all config variables
+<a name="line381"></a>     * 
+<a name="line382"></a>     * @param string $varname variable name or null
+<a name="line383"></a>     */
+<a name="line384"></a>    function clearConfig($varname = null)
+<a name="line385"></a>    {
+<a name="line386"></a>        if (isset($varname)) {
+<a name="line387"></a>            unset($this->config_vars[$varname]);
+<a name="line388"></a>            return;
+<a name="line389"></a>        } else {
+<a name="line390"></a>            $this->config_vars = array();
+<a name="line391"></a>            return;
+<a name="line392"></a>        } 
+<a name="line393"></a>    } 
+<a name="line394"></a>
+<a name="line395"></a>} 
+<a name="line396"></a>
+<a name="line397"></a>/**
+<a name="line398"></a> * class for the Smarty data object
+<a name="line399"></a> * 
+<a name="line400"></a> * The Smarty data object will hold Smarty variables in the current scope
+<a name="line401"></a> * 
+<a name="line402"></a> * @param object $parent tpl_vars next higher level of Smarty variables
+<a name="line403"></a> */
+<a name="line404"></a>class Smarty_Data extends Smarty_Internal_Data {
+<a name="line405"></a>    // array of variable objects
+<a name="line406"></a>    public $tpl_vars = array(); 
+<a name="line407"></a>    // back pointer to parent object
+<a name="line408"></a>    public $parent = null; 
+<a name="line409"></a>    // config vars
+<a name="line410"></a>    public $config_vars = array(); 
+<a name="line411"></a>    // Smarty object
+<a name="line412"></a>    public $smarty = null;
+<a name="line413"></a>    /**
+<a name="line414"></a>     * create Smarty data object
+<a name="line415"></a>     */
+<a name="line416"></a>    public function __construct ($_parent = null, $smarty = null)
+<a name="line417"></a>    {
+<a name="line418"></a>        $this->smarty = $smarty;
+<a name="line419"></a>        if (is_object($_parent)) {
+<a name="line420"></a>            // when object set up back pointer
+<a name="line421"></a>            $this->parent = $_parent;
+<a name="line422"></a>        } elseif (is_array($_parent)) {
+<a name="line423"></a>            // set up variable values
+<a name="line424"></a>            foreach ($_parent as $_key => $_val) {
+<a name="line425"></a>                $this->tpl_vars[$_key] = new Smarty_variable($_val);
+<a name="line426"></a>            } 
+<a name="line427"></a>        } elseif ($_parent != null) {
+<a name="line428"></a>            throw new SmartyException("Wrong type for template variables");
+<a name="line429"></a>        } 
+<a name="line430"></a>    } 
+<a name="line431"></a>} 
+<a name="line432"></a>/**
+<a name="line433"></a> * class for the Smarty variable object
+<a name="line434"></a> * 
+<a name="line435"></a> * This class defines the Smarty variable object
+<a name="line436"></a> */
+<a name="line437"></a>class Smarty_Variable {
+<a name="line438"></a>    // template variable
+<a name="line439"></a>    public $value;
+<a name="line440"></a>    public $nocache;
+<a name="line441"></a>    public $scope;
+<a name="line442"></a>    /**
+<a name="line443"></a>     * create Smarty variable object
+<a name="line444"></a>     * 
+<a name="line445"></a>     * @param mixed $value the value to assign
+<a name="line446"></a>     * @param boolean $nocache if true any output of this variable will be not cached
+<a name="line447"></a>     * @param boolean $scope the scope the variable will have  (local,parent or root)
+<a name="line448"></a>     */
+<a name="line449"></a>    public function __construct ($value = null, $nocache = false, $scope = Smarty::SCOPE_LOCAL)
+<a name="line450"></a>    {
+<a name="line451"></a>        $this->value = $value;
+<a name="line452"></a>        $this->nocache = $nocache;
+<a name="line453"></a>        $this->scope = $scope;
+<a name="line454"></a>    } 
+<a name="line455"></a>
+<a name="line456"></a>    public function __toString ()
+<a name="line457"></a>    {
+<a name="line458"></a>        return $this->value;
+<a name="line459"></a>    } 
+<a name="line460"></a>} 
+<a name="line461"></a>
+<a name="line462"></a>/**
+<a name="line463"></a> * class for undefined variable object
+<a name="line464"></a> * 
+<a name="line465"></a> * This class defines an object for undefined variable handling
+<a name="line466"></a> */
+<a name="line467"></a>class Undefined_Smarty_Variable {
+<a name="line468"></a>    // return always false
+<a name="line469"></a>    public function __get ($name)
+<a name="line470"></a>    {
+<a name="line471"></a>        if ($name == 'nocache') {
+<a name="line472"></a>            return false;
+<a name="line473"></a>        } else {
+<a name="line474"></a>            return null;
+<a name="line475"></a>        } 
+<a name="line476"></a>    } 
+<a name="line477"></a>} 
+<a name="line478"></a>
+<a name="line479"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_data.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

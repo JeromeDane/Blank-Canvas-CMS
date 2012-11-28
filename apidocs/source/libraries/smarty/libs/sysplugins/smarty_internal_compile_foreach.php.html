@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:58 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_compile_foreach.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_foreach.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_compile_foreach.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Compile Foreach</p><p>Compiles the {foreach} {foreachelse} {/foreach} tags</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty Internal Plugin Compile Foreach
+<a name="line4"></a> * 
+<a name="line5"></a> * Compiles the {foreach} {foreachelse} {/foreach} tags
+<a name="line6"></a> * 
+<a name="line7"></a> * @package Smarty
+<a name="line8"></a> * @subpackage Compiler
+<a name="line9"></a> * @author Uwe Tews 
+<a name="line10"></a> */
+<a name="line11"></a>
+<a name="line12"></a>/**
+<a name="line13"></a> * Smarty Internal Plugin Compile Foreach Class
+<a name="line14"></a> */
+<a name="line15"></a>class Smarty_Internal_Compile_Foreach extends Smarty_Internal_CompileBase {
+<a name="line16"></a>	// attribute definitions
+<a name="line17"></a>    public $required_attributes = array('from', 'item');
+<a name="line18"></a>    public $optional_attributes = array('name', 'key'); 
+<a name="line19"></a>    public $shorttag_order = array('from','item','key','name');
+<a name="line20"></a>
+<a name="line21"></a>    /**
+<a name="line22"></a>     * Compiles code for the {foreach} tag
+<a name="line23"></a>     * 
+<a name="line24"></a>     * @param array $args array with attributes from parser
+<a name="line25"></a>     * @param object $compiler compiler object
+<a name="line26"></a>     * @param array $parameter array with compilation parameter
+<a name="line27"></a>     * @return string compiled code
+<a name="line28"></a>     */
+<a name="line29"></a>    public function compile($args, $compiler, $parameter)
+<a name="line30"></a>    {
+<a name="line31"></a>        $this->compiler = $compiler;
+<a name="line32"></a>        $tpl = $compiler->template; 
+<a name="line33"></a>        // check and get attributes
+<a name="line34"></a>        $_attr = $this->_get_attributes($args);
+<a name="line35"></a>
+<a name="line36"></a>        $from = $_attr['from'];
+<a name="line37"></a>        $item = $_attr['item'];
+<a name="line38"></a>
+<a name="line39"></a>        if (substr_compare("\$_smarty_tpl->getVariable($item)", $from,0, strlen("\$_smarty_tpl->getVariable($item)")) == 0) {
+<a name="line40"></a>            $this->compiler->trigger_template_error("item variable {$item} may not be the same variable as at 'from'", $this->compiler->lex->taglineno);
+<a name="line41"></a>        } 
+<a name="line42"></a>
+<a name="line43"></a>        if (isset($_attr['key'])) {
+<a name="line44"></a>            $key = $_attr['key'];
+<a name="line45"></a>        } else {
+<a name="line46"></a>            $key = null;
+<a name="line47"></a>        } 
+<a name="line48"></a>
+<a name="line49"></a>        $this->_open_tag('foreach', array('foreach', $this->compiler->nocache, $item, $key)); 
+<a name="line50"></a>        // maybe nocache because of nocache variables
+<a name="line51"></a>        $this->compiler->nocache = $this->compiler->nocache | $this->compiler->tag_nocache;
+<a name="line52"></a>
+<a name="line53"></a>        if (isset($_attr['name'])) {
+<a name="line54"></a>            $name = $_attr['name'];
+<a name="line55"></a>            $has_name = true;
+<a name="line56"></a>            $SmartyVarName = '$smarty.foreach.' . trim($name, '\'"') . '.';
+<a name="line57"></a>        } else {
+<a name="line58"></a>            $name = null;
+<a name="line59"></a>            $has_name = false;
+<a name="line60"></a>        } 
+<a name="line61"></a>        $ItemVarName = '$' . trim($item, '\'"') . '@'; 
+<a name="line62"></a>        // evaluates which Smarty variables and properties have to be computed
+<a name="line63"></a>        if ($has_name) {
+<a name="line64"></a>            $usesSmartyFirst = strpos($tpl->template_source, $SmartyVarName . 'first') !== false;
+<a name="line65"></a>            $usesSmartyLast = strpos($tpl->template_source, $SmartyVarName . 'last') !== false;
+<a name="line66"></a>            $usesSmartyIndex = strpos($tpl->template_source, $SmartyVarName . 'index') !== false;
+<a name="line67"></a>            $usesSmartyIteration = strpos($tpl->template_source, $SmartyVarName . 'iteration') !== false;
+<a name="line68"></a>            $usesSmartyShow = strpos($tpl->template_source, $SmartyVarName . 'show') !== false;
+<a name="line69"></a>            $usesSmartyTotal = strpos($tpl->template_source, $SmartyVarName . 'total') !== false;
+<a name="line70"></a>        } else {
+<a name="line71"></a>            $usesSmartyFirst = false;
+<a name="line72"></a>            $usesSmartyLast = false;
+<a name="line73"></a>            $usesSmartyTotal = false;
+<a name="line74"></a>            $usesSmartyShow = false;
+<a name="line75"></a>        } 
+<a name="line76"></a>
+<a name="line77"></a>        $usesPropFirst = $usesSmartyFirst || strpos($tpl->template_source, $ItemVarName . 'first') !== false;
+<a name="line78"></a>        $usesPropLast = $usesSmartyLast || strpos($tpl->template_source, $ItemVarName . 'last') !== false;
+<a name="line79"></a>        $usesPropIndex = $usesPropFirst || strpos($tpl->template_source, $ItemVarName . 'index') !== false;
+<a name="line80"></a>        $usesPropIteration = $usesPropLast || strpos($tpl->template_source, $ItemVarName . 'iteration') !== false;
+<a name="line81"></a>        $usesPropShow = strpos($tpl->template_source, $ItemVarName . 'show') !== false;
+<a name="line82"></a>        $usesPropTotal = $usesSmartyTotal || $usesSmartyShow || $usesPropShow || $usesPropLast || strpos($tpl->template_source, $ItemVarName . 'total') !== false; 
+<a name="line83"></a>        // generate output code
+<a name="line84"></a>        $output = "<?php ";
+<a name="line85"></a>        $output .= " \$_smarty_tpl->tpl_vars[$item] = new Smarty_Variable;\n";
+<a name="line86"></a>        $compiler->local_var[$item] = true;
+<a name="line87"></a>        if ($key != null) {
+<a name="line88"></a>            $output .= " \$_smarty_tpl->tpl_vars[$key] = new Smarty_Variable;\n";
+<a name="line89"></a>            $compiler->local_var[$key] = true;
+<a name="line90"></a>        } 
+<a name="line91"></a>        $output .= " \$_from = $from; if (!is_array(\$_from) && !is_object(\$_from)) { settype(\$_from, 'array');}\n";
+<a name="line92"></a>        if ($usesPropTotal) {
+<a name="line93"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->total= \$_smarty_tpl->_count(\$_from);\n";
+<a name="line94"></a>        } 
+<a name="line95"></a>        if ($usesPropIteration) {
+<a name="line96"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->iteration=0;\n";
+<a name="line97"></a>        } 
+<a name="line98"></a>        if ($usesPropIndex) {
+<a name="line99"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->index=-1;\n";
+<a name="line100"></a>        } 
+<a name="line101"></a>        if ($usesPropShow) {
+<a name="line102"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->show = (\$_smarty_tpl->tpl_vars[$item]->total > 0);\n";
+<a name="line103"></a>        } 
+<a name="line104"></a>        if ($has_name) {
+<a name="line105"></a>            if ($usesSmartyTotal) {
+<a name="line106"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['total'] = \$_smarty_tpl->tpl_vars[$item]->total;\n";
+<a name="line107"></a>            } 
+<a name="line108"></a>            if ($usesSmartyIteration) {
+<a name="line109"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['iteration']=0;\n";
+<a name="line110"></a>            } 
+<a name="line111"></a>            if ($usesSmartyIndex) {
+<a name="line112"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['index']=-1;\n";
+<a name="line113"></a>            } 
+<a name="line114"></a>            if ($usesSmartyShow) {
+<a name="line115"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['show']=(\$_smarty_tpl->tpl_vars[$item]->total > 0);\n";
+<a name="line116"></a>            } 
+<a name="line117"></a>        } 
+<a name="line118"></a>        if ($usesPropTotal) {
+<a name="line119"></a>			$output .= "if (\$_smarty_tpl->tpl_vars[$item]->total > 0){\n";
+<a name="line120"></a>        } else {
+<a name="line121"></a>			$output .= "if (\$_smarty_tpl->_count(\$_from) > 0){\n";
+<a name="line122"></a>		}
+<a name="line123"></a>		$output .= "    foreach (\$_from as \$_smarty_tpl->tpl_vars[$item]->key => \$_smarty_tpl->tpl_vars[$item]->value){\n";
+<a name="line124"></a>        if ($key != null) {
+<a name="line125"></a>            $output .= " \$_smarty_tpl->tpl_vars[$key]->value = \$_smarty_tpl->tpl_vars[$item]->key;\n";
+<a name="line126"></a>        } 
+<a name="line127"></a>        if ($usesPropIteration) {
+<a name="line128"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->iteration++;\n";
+<a name="line129"></a>        } 
+<a name="line130"></a>        if ($usesPropIndex) {
+<a name="line131"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->index++;\n";
+<a name="line132"></a>        } 
+<a name="line133"></a>        if ($usesPropFirst) {
+<a name="line134"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->first = \$_smarty_tpl->tpl_vars[$item]->index === 0;\n";
+<a name="line135"></a>        } 
+<a name="line136"></a>        if ($usesPropLast) {
+<a name="line137"></a>            $output .= " \$_smarty_tpl->tpl_vars[$item]->last = \$_smarty_tpl->tpl_vars[$item]->iteration === \$_smarty_tpl->tpl_vars[$item]->total;\n";
+<a name="line138"></a>        } 
+<a name="line139"></a>        if ($has_name) {
+<a name="line140"></a>            if ($usesSmartyFirst) {
+<a name="line141"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['first'] = \$_smarty_tpl->tpl_vars[$item]->first;\n";
+<a name="line142"></a>            } 
+<a name="line143"></a>            if ($usesSmartyIteration) {
+<a name="line144"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['iteration']++;\n";
+<a name="line145"></a>            } 
+<a name="line146"></a>            if ($usesSmartyIndex) {
+<a name="line147"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['index']++;\n";
+<a name="line148"></a>            } 
+<a name="line149"></a>            if ($usesSmartyLast) {
+<a name="line150"></a>                $output .= " \$_smarty_tpl->tpl_vars['smarty']->value['foreach'][$name]['last'] = \$_smarty_tpl->tpl_vars[$item]->last;\n";
+<a name="line151"></a>            } 
+<a name="line152"></a>        } 
+<a name="line153"></a>        $output .= "?>";
+<a name="line154"></a>
+<a name="line155"></a>        return $output;
+<a name="line156"></a>    } 
+<a name="line157"></a>} 
+<a name="line158"></a>
+<a name="line159"></a>/**
+<a name="line160"></a> * Smarty Internal Plugin Compile Foreachelse Class
+<a name="line161"></a> */
+<a name="line162"></a>class Smarty_Internal_Compile_Foreachelse extends Smarty_Internal_CompileBase {
+<a name="line163"></a>    /**
+<a name="line164"></a>     * Compiles code for the {foreachelse} tag
+<a name="line165"></a>     * 
+<a name="line166"></a>     * @param array $args array with attributes from parser
+<a name="line167"></a>     * @param object $compiler compiler object
+<a name="line168"></a>     * @param array $parameter array with compilation parameter
+<a name="line169"></a>     * @return string compiled code
+<a name="line170"></a>     */
+<a name="line171"></a>    public function compile($args, $compiler, $parameter)
+<a name="line172"></a>    {
+<a name="line173"></a>        $this->compiler = $compiler; 
+<a name="line174"></a>        // check and get attributes
+<a name="line175"></a>        $_attr = $this->_get_attributes($args);
+<a name="line176"></a>
+<a name="line177"></a>        list($_open_tag, $nocache, $item, $key) = $this->_close_tag(array('foreach'));
+<a name="line178"></a>        $this->_open_tag('foreachelse', array('foreachelse', $nocache, $item, $key));
+<a name="line179"></a>
+<a name="line180"></a>        return "<?php }} else { ?>";
+<a name="line181"></a>    } 
+<a name="line182"></a>} 
+<a name="line183"></a>
+<a name="line184"></a>/**
+<a name="line185"></a> * Smarty Internal Plugin Compile Foreachclose Class
+<a name="line186"></a> */
+<a name="line187"></a>class Smarty_Internal_Compile_Foreachclose extends Smarty_Internal_CompileBase {
+<a name="line188"></a>    /**
+<a name="line189"></a>     * Compiles code for the {/foreach} tag
+<a name="line190"></a>     * 
+<a name="line191"></a>     * @param array $args array with attributes from parser
+<a name="line192"></a>     * @param object $compiler compiler object
+<a name="line193"></a>     * @param array $parameter array with compilation parameter
+<a name="line194"></a>     * @return string compiled code
+<a name="line195"></a>     */
+<a name="line196"></a>    public function compile($args, $compiler, $parameter)
+<a name="line197"></a>    {
+<a name="line198"></a>        $this->compiler = $compiler; 
+<a name="line199"></a>        // check and get attributes
+<a name="line200"></a>        $_attr = $this->_get_attributes($args); 
+<a name="line201"></a>        // must endblock be nocache?
+<a name="line202"></a>        if ($this->compiler->nocache) {
+<a name="line203"></a>            $this->compiler->tag_nocache = true;
+<a name="line204"></a>        } 
+<a name="line205"></a>
+<a name="line206"></a>        list($_open_tag, $this->compiler->nocache, $item, $key) = $this->_close_tag(array('foreach', 'foreachelse'));
+<a name="line207"></a>        unset($compiler->local_var[$item]);
+<a name="line208"></a>        if ($key != null) {
+<a name="line209"></a>            unset($compiler->local_var[$key]);
+<a name="line210"></a>        } 
+<a name="line211"></a>
+<a name="line212"></a>        if ($_open_tag == 'foreachelse')
+<a name="line213"></a>            return "<?php } ?>";
+<a name="line214"></a>        else
+<a name="line215"></a>            return "<?php }} ?>";
+<a name="line216"></a>    } 
+<a name="line217"></a>} 
+<a name="line218"></a>
+<a name="line219"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_foreach.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

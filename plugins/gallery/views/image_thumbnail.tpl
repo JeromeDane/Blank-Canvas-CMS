@@ -1,0 +1,1 @@
+<a href="{$image->url}" class="gallery_image_thumbnail_wrapper" title="{$image.name}"><img src="{$image.src}" /></a>

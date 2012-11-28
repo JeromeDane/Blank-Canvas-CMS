@@ -1,0 +1,847 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:55 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\phpDataMapper\Base.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\phpdatamapper\base.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\phpDataMapper\Base.php</h1>
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Base DataMapper Model
+<a name="line4"></a> *
+<a name="line5"></a> * @package phpDataMapper
+<a name="line6"></a> * @link http://phpdatamapper.com
+<a name="line7"></a> * @link http://github.com/vlucas/phpDataMapper
+<a name="line8"></a> */
+<a name="line9"></a>class phpDataMapper_Base {
+<a name="line10"></a>	// Class Names for required classes - Here so they can be easily overridden
+<a name="line11"></a>	protected $_entityClass = 'phpDataMapper_Entity';
+<a name="line12"></a>	protected $_queryClass = 'phpDataMapper_Query';
+<a name="line13"></a>	protected $_collectionClass = 'phpDataMapper_Collection';
+<a name="line14"></a>	protected $_exceptionClass = 'phpDataMapper_Exception';
+<a name="line15"></a>	
+<a name="line16"></a>	// Stored adapter connections
+<a name="line17"></a>	protected $_adapter;
+<a name="line18"></a>	protected $_adapterRead;
+<a name="line19"></a>	
+<a name="line20"></a>	// Array of error messages and types
+<a name="line21"></a>	protected $_errors = array();
+<a name="line22"></a>	
+<a name="line23"></a>	// Query log
+<a name="line24"></a>	protected static $_queryLog = array();
+<a name="line25"></a>	
+<a name="line26"></a>	// Store cached field info
+<a name="line27"></a>	protected $_fields = array();
+<a name="line28"></a>	protected $_relations = array();
+<a name="line29"></a>	protected $_primaryKey;
+<a name="line30"></a>	
+<a name="line31"></a>	// Data source setup info
+<a name="line32"></a>	protected $_engine;
+<a name="line33"></a>	protected $_datasource;
+<a name="line34"></a>	/**
+<a name="line35"></a>	=== EXAMPLE fields ===
+<a name="line36"></a>	
+<a name="line37"></a>	public $id = array('type' => 'int', 'primary' => true);
+<a name="line38"></a>	public $name = array('type' => 'string', 'required' => true);
+<a name="line39"></a>	public $date_created = array('type' => 'datetime');
+<a name="line40"></a>	
+<a name="line41"></a>	=== EXAMPLE Relationship associations ===
+<a name="line42"></a>	
+<a name="line43"></a>	public $comments = array(
+<a name="line44"></a>	    'type' => 'relation',
+<a name="line45"></a>	    'relation' => 'HasMany',
+<a name="line46"></a>	    'mapper' => 'CommentsModel',
+<a name="line47"></a>	    'where' => array('comment_id' => 'entity.id'),
+<a name="line48"></a>	    );
+<a name="line49"></a>	
+<a name="line50"></a>	======================
+<a name="line51"></a>	 */
+<a name="line52"></a>	
+<a name="line53"></a>	/**
+<a name="line54"></a>	 *	Constructor Method
+<a name="line55"></a>	 */
+<a name="line56"></a>	public function __construct(phpDataMapper_Adapter_Interface $adapter, $adapterRead = null) {
+<a name="line57"></a>		$this->_adapter = $adapter;
+<a name="line58"></a>		
+<a name="line59"></a>		// Ensure required classes for minimum activity are loaded
+<a name="line60"></a>		$this->loadClass($this->_entityClass);
+<a name="line61"></a>		$this->loadClass($this->_queryClass);
+<a name="line62"></a>		$this->loadClass($this->_collectionClass);
+<a name="line63"></a>		$this->loadClass($this->_exceptionClass);
+<a name="line64"></a>		
+<a name="line65"></a>		// Slave adapter if given (usually for reads)
+<a name="line66"></a>		if (null !== $adapterRead) {
+<a name="line67"></a>			if ($adapterRead instanceof phpDataMapper_Adapter_Interface) {
+<a name="line68"></a>				$this->_adapterRead = $adapterRead;
+<a name="line69"></a>			} else {
+<a name="line70"></a>				throw new InvalidArgumentException("Secondary/Slave adapter must implement 'phpDataMapper_Adapter_Interface'");
+<a name="line71"></a>			}
+<a name="line72"></a>		}
+<a name="line73"></a>		
+<a name="line74"></a>		// Ensure table has been defined
+<a name="line75"></a>		if (!$this->_datasource) {
+<a name="line76"></a>			throw new $this->_exceptionClass("Error: Datasource name must be defined - please define the \$_datasource variable. This can be a database table name, collection or bucket name, a file name, or a URL, depending on your adapter.");
+<a name="line77"></a>		}
+<a name="line78"></a>		
+<a name="line79"></a>		// Ensure fields have been defined for current table
+<a name="line80"></a>		if (!$this->fields()) {
+<a name="line81"></a>			throw new $this->_exceptionClass("Error: Fields must be defined");
+<a name="line82"></a>		}
+<a name="line83"></a>		
+<a name="line84"></a>		// Call init for extension without overriding constructor
+<a name="line85"></a>		$this->init();
+<a name="line86"></a>	}
+<a name="line87"></a>	
+<a name="line88"></a>	/**
+<a name="line89"></a>	 * Initialization function, run immediately after __construct() so that the constructor is never overridden
+<a name="line90"></a>	 */
+<a name="line91"></a>	public function init() {
+<a name="line92"></a>		
+<a name="line93"></a>	}
+<a name="line94"></a>	
+<a name="line95"></a>	/**
+<a name="line96"></a>	 * Get current adapter object
+<a name="line97"></a>	 */
+<a name="line98"></a>	public function adapter() {
+<a name="line99"></a>		return $this->_adapter;
+<a name="line100"></a>	}
+<a name="line101"></a>	
+<a name="line102"></a>	/**
+<a name="line103"></a>	 * Get adapter object that will serve as the 'slave' for reads
+<a name="line104"></a>	 */
+<a name="line105"></a>	public function adapterRead() {
+<a name="line106"></a>		if ($this->_adapterRead) {
+<a name="line107"></a>			return $this->_adapterRead;
+<a name="line108"></a>		} else {
+<a name="line109"></a>			return $this->_adapter;
+<a name="line110"></a>		}
+<a name="line111"></a>	}
+<a name="line112"></a>	
+<a name="line113"></a>	/**
+<a name="line114"></a>	 * Get entity class name to use
+<a name="line115"></a>	 *
+<a name="line116"></a>	 * @return string
+<a name="line117"></a>	 */
+<a name="line118"></a>	public function entityClass() {
+<a name="line119"></a>		return $this->_entityClass;
+<a name="line120"></a>	}
+<a name="line121"></a>	
+<a name="line122"></a>	/**
+<a name="line123"></a>	 * Get query class name to use
+<a name="line124"></a>	 *
+<a name="line125"></a>	 * @return string
+<a name="line126"></a>	 */
+<a name="line127"></a>	public function queryClass() {
+<a name="line128"></a>		return $this->_queryClass;
+<a name="line129"></a>	}
+<a name="line130"></a>	
+<a name="line131"></a>	/**
+<a name="line132"></a>	 * Get collection class name to use
+<a name="line133"></a>	 *
+<a name="line134"></a>	 * @return string
+<a name="line135"></a>	 */
+<a name="line136"></a>	public function collectionClass() {
+<a name="line137"></a>		return $this->_collectionClass;
+<a name="line138"></a>	}
+<a name="line139"></a>	
+<a name="line140"></a>	/**
+<a name="line141"></a>	 * Get name of the data source
+<a name="line142"></a>	 */
+<a name="line143"></a>	public function datasource() {
+<a name="line144"></a>		return $this->_datasource;
+<a name="line145"></a>	}
+<a name="line146"></a>	
+<a name="line147"></a>	/**
+<a name="line148"></a>	 * Get formatted fields with all neccesary array keys and values.
+<a name="line149"></a>	 * Merges defaults with defined field values to ensure all options exist for each field.
+<a name="line150"></a>	 *
+<a name="line151"></a>	 * @return array Defined fields plus all defaults for full array of all possible options
+<a name="line152"></a>	 */
+<a name="line153"></a>	public function fields() {
+<a name="line154"></a>		if (is_null($this->_fields)) {
+<a name="line155"></a>			$getFields = create_function('$obj', 'return get_object_vars($obj);');
+<a name="line156"></a>			$this->loadFields($getFields($this));
+<a name="line157"></a>		}
+<a name="line158"></a>		return $this->_fields;
+<a name="line159"></a>	}
+<a name="line160"></a>	
+<a name="line161"></a>	/**
+<a name="line162"></a>	 * Internally set fields so that classes that extend from the base have more flexibility
+<a name="line163"></a>	 * in the way they define their fields.
+<a name="line164"></a>	 *
+<a name="line165"></a>	 * @return void
+<a name="line166"></a>	 */
+<a name="line167"></a>	protected function loadFields($fields) {
+<a name="line168"></a>		// Default settings for all fields
+<a name="line169"></a>		$fieldDefaults = array(
+<a name="line170"></a>			'type'     => 'string',
+<a name="line171"></a>			'default'  => null,
+<a name="line172"></a>			'length'   => null,
+<a name="line173"></a>			'required' => false,
+<a name="line174"></a>			'null'     => true,
+<a name="line175"></a>			'unsigned' => false,
+<a name="line176"></a>			'primary'  => false,
+<a name="line177"></a>			'index'    => false,
+<a name="line178"></a>			'unique'   => false,
+<a name="line179"></a>			'serial'   => false,
+<a name="line180"></a>			'relation' => false
+<a name="line181"></a>		);
+<a name="line182"></a>		
+<a name="line183"></a>		// Type default overrides for specific field types
+<a name="line184"></a>		$fieldTypeDefaults = array(
+<a name="line185"></a>			'string' => array(
+<a name="line186"></a>				'length' => 255
+<a name="line187"></a>			),
+<a name="line188"></a>			'float'  => array(
+<a name="line189"></a>				'length' => array(
+<a name="line190"></a>					10,
+<a name="line191"></a>					2
+<a name="line192"></a>				)
+<a name="line193"></a>			),
+<a name="line194"></a>			'int'    => array(
+<a name="line195"></a>				'length'   => 10,
+<a name="line196"></a>				'unsigned' => true
+<a name="line197"></a>			)
+<a name="line198"></a>		);
+<a name="line199"></a>		
+<a name="line200"></a>		$returnFields = array();
+<a name="line201"></a>		foreach ($fields as $fieldName => $fieldOpts) {
+<a name="line202"></a>			// Format field will full set of default options
+<a name="line203"></a>			if (isset($fieldInfo['type']) && isset($fieldTypeDefaults[$fieldOpts['type']])) {
+<a name="line204"></a>				// Include type defaults
+<a name="line205"></a>				$fieldOpts = array_merge($fieldDefaults, $fieldTypeDefaults[$fieldOpts['type']], $fieldOpts);
+<a name="line206"></a>			} else {
+<a name="line207"></a>				// Merge with defaults
+<a name="line208"></a>				$fieldOpts = array_merge($fieldDefaults, $fieldOpts);
+<a name="line209"></a>			}
+<a name="line210"></a>			
+<a name="line211"></a>			// Store primary key
+<a name="line212"></a>			if ($fieldOpts['primary'] === true) {
+<a name="line213"></a>				$this->_primaryKey = $fieldName;
+<a name="line214"></a>			}
+<a name="line215"></a>			// Store relations (and remove them from the mix of regular fields)
+<a name="line216"></a>			if ($fieldOpts['type'] == 'relation') {
+<a name="line217"></a>				$this->_relations[$fieldName] = $fieldOpts;
+<a name="line218"></a>				continue; // skip, not a field
+<a name="line219"></a>			}
+<a name="line220"></a>			
+<a name="line221"></a>			$returnFields[$fieldName] = $fieldOpts;
+<a name="line222"></a>		}
+<a name="line223"></a>		$this->_fields = $returnFields;
+<a name="line224"></a>	}
+<a name="line225"></a>	
+<a name="line226"></a>	/**
+<a name="line227"></a>	 * Get defined relations
+<a name="line228"></a>	 */
+<a name="line229"></a>	public function relations() {
+<a name="line230"></a>		if (!$this->_relations) {
+<a name="line231"></a>			$this->fields();
+<a name="line232"></a>		}
+<a name="line233"></a>		return $this->_relations;
+<a name="line234"></a>	}
+<a name="line235"></a>	
+<a name="line236"></a>	/**
+<a name="line237"></a>	 * Get value of primary key for given row result
+<a name="line238"></a>	 */
+<a name="line239"></a>	public function primaryKey(phpDataMapper_Entity $entity) {
+<a name="line240"></a>		$pkField = $this->primaryKeyField();
+<a name="line241"></a>		return $entity->$pkField;
+<a name="line242"></a>	}
+<a name="line243"></a>	
+<a name="line244"></a>	/**
+<a name="line245"></a>	 * Get value of primary key for given row result
+<a name="line246"></a>	 */
+<a name="line247"></a>	public function primaryKeyField() {
+<a name="line248"></a>		return $this->_primaryKey;
+<a name="line249"></a>	}
+<a name="line250"></a>	
+<a name="line251"></a>	/**
+<a name="line252"></a>	 * Check if field exists in defined fields
+<a name="line253"></a>	 */
+<a name="line254"></a>	public function fieldExists($field) {
+<a name="line255"></a>		return array_key_exists($field, $this->fields());
+<a name="line256"></a>	}
+<a name="line257"></a>	
+<a name="line258"></a>	/**
+<a name="line259"></a>	 * Load record from primary key
+<a name="line260"></a>	 */
+<a name="line261"></a>	public function get($primaryKeyValue = 0) {
+<a name="line262"></a>		// Create new row object
+<a name="line263"></a>		if (!$primaryKeyValue) {
+<a name="line264"></a>			$entity = new $this->_entityClass();
+<a name="line265"></a>			
+<a name="line266"></a>			// Find record by primary key
+<a name="line267"></a>		} else {
+<a name="line268"></a>			$entity = $this->first(array($this->primaryKeyField() => $primaryKeyValue));
+<a name="line269"></a>		}
+<a name="line270"></a>		return $entity;
+<a name="line271"></a>	}
+<a name="line272"></a>	
+<a name="line273"></a>	/**
+<a name="line274"></a>	 * Load defined relations
+<a name="line275"></a>	 */
+<a name="line276"></a>	public function getRelationsFor(phpDataMapper_Entity $entity) {
+<a name="line277"></a>		$relatedColumns = array();
+<a name="line278"></a>		$rels = $this->getEntityRelationWithValues($entity);
+<a name="line279"></a>		if (count($rels) > 0) {
+<a name="line280"></a>			foreach ($rels as $column => $relation) {
+<a name="line281"></a>				$mapperName = isset($relation['mapper']) ? $relation['mapper'] : false;
+<a name="line282"></a>				if (!$mapperName) {
+<a name="line283"></a>					throw new $this->_exceptionClass("Relationship mapper for '" . $column . "' has not been defined.");
+<a name="line284"></a>				}
+<a name="line285"></a>				
+<a name="line286"></a>				// Set conditions for relation query
+<a name="line287"></a>				$relConditions = array();
+<a name="line288"></a>				if (isset($relation['where'])) {
+<a name="line289"></a>					$relConditions = $relation['where'];
+<a name="line290"></a>				}
+<a name="line291"></a>				
+<a name="line292"></a>				// Create new instance of mapper
+<a name="line293"></a>				$mapper = new $mapperName($this->adapter());
+<a name="line294"></a>				
+<a name="line295"></a>				// Load relation class
+<a name="line296"></a>				$relationClass = 'phpDataMapper_Relation_' . $relation['relation'];
+<a name="line297"></a>				if ($loadedRel = $this->loadClass($relationClass)) {
+<a name="line298"></a>					// Set column equal to relation class instance
+<a name="line299"></a>					$relationObj = new $relationClass($mapper, $relConditions, $relation);
+<a name="line300"></a>					$relatedColumns[$column] = $relationObj;
+<a name="line301"></a>				}
+<a name="line302"></a>				
+<a name="line303"></a>			}
+<a name="line304"></a>		}
+<a name="line305"></a>		return (count($relatedColumns) > 0) ? $relatedColumns : false;
+<a name="line306"></a>	}
+<a name="line307"></a>	
+<a name="line308"></a>	/**
+<a name="line309"></a>	 * Replace entity value placeholders on relation definitions
+<a name="line310"></a>	 * Currently replaces 'entity.[col]' with the column value from the passed entity object
+<a name="line311"></a>	 */
+<a name="line312"></a>	public function getEntityRelationWithValues(phpDataMapper_Entity $entity) {
+<a name="line313"></a>		$rels = $this->relations();
+<a name="line314"></a>		if (count($rels) > 0) {
+<a name="line315"></a>			foreach ($rels as $column => $relation) {
+<a name="line316"></a>				// Load foreign keys with data from current row
+<a name="line317"></a>				// Replace 'entity.[col]' with the column value from the passed entity object
+<a name="line318"></a>				if (isset($relation['where'])) {
+<a name="line319"></a>					foreach ($relation['where'] as $relationCol => $col) {
+<a name="line320"></a>						if (is_string($col) && strpos($col, 'entity.') !== false) {
+<a name="line321"></a>							$col = str_replace('entity.', '', $col);
+<a name="line322"></a>							$rels[$column]['where'][$relationCol] = $entity->$col;
+<a name="line323"></a>						}
+<a name="line324"></a>					}
+<a name="line325"></a>				}
+<a name="line326"></a>			}
+<a name="line327"></a>		}
+<a name="line328"></a>		return $rels;
+<a name="line329"></a>	}
+<a name="line330"></a>	
+<a name="line331"></a>	/**
+<a name="line332"></a>	 * Get result set for given PDO Statement
+<a name="line333"></a>	 */
+<a name="line334"></a>	public function getResultSet($stmt) {
+<a name="line335"></a>		if ($stmt instanceof PDOStatement) {
+<a name="line336"></a>			$results = array();
+<a name="line337"></a>			$resultsIdentities = array();
+<a name="line338"></a>			
+<a name="line339"></a>			// Set object to fetch results into
+<a name="line340"></a>			$stmt->setFetchMode(PDO::FETCH_CLASS, $this->_entityClass);
+<a name="line341"></a>			
+<a name="line342"></a>			// Fetch all results into new DataMapper_Result class
+<a name="line343"></a>			while ($entity = $stmt->fetch(PDO::FETCH_CLASS)) {
+<a name="line344"></a>				
+<a name="line345"></a>				// Load relations for this row
+<a name="line346"></a>				$relations = $this->getRelationsFor($entity);
+<a name="line347"></a>				if ($relations && is_array($relations) && count($relations) > 0) {
+<a name="line348"></a>					foreach ($relations as $relationCol => $relationObj) {
+<a name="line349"></a>						$entity->$relationCol = $relationObj;
+<a name="line350"></a>					}
+<a name="line351"></a>				}
+<a name="line352"></a>				
+<a name="line353"></a>				// Store in array for ResultSet
+<a name="line354"></a>				$results[] = $entity;
+<a name="line355"></a>				
+<a name="line356"></a>				// Store primary key of each unique record in set
+<a name="line357"></a>				$pk = $this->primaryKey($entity);
+<a name="line358"></a>				if (!in_array($pk, $resultsIdentities) && !empty($pk)) {
+<a name="line359"></a>					$resultsIdentities[] = $pk;
+<a name="line360"></a>				}
+<a name="line361"></a>				
+<a name="line362"></a>				// Mark row as loaded
+<a name="line363"></a>				$entity->loaded(true);
+<a name="line364"></a>			}
+<a name="line365"></a>			// Ensure set is closed
+<a name="line366"></a>			$stmt->closeCursor();
+<a name="line367"></a>			
+<a name="line368"></a>			return new $this->_collectionClass($results, $resultsIdentities);
+<a name="line369"></a>			
+<a name="line370"></a>		} else {
+<a name="line371"></a>			return array();
+<a name="line372"></a>			//throw new $this->_exceptionClass(__METHOD__ . " expected PDOStatement object");
+<a name="line373"></a>		}
+<a name="line374"></a>	}
+<a name="line375"></a>	
+<a name="line376"></a>	/**
+<a name="line377"></a>	 * Find records with given conditions
+<a name="line378"></a>	 * If all parameters are empty, find all records
+<a name="line379"></a>	 *
+<a name="line380"></a>	 * @param array $conditions Array of conditions in column => value pairs
+<a name="line381"></a>	 */
+<a name="line382"></a>	public function all(array $conditions = array()) {
+<a name="line383"></a>		return $this->select()->where($conditions);
+<a name="line384"></a>	}
+<a name="line385"></a>	
+<a name="line386"></a>	/**
+<a name="line387"></a>	 * Find first record matching given conditions
+<a name="line388"></a>	 *
+<a name="line389"></a>	 * @param array $conditions Array of conditions in column => value pairs
+<a name="line390"></a>	 */
+<a name="line391"></a>	public function first(array $conditions = array()) {
+<a name="line392"></a>		$query = $this->select()->where($conditions)->limit(1);
+<a name="line393"></a>		$entitys = $this->adapterRead()->read($query);
+<a name="line394"></a>		if ($entitys) {
+<a name="line395"></a>			return $entitys->first();
+<a name="line396"></a>		} else {
+<a name="line397"></a>			return false;
+<a name="line398"></a>		}
+<a name="line399"></a>	}
+<a name="line400"></a>	
+<a name="line401"></a>	/**
+<a name="line402"></a>	 * Find records with custom SQL query
+<a name="line403"></a>	 *
+<a name="line404"></a>	 * @param string $sql SQL query to execute
+<a name="line405"></a>	 * @param array $binds Array of bound parameters to use as values for query
+<a name="line406"></a>	 * @throws phpDataMapper_Exception
+<a name="line407"></a>	 */
+<a name="line408"></a>	public function query($sql, array $binds = array()) {
+<a name="line409"></a>		// Add query to log
+<a name="line410"></a>		self::logQuery($sql, $binds);
+<a name="line411"></a>		
+<a name="line412"></a>		// Prepare and execute query
+<a name="line413"></a>		if ($stmt = $this->adapter()->prepare($sql)) {
+<a name="line414"></a>			$results = $stmt->execute($binds);
+<a name="line415"></a>			if ($results) {
+<a name="line416"></a>				$r = $this->getResultSet($stmt);
+<a name="line417"></a>			} else {
+<a name="line418"></a>				$r = false;
+<a name="line419"></a>			}
+<a name="line420"></a>			
+<a name="line421"></a>			return $r;
+<a name="line422"></a>		} else {
+<a name="line423"></a>			throw new $this->_exceptionClass(__METHOD__ . " Error: Unable to execute SQL query - failed to create prepared statement from given SQL");
+<a name="line424"></a>		}
+<a name="line425"></a>		
+<a name="line426"></a>	}
+<a name="line427"></a>	
+<a name="line428"></a>	/**
+<a name="line429"></a>	 * Begin a new database query - get query builder
+<a name="line430"></a>	 * Acts as a kind of factory to get the current adapter's query builder object
+<a name="line431"></a>	 *
+<a name="line432"></a>	 * @param mixed $fields String for single field or array of fields
+<a name="line433"></a>	 */
+<a name="line434"></a>	public function select($fields = "*") {
+<a name="line435"></a>		$query = new $this->_queryClass($this);
+<a name="line436"></a>		$query->select($fields, $this->datasource());
+<a name="line437"></a>		return $query;
+<a name="line438"></a>	}
+<a name="line439"></a>	
+<a name="line440"></a>	/**
+<a name="line441"></a>	 * Save related rows of data
+<a name="line442"></a>	 */
+<a name="line443"></a>	protected function saveRelatedRowsFor($entity, array $fillData = array()) {
+<a name="line444"></a>		$relationColumns = $this->getRelationsFor($entity);
+<a name="line445"></a>		foreach ($entity->toArray() as $field => $value) {
+<a name="line446"></a>			if ($relationColumns && array_key_exists($field, $relationColumns) && (is_array($value) || is_object($value))) {
+<a name="line447"></a>				foreach ($value as $relatedRow) {
+<a name="line448"></a>					// Determine relation object
+<a name="line449"></a>					if ($value instanceof phpDataMapper_Relation) {
+<a name="line450"></a>						$relatedObj = $value;
+<a name="line451"></a>					} else {
+<a name="line452"></a>						$relatedObj = $relationColumns[$field];
+<a name="line453"></a>					}
+<a name="line454"></a>					$relatedMapper = $relatedObj->mapper();
+<a name="line455"></a>					
+<a name="line456"></a>					// Row object
+<a name="line457"></a>					if ($relatedRow instanceof phpDataMapper_Entity) {
+<a name="line458"></a>						$relatedRowObj = $relatedRow;
+<a name="line459"></a>						
+<a name="line460"></a>						// Associative array
+<a name="line461"></a>					} elseif (is_array($relatedRow)) {
+<a name="line462"></a>						$relatedRowObj = new $this->_entityClass($relatedRow);
+<a name="line463"></a>					}
+<a name="line464"></a>					
+<a name="line465"></a>					// Set column values on row only if other data has been updated (prevents queries for unchanged existing rows)
+<a name="line466"></a>					if (count($relatedRowObj->dataModified()) > 0) {
+<a name="line467"></a>						$fillData = array_merge($relatedObj->foreignKeys(), $fillData);
+<a name="line468"></a>						$relatedRowObj->data($fillData);
+<a name="line469"></a>					}
+<a name="line470"></a>					
+<a name="line471"></a>					// Save related row
+<a name="line472"></a>					$relatedMapper->save($relatedRowObj);
+<a name="line473"></a>				}
+<a name="line474"></a>			}
+<a name="line475"></a>		}
+<a name="line476"></a>	}
+<a name="line477"></a>	
+<a name="line478"></a>	/**
+<a name="line479"></a>	 * Save record
+<a name="line480"></a>	 * Will update if primary key found, insert if not
+<a name="line481"></a>	 * Performs validation automatically before saving record
+<a name="line482"></a>	 *
+<a name="line483"></a>	 * @param mixed $entity Entity object or array of field => value pairs
+<a name="line484"></a>	 */
+<a name="line485"></a>	public function save($entity) {
+<a name="line486"></a>		if (is_array($entity)) {
+<a name="line487"></a>			$entity = $this->get()->data($entity);
+<a name="line488"></a>		}
+<a name="line489"></a>		
+<a name="line490"></a>		if (!($entity instanceof phpDataMapper_Entity)) {
+<a name="line491"></a>			throw new $this->_exceptionClass(__METHOD__ . " first argument must be entity object or array");
+<a name="line492"></a>		}
+<a name="line493"></a>		
+<a name="line494"></a>		// Run validation
+<a name="line495"></a>		if ($this->validate($entity)) {
+<a name="line496"></a>			$pk = $this->primaryKey($entity);
+<a name="line497"></a>			// No primary key, insert
+<a name="line498"></a>			if (empty($pk)) {
+<a name="line499"></a>				$result = $this->insert($entity);
+<a name="line500"></a>				// Has primary key, update
+<a name="line501"></a>			} else {
+<a name="line502"></a>				$result = $this->update($entity);
+<a name="line503"></a>			}
+<a name="line504"></a>		} else {
+<a name="line505"></a>			$result = false;
+<a name="line506"></a>		}
+<a name="line507"></a>		
+<a name="line508"></a>		return $result;
+<a name="line509"></a>	}
+<a name="line510"></a>	
+<a name="line511"></a>	/**
+<a name="line512"></a>	 * Insert record
+<a name="line513"></a>	 *
+<a name="line514"></a>	 * @param mixed $entity Entity object or array of field => value pairs
+<a name="line515"></a>	 */
+<a name="line516"></a>	public function insert($entity) {
+<a name="line517"></a>		if (is_array($entity)) {
+<a name="line518"></a>			$entity = $this->get()->data($entity);
+<a name="line519"></a>		}
+<a name="line520"></a>		
+<a name="line521"></a>		if (!($entity instanceof phpDataMapper_Entity)) {
+<a name="line522"></a>			throw new $this->_exceptionClass(__METHOD__ . " first argument must be entity object or array");
+<a name="line523"></a>		}
+<a name="line524"></a>		
+<a name="line525"></a>		$data = array();
+<a name="line526"></a>		$entityData = $entity->toArray();
+<a name="line527"></a>		foreach ($entityData as $field => $value) {
+<a name="line528"></a>			if ($this->fieldExists($field)) {
+<a name="line529"></a>				// Empty values will be NULL (easier to be handled by databases)
+<a name="line530"></a>				$data[$field] = $this->isEmpty($value) ? null : $value;
+<a name="line531"></a>			}
+<a name="line532"></a>		}
+<a name="line533"></a>		
+<a name="line534"></a>		// Ensure there is actually data to update
+<a name="line535"></a>		if (count($data) > 0) {
+<a name="line536"></a>			$result = $this->adapter()->create($this->datasource(), $data);
+<a name="line537"></a>			
+<a name="line538"></a>			// Update primary key on row
+<a name="line539"></a>			$pkField = $this->primaryKeyField();
+<a name="line540"></a>			$entity->$pkField = $result;
+<a name="line541"></a>			
+<a name="line542"></a>			// Load relations for this row so they can be used immediately
+<a name="line543"></a>			$relations = $this->getRelationsFor($entity);
+<a name="line544"></a>			if ($relations && is_array($relations) && count($relations) > 0) {
+<a name="line545"></a>				foreach ($relations as $relationCol => $relationObj) {
+<a name="line546"></a>					$entity->$relationCol = $relationObj;
+<a name="line547"></a>				}
+<a name="line548"></a>			}
+<a name="line549"></a>		} else {
+<a name="line550"></a>			$result = false;
+<a name="line551"></a>		}
+<a name="line552"></a>		
+<a name="line553"></a>		// Save related rows
+<a name="line554"></a>		if ($result) {
+<a name="line555"></a>			$this->saveRelatedRowsFor($entity);
+<a name="line556"></a>		}
+<a name="line557"></a>		
+<a name="line558"></a>		return $result;
+<a name="line559"></a>	}
+<a name="line560"></a>	
+<a name="line561"></a>	/**
+<a name="line562"></a>	 * Update given row object
+<a name="line563"></a>	 */
+<a name="line564"></a>	public function update(phpDataMapper_Entity $entity) {
+<a name="line565"></a>		// Ensure fields exist to prevent errors
+<a name="line566"></a>		$binds = array();
+<a name="line567"></a>		foreach ($entity->dataModified() as $field => $value) {
+<a name="line568"></a>			if ($this->fieldExists($field)) {
+<a name="line569"></a>				// Empty values will be NULL (easier to be handled by databases)
+<a name="line570"></a>				$binds[$field] = $this->isEmpty($value) ? null : $value;
+<a name="line571"></a>			}
+<a name="line572"></a>		}
+<a name="line573"></a>		
+<a name="line574"></a>		// Handle with adapter
+<a name="line575"></a>		if (count($binds) > 0) {
+<a name="line576"></a>			$result = $this->adapter()->update($this->datasource(), $binds, array(
+<a name="line577"></a>				$this->primaryKeyField() => $this->primaryKey($entity)
+<a name="line578"></a>			));
+<a name="line579"></a>		} else {
+<a name="line580"></a>			$result = true;
+<a name="line581"></a>		}
+<a name="line582"></a>		
+<a name="line583"></a>		// Save related rows
+<a name="line584"></a>		if ($result) {
+<a name="line585"></a>			$this->saveRelatedRowsFor($entity);
+<a name="line586"></a>		}
+<a name="line587"></a>		
+<a name="line588"></a>		return $result;
+<a name="line589"></a>	}
+<a name="line590"></a>	
+<a name="line591"></a>	/**
+<a name="line592"></a>	 * Delete items matching given conditions
+<a name="line593"></a>	 *
+<a name="line594"></a>	 * @param mixed $conditions Array of conditions in column => value pairs or Entity object
+<a name="line595"></a>	 */
+<a name="line596"></a>	public function delete($conditions) {
+<a name="line597"></a>		if ($conditions instanceof phpDataMapper_Entity) {
+<a name="line598"></a>			$conditions = array(
+<a name="line599"></a>				0 => array(
+<a name="line600"></a>					'conditions' => array(
+<a name="line601"></a>						$this->primaryKeyField() => $this->primaryKey($conditions)
+<a name="line602"></a>					)
+<a name="line603"></a>				)
+<a name="line604"></a>			);
+<a name="line605"></a>		}
+<a name="line606"></a>		
+<a name="line607"></a>		if (is_array($conditions)) {
+<a name="line608"></a>			return $this->adapter()->delete($this->datasource(), $conditions);
+<a name="line609"></a>		} else {
+<a name="line610"></a>			throw new $this->_exceptionClass(__METHOD__ . " conditions must be entity object or array, given " . gettype($conditions) . "");
+<a name="line611"></a>		}
+<a name="line612"></a>	}
+<a name="line613"></a>	
+<a name="line614"></a>	/**
+<a name="line615"></a>	 * Truncate data source
+<a name="line616"></a>	 * Should delete all rows and reset serial/auto_increment keys to 0
+<a name="line617"></a>	 */
+<a name="line618"></a>	public function truncateDatasource() {
+<a name="line619"></a>		return $this->adapter()->truncateDatasource($this->datasource());
+<a name="line620"></a>	}
+<a name="line621"></a>	
+<a name="line622"></a>	/**
+<a name="line623"></a>	 * Drop/delete data source
+<a name="line624"></a>	 * Destructive and dangerous - drops entire data source and all data
+<a name="line625"></a>	 */
+<a name="line626"></a>	public function dropDatasource() {
+<a name="line627"></a>		return $this->adapter()->dropDatasource($this->datasource());
+<a name="line628"></a>	}
+<a name="line629"></a>	
+<a name="line630"></a>	/**
+<a name="line631"></a>	 * Run set validation rules on fields
+<a name="line632"></a>	 *
+<a name="line633"></a>	 * @todo A LOT more to do here... More validation, break up into classes with rules, etc.
+<a name="line634"></a>	 */
+<a name="line635"></a>	public function validate(phpDataMapper_Entity $entity) {
+<a name="line636"></a>		// Check validation rules on each feild
+<a name="line637"></a>		foreach ($this->fields() as $field => $fieldAttrs) {
+<a name="line638"></a>			if (isset($fieldAttrs['required']) && true === $fieldAttrs['required']) {
+<a name="line639"></a>				// Required field
+<a name="line640"></a>				if (empty($entity->$field)) {
+<a name="line641"></a>					$this->error($field, "Required field '" . $field . "' was left blank");
+<a name="line642"></a>				}
+<a name="line643"></a>			}
+<a name="line644"></a>		}
+<a name="line645"></a>		
+<a name="line646"></a>		// Check for errors
+<a name="line647"></a>		if ($this->hasErrors()) {
+<a name="line648"></a>			return false;
+<a name="line649"></a>		} else {
+<a name="line650"></a>			return true;
+<a name="line651"></a>		}
+<a name="line652"></a>	}
+<a name="line653"></a>	
+<a name="line654"></a>	/**
+<a name="line655"></a>	 * Migrate table structure changes from model to database
+<a name="line656"></a>	 */
+<a name="line657"></a>	public function migrate() {
+<a name="line658"></a>		return $this->adapter()->migrate($this->datasource(), $this->fields());
+<a name="line659"></a>	}
+<a name="line660"></a>	
+<a name="line661"></a>	/**
+<a name="line662"></a>	 * Check if a value is empty, excluding 0 (annoying PHP issue)
+<a name="line663"></a>	 *
+<a name="line664"></a>	 * @param mixed $value
+<a name="line665"></a>	 * @return boolean
+<a name="line666"></a>	 */
+<a name="line667"></a>	public function isEmpty($value) {
+<a name="line668"></a>		return (empty($value) && 0 !== $value && '0' !== $value);
+<a name="line669"></a>	}
+<a name="line670"></a>	
+<a name="line671"></a>	/**
+<a name="line672"></a>	 * Check if any errors exist
+<a name="line673"></a>	 *
+<a name="line674"></a>	 * @param string $field OPTIONAL field name
+<a name="line675"></a>	 * @return boolean
+<a name="line676"></a>	 */
+<a name="line677"></a>	public function hasErrors($field = null) {
+<a name="line678"></a>		if (null !== $field) {
+<a name="line679"></a>			return isset($this->_errors[$field]) ? count($this->_errors[$field]) : false;
+<a name="line680"></a>		}
+<a name="line681"></a>		return count($this->_errors);
+<a name="line682"></a>	}
+<a name="line683"></a>	
+<a name="line684"></a>	/**
+<a name="line685"></a>	 * Get array of error messages
+<a name="line686"></a>	 *
+<a name="line687"></a>	 * @return array
+<a name="line688"></a>	 */
+<a name="line689"></a>	public function errors($msgs = null) {
+<a name="line690"></a>		// Return errors for given field
+<a name="line691"></a>		if (is_string($msgs)) {
+<a name="line692"></a>			return isset($this->_errors[$field]) ? $this->_errors[$field] : array();
+<a name="line693"></a>			
+<a name="line694"></a>			// Set error messages from given array
+<a name="line695"></a>		} elseif (is_array($msgs)) {
+<a name="line696"></a>			foreach ($msgs as $field => $msg) {
+<a name="line697"></a>				$this->error($field, $msg);
+<a name="line698"></a>			}
+<a name="line699"></a>		}
+<a name="line700"></a>		return $this->_errors;
+<a name="line701"></a>	}
+<a name="line702"></a>	
+<a name="line703"></a>	/**
+<a name="line704"></a>	 * Add an error to error messages array
+<a name="line705"></a>	 *
+<a name="line706"></a>	 * @param string $field Field name that error message relates to
+<a name="line707"></a>	 * @param mixed $msg Error message text - String or array of messages
+<a name="line708"></a>	 */
+<a name="line709"></a>	public function error($field, $msg) {
+<a name="line710"></a>		if (is_array($msg)) {
+<a name="line711"></a>			// Add array of error messages about field
+<a name="line712"></a>			foreach ($msg as $msgx) {
+<a name="line713"></a>				$this->_errors[$field][] = $msgx;
+<a name="line714"></a>			}
+<a name="line715"></a>		} else {
+<a name="line716"></a>			// Add to error array
+<a name="line717"></a>			$this->_errors[$field][] = $msg;
+<a name="line718"></a>		}
+<a name="line719"></a>	}
+<a name="line720"></a>	
+<a name="line721"></a>	/**
+<a name="line722"></a>	 * Attempt to load class file based on phpDataMapper naming conventions
+<a name="line723"></a>	 */
+<a name="line724"></a>	public static function loadClass($className) {
+<a name="line725"></a>		$loaded = false;
+<a name="line726"></a>		
+<a name="line727"></a>		// If class has already been defined, skip loading
+<a name="line728"></a>		if (class_exists($className, false)) {
+<a name="line729"></a>			$loaded = true;
+<a name="line730"></a>		} else {
+<a name="line731"></a>			// Require phpDataMapper_* files by assumed folder structure (naming convention)
+<a name="line732"></a>			if (strpos($className, "phpDataMapper") !== false) {
+<a name="line733"></a>				$classFile = str_replace("_", "/", $className);
+<a name="line734"></a>				$loaded = require_once(dirname(dirname(__FILE__)) . "/" . $classFile . ".php");
+<a name="line735"></a>			}
+<a name="line736"></a>		}
+<a name="line737"></a>		
+<a name="line738"></a>		// Ensure required class was loaded
+<a name="line739"></a>		/*
+<a name="line740"></a>		if(!$loaded) {
+<a name="line741"></a>		    throw new Exception(__METHOD__ . " Failed: Unable to load class '" . $className . "'!");
+<a name="line742"></a>		}
+<a name="line743"></a>		 */
+<a name="line744"></a>		
+<a name="line745"></a>		return $loaded;
+<a name="line746"></a>	}
+<a name="line747"></a>	
+<a name="line748"></a>	/**
+<a name="line749"></a>	 * Prints all executed SQL queries - useful for debugging
+<a name="line750"></a>	 */
+<a name="line751"></a>	public function debug($entity = null) {
+<a name="line752"></a>		echo "<p>Executed " . $this->queryCount() . " queries:</p>";
+<a name="line753"></a>		echo "<pre>\n";
+<a name="line754"></a>		print_r(self::$_queryLog);
+<a name="line755"></a>		echo "</pre>\n";
+<a name="line756"></a>	}
+<a name="line757"></a>	
+<a name="line758"></a>	/**
+<a name="line759"></a>	 * Get count of all queries that have been executed
+<a name="line760"></a>	 *
+<a name="line761"></a>	 * @return int
+<a name="line762"></a>	 */
+<a name="line763"></a>	public function queryCount() {
+<a name="line764"></a>		return count(self::$_queryLog);
+<a name="line765"></a>	}
+<a name="line766"></a>	
+<a name="line767"></a>	/**
+<a name="line768"></a>	 * Log query
+<a name="line769"></a>	 *
+<a name="line770"></a>	 * @param string $sql
+<a name="line771"></a>	 * @param array $data
+<a name="line772"></a>	 */
+<a name="line773"></a>	public static function logQuery($sql, $data = null) {
+<a name="line774"></a>		self::$_queryLog[] = array(
+<a name="line775"></a>			'query' => $sql,
+<a name="line776"></a>			'data'  => $data
+<a name="line777"></a>		);
+<a name="line778"></a>	}
+<a name="line779"></a>}
+<a name="line780"></a>
+<a name="line781"></a>/**
+<a name="line782"></a> * Register static 'loadClass' function as an autoloader for files prefixed with 'phpDataMapper_'
+<a name="line783"></a> */
+<a name="line784"></a>spl_autoload_register(array('phpDataMapper_Base',
+<a name="line785"></a>	'loadClass'
+<a name="line786"></a>));
+<a name="line787"></a></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\phpdatamapper\base.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

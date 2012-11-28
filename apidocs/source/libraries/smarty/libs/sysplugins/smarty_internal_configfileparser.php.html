@@ -1,0 +1,930 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_configfileparser.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_configfileparser.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_configfileparser.php</h1>
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a>* Smarty Internal Plugin Configfileparser
+<a name="line4"></a>*
+<a name="line5"></a>* This is the config file parser.
+<a name="line6"></a>* It is generated from the internal.configfileparser.y file
+<a name="line7"></a>* @package Smarty
+<a name="line8"></a>* @subpackage Compiler
+<a name="line9"></a>* @author Uwe Tews
+<a name="line10"></a>*/
+<a name="line11"></a>
+<a name="line12"></a>class TPC_yyToken implements ArrayAccess
+<a name="line13"></a>{
+<a name="line14"></a>    public $string = '';
+<a name="line15"></a>    public $metadata = array();
+<a name="line16"></a>
+<a name="line17"></a>    function __construct($s, $m = array())
+<a name="line18"></a>    {
+<a name="line19"></a>        if ($s instanceof TPC_yyToken) {
+<a name="line20"></a>            $this->string = $s->string;
+<a name="line21"></a>            $this->metadata = $s->metadata;
+<a name="line22"></a>        } else {
+<a name="line23"></a>            $this->string = (string) $s;
+<a name="line24"></a>            if ($m instanceof TPC_yyToken) {
+<a name="line25"></a>                $this->metadata = $m->metadata;
+<a name="line26"></a>            } elseif (is_array($m)) {
+<a name="line27"></a>                $this->metadata = $m;
+<a name="line28"></a>            }
+<a name="line29"></a>        }
+<a name="line30"></a>    }
+<a name="line31"></a>
+<a name="line32"></a>    function __toString()
+<a name="line33"></a>    {
+<a name="line34"></a>        return $this->_string;
+<a name="line35"></a>    }
+<a name="line36"></a>
+<a name="line37"></a>    function offsetExists($offset)
+<a name="line38"></a>    {
+<a name="line39"></a>        return isset($this->metadata[$offset]);
+<a name="line40"></a>    }
+<a name="line41"></a>
+<a name="line42"></a>    function offsetGet($offset)
+<a name="line43"></a>    {
+<a name="line44"></a>        return $this->metadata[$offset];
+<a name="line45"></a>    }
+<a name="line46"></a>
+<a name="line47"></a>    function offsetSet($offset, $value)
+<a name="line48"></a>    {
+<a name="line49"></a>        if ($offset === null) {
+<a name="line50"></a>            if (isset($value[0])) {
+<a name="line51"></a>                $x = ($value instanceof TPC_yyToken) ?
+<a name="line52"></a>                    $value->metadata : $value;
+<a name="line53"></a>                $this->metadata = array_merge($this->metadata, $x);
+<a name="line54"></a>                return;
+<a name="line55"></a>            }
+<a name="line56"></a>            $offset = count($this->metadata);
+<a name="line57"></a>        }
+<a name="line58"></a>        if ($value === null) {
+<a name="line59"></a>            return;
+<a name="line60"></a>        }
+<a name="line61"></a>        if ($value instanceof TPC_yyToken) {
+<a name="line62"></a>            if ($value->metadata) {
+<a name="line63"></a>                $this->metadata[$offset] = $value->metadata;
+<a name="line64"></a>            }
+<a name="line65"></a>        } elseif ($value) {
+<a name="line66"></a>            $this->metadata[$offset] = $value;
+<a name="line67"></a>        }
+<a name="line68"></a>    }
+<a name="line69"></a>
+<a name="line70"></a>    function offsetUnset($offset)
+<a name="line71"></a>    {
+<a name="line72"></a>        unset($this->metadata[$offset]);
+<a name="line73"></a>    }
+<a name="line74"></a>}
+<a name="line75"></a>
+<a name="line76"></a>class TPC_yyStackEntry
+<a name="line77"></a>{
+<a name="line78"></a>    public $stateno;       /* The state-number */
+<a name="line79"></a>    public $major;         /* The major token value.  This is the code
+<a name="line80"></a>                     ** number for the token at this stack level */
+<a name="line81"></a>    public $minor; /* The user-supplied minor token value.  This
+<a name="line82"></a>                     ** is the value of the token  */
+<a name="line83"></a>};
+<a name="line84"></a>
+<a name="line85"></a>
+<a name="line86"></a>#line 12 "smarty_internal_configfileparser.y"
+<a name="line87"></a>class Smarty_Internal_Configfileparser#line 79 "smarty_internal_configfileparser.php"
+<a name="line88"></a>{
+<a name="line89"></a>#line 14 "smarty_internal_configfileparser.y"
+<a name="line90"></a>
+<a name="line91"></a>    // states whether the parse was successful or not
+<a name="line92"></a>    public $successful = true;
+<a name="line93"></a>    public $retvalue = 0;
+<a name="line94"></a>    private $lex;
+<a name="line95"></a>    private $internalError = false;
+<a name="line96"></a>
+<a name="line97"></a>    function __construct($lex, $compiler) {
+<a name="line98"></a>        // set instance object
+<a name="line99"></a>        self::instance($this); 
+<a name="line100"></a>        $this->lex = $lex;
+<a name="line101"></a>        $this->smarty = $compiler->smarty; 
+<a name="line102"></a>        $this->compiler = $compiler;
+<a name="line103"></a>    }
+<a name="line104"></a>    public static function &instance($new_instance = null)
+<a name="line105"></a>    {
+<a name="line106"></a>        static $instance = null;
+<a name="line107"></a>        if (isset($new_instance) && is_object($new_instance))
+<a name="line108"></a>            $instance = $new_instance;
+<a name="line109"></a>        return $instance;
+<a name="line110"></a>    }
+<a name="line111"></a>
+<a name="line112"></a>    private function parse_bool($str) {
+<a name="line113"></a>        if (in_array(strtolower($str) ,array('on','yes','true'))) {
+<a name="line114"></a>            $res = true;
+<a name="line115"></a>        } else {
+<a name="line116"></a>            $res = false;
+<a name="line117"></a>        }
+<a name="line118"></a>        return $res;
+<a name="line119"></a>    }
+<a name="line120"></a>
+<a name="line121"></a>    private static $escapes_single = Array('\\' => '\\',
+<a name="line122"></a>                                          '\'' => '\'');
+<a name="line123"></a>    private static function parse_single_quoted_string($qstr) {
+<a name="line124"></a>        $escaped_string = substr($qstr, 1, strlen($qstr)-2); //remove outer quotes
+<a name="line125"></a>
+<a name="line126"></a>        $ss = preg_split('/(\\\\.)/', $escaped_string, -1, PREG_SPLIT_DELIM_CAPTURE);
+<a name="line127"></a>
+<a name="line128"></a>        $str = "";
+<a name="line129"></a>        foreach ($ss as $s) {
+<a name="line130"></a>            if (strlen($s) === 2 && $s[0] === '\\') {
+<a name="line131"></a>                if (isset(self::$escapes_single[$s[1]])) {
+<a name="line132"></a>                    $s = self::$escapes_single[$s[1]];
+<a name="line133"></a>                }
+<a name="line134"></a>             }
+<a name="line135"></a>
+<a name="line136"></a>             $str .= $s;
+<a name="line137"></a>        }
+<a name="line138"></a>
+<a name="line139"></a>        return $str;
+<a name="line140"></a>    }
+<a name="line141"></a>
+<a name="line142"></a>    private static function parse_double_quoted_string($qstr) {
+<a name="line143"></a>        $inner_str = substr($qstr, 1, strlen($qstr)-2);
+<a name="line144"></a>        return stripcslashes($inner_str);
+<a name="line145"></a>    }
+<a name="line146"></a>
+<a name="line147"></a>    private static function parse_tripple_double_quoted_string($qstr) {
+<a name="line148"></a>        $inner_str = substr($qstr, 3, strlen($qstr)-6);
+<a name="line149"></a>        return stripcslashes($inner_str);
+<a name="line150"></a>    }
+<a name="line151"></a>
+<a name="line152"></a>    private function set_var(Array $var, Array &$target_array) {
+<a name="line153"></a>        $key = $var["key"];
+<a name="line154"></a>        $value = $var["value"];
+<a name="line155"></a>
+<a name="line156"></a>        if ($this->smarty->config_overwrite || !isset($target_array['vars'][$key])) {
+<a name="line157"></a>            $target_array['vars'][$key] = $value;
+<a name="line158"></a>        } else {
+<a name="line159"></a>            settype($target_array['vars'][$key], 'array');
+<a name="line160"></a>            $target_array['vars'][$key][] = $value;
+<a name="line161"></a>        }
+<a name="line162"></a>    }
+<a name="line163"></a>
+<a name="line164"></a>    private function add_global_vars(Array $vars) {
+<a name="line165"></a>        if (!isset($this->compiler->config_data['vars'])) {
+<a name="line166"></a>	    $this->compiler->config_data['vars'] = Array();
+<a name="line167"></a>        }
+<a name="line168"></a>        foreach ($vars as $var) {
+<a name="line169"></a>            $this->set_var($var, $this->compiler->config_data);
+<a name="line170"></a>        }
+<a name="line171"></a>    }
+<a name="line172"></a>
+<a name="line173"></a>    private function add_section_vars($section_name, Array $vars) {
+<a name="line174"></a>        if (!isset($this->compiler->config_data['sections'][$section_name]['vars'])) {
+<a name="line175"></a>            $this->compiler->config_data['sections'][$section_name]['vars'] = Array();
+<a name="line176"></a>        }
+<a name="line177"></a>        foreach ($vars as $var) {
+<a name="line178"></a>            $this->set_var($var, $this->compiler->config_data['sections'][$section_name]);
+<a name="line179"></a>        }
+<a name="line180"></a>    }
+<a name="line181"></a>#line 174 "smarty_internal_configfileparser.php"
+<a name="line182"></a>
+<a name="line183"></a>    const TPC_OPENB                          =  1;
+<a name="line184"></a>    const TPC_SECTION                        =  2;
+<a name="line185"></a>    const TPC_CLOSEB                         =  3;
+<a name="line186"></a>    const TPC_DOT                            =  4;
+<a name="line187"></a>    const TPC_ID                             =  5;
+<a name="line188"></a>    const TPC_EQUAL                          =  6;
+<a name="line189"></a>    const TPC_FLOAT                          =  7;
+<a name="line190"></a>    const TPC_INT                            =  8;
+<a name="line191"></a>    const TPC_BOOL                           =  9;
+<a name="line192"></a>    const TPC_SINGLE_QUOTED_STRING           = 10;
+<a name="line193"></a>    const TPC_DOUBLE_QUOTED_STRING           = 11;
+<a name="line194"></a>    const TPC_TRIPPLE_DOUBLE_QUOTED_STRING   = 12;
+<a name="line195"></a>    const TPC_NAKED_STRING                   = 13;
+<a name="line196"></a>    const TPC_NEWLINE                        = 14;
+<a name="line197"></a>    const TPC_COMMENTSTART                   = 15;
+<a name="line198"></a>    const YY_NO_ACTION = 54;
+<a name="line199"></a>    const YY_ACCEPT_ACTION = 53;
+<a name="line200"></a>    const YY_ERROR_ACTION = 52;
+<a name="line201"></a>
+<a name="line202"></a>    const YY_SZ_ACTTAB = 35;
+<a name="line203"></a>static public $yy_action = array(
+<a name="line204"></a> /*     0 */    26,   27,   21,   30,   29,   28,   31,   16,   53,    8,
+<a name="line205"></a> /*    10 */    19,    2,   20,   11,   24,   23,   20,   11,   17,   15,
+<a name="line206"></a> /*    20 */     3,   14,   13,   18,    4,    6,    5,    1,   12,   22,
+<a name="line207"></a> /*    30 */     9,   47,   10,   25,    7,
+<a name="line208"></a>    );
+<a name="line209"></a>    static public $yy_lookahead = array(
+<a name="line210"></a> /*     0 */     7,    8,    9,   10,   11,   12,   13,    5,   17,   18,
+<a name="line211"></a> /*    10 */    14,   20,   14,   15,   22,   23,   14,   15,    2,    2,
+<a name="line212"></a> /*    20 */    20,    4,   13,   14,    6,    3,    3,   20,    1,   24,
+<a name="line213"></a> /*    30 */    22,   25,   22,   21,   19,
+<a name="line214"></a>);
+<a name="line215"></a>    const YY_SHIFT_USE_DFLT = -8;
+<a name="line216"></a>    const YY_SHIFT_MAX = 17;
+<a name="line217"></a>    static public $yy_shift_ofst = array(
+<a name="line218"></a> /*     0 */    -8,    2,    2,    2,   -7,   -2,   -2,   27,   -8,   -8,
+<a name="line219"></a> /*    10 */    -8,    9,   17,   -4,   16,   23,   18,   22,
+<a name="line220"></a>);
+<a name="line221"></a>    const YY_REDUCE_USE_DFLT = -10;
+<a name="line222"></a>    const YY_REDUCE_MAX = 10;
+<a name="line223"></a>    static public $yy_reduce_ofst = array(
+<a name="line224"></a> /*     0 */    -9,   -8,   -8,   -8,    5,   10,    8,   12,   15,    0,
+<a name="line225"></a> /*    10 */     7,
+<a name="line226"></a>);
+<a name="line227"></a>    static public $yyExpectedTokens = array(
+<a name="line228"></a>        /* 0 */ array(),
+<a name="line229"></a>        /* 1 */ array(5, 14, 15, ),
+<a name="line230"></a>        /* 2 */ array(5, 14, 15, ),
+<a name="line231"></a>        /* 3 */ array(5, 14, 15, ),
+<a name="line232"></a>        /* 4 */ array(7, 8, 9, 10, 11, 12, 13, ),
+<a name="line233"></a>        /* 5 */ array(14, 15, ),
+<a name="line234"></a>        /* 6 */ array(14, 15, ),
+<a name="line235"></a>        /* 7 */ array(1, ),
+<a name="line236"></a>        /* 8 */ array(),
+<a name="line237"></a>        /* 9 */ array(),
+<a name="line238"></a>        /* 10 */ array(),
+<a name="line239"></a>        /* 11 */ array(13, 14, ),
+<a name="line240"></a>        /* 12 */ array(2, 4, ),
+<a name="line241"></a>        /* 13 */ array(14, ),
+<a name="line242"></a>        /* 14 */ array(2, ),
+<a name="line243"></a>        /* 15 */ array(3, ),
+<a name="line244"></a>        /* 16 */ array(6, ),
+<a name="line245"></a>        /* 17 */ array(3, ),
+<a name="line246"></a>        /* 18 */ array(),
+<a name="line247"></a>        /* 19 */ array(),
+<a name="line248"></a>        /* 20 */ array(),
+<a name="line249"></a>        /* 21 */ array(),
+<a name="line250"></a>        /* 22 */ array(),
+<a name="line251"></a>        /* 23 */ array(),
+<a name="line252"></a>        /* 24 */ array(),
+<a name="line253"></a>        /* 25 */ array(),
+<a name="line254"></a>        /* 26 */ array(),
+<a name="line255"></a>        /* 27 */ array(),
+<a name="line256"></a>        /* 28 */ array(),
+<a name="line257"></a>        /* 29 */ array(),
+<a name="line258"></a>        /* 30 */ array(),
+<a name="line259"></a>        /* 31 */ array(),
+<a name="line260"></a>);
+<a name="line261"></a>    static public $yy_default = array(
+<a name="line262"></a> /*     0 */    40,   36,   33,   37,   52,   52,   52,   32,   35,   40,
+<a name="line263"></a> /*    10 */    40,   52,   52,   52,   52,   52,   52,   52,   50,   51,
+<a name="line264"></a> /*    20 */    49,   44,   41,   39,   38,   34,   42,   43,   47,   46,
+<a name="line265"></a> /*    30 */    45,   48,
+<a name="line266"></a>);
+<a name="line267"></a>    const YYNOCODE = 26;
+<a name="line268"></a>    const YYSTACKDEPTH = 100;
+<a name="line269"></a>    const YYNSTATE = 32;
+<a name="line270"></a>    const YYNRULE = 20;
+<a name="line271"></a>    const YYERRORSYMBOL = 16;
+<a name="line272"></a>    const YYERRSYMDT = 'yy0';
+<a name="line273"></a>    const YYFALLBACK = 0;
+<a name="line274"></a>    static public $yyFallback = array(
+<a name="line275"></a>    );
+<a name="line276"></a>    static function Trace($TraceFILE, $zTracePrompt)
+<a name="line277"></a>    {
+<a name="line278"></a>        if (!$TraceFILE) {
+<a name="line279"></a>            $zTracePrompt = 0;
+<a name="line280"></a>        } elseif (!$zTracePrompt) {
+<a name="line281"></a>            $TraceFILE = 0;
+<a name="line282"></a>        }
+<a name="line283"></a>        self::$yyTraceFILE = $TraceFILE;
+<a name="line284"></a>        self::$yyTracePrompt = $zTracePrompt;
+<a name="line285"></a>    }
+<a name="line286"></a>
+<a name="line287"></a>    static function PrintTrace()
+<a name="line288"></a>    {
+<a name="line289"></a>        self::$yyTraceFILE = fopen('php://output', 'w');
+<a name="line290"></a>        self::$yyTracePrompt = '<br>';
+<a name="line291"></a>    }
+<a name="line292"></a>
+<a name="line293"></a>    static public $yyTraceFILE;
+<a name="line294"></a>    static public $yyTracePrompt;
+<a name="line295"></a>    public $yyidx;                    /* Index of top element in stack */
+<a name="line296"></a>    public $yyerrcnt;                 /* Shifts left before out of the error */
+<a name="line297"></a>    public $yystack = array();  /* The parser's stack */
+<a name="line298"></a>
+<a name="line299"></a>    public $yyTokenName = array( 
+<a name="line300"></a>  '$',             'OPENB',         'SECTION',       'CLOSEB',      
+<a name="line301"></a>  'DOT',           'ID',            'EQUAL',         'FLOAT',       
+<a name="line302"></a>  'INT',           'BOOL',          'SINGLE_QUOTED_STRING',  'DOUBLE_QUOTED_STRING',
+<a name="line303"></a>  'TRIPPLE_DOUBLE_QUOTED_STRING',  'NAKED_STRING',  'NEWLINE',       'COMMENTSTART',
+<a name="line304"></a>  'error',         'start',         'global_vars',   'sections',    
+<a name="line305"></a>  'var_list',      'section',       'newline',       'var',         
+<a name="line306"></a>  'value',       
+<a name="line307"></a>    );
+<a name="line308"></a>
+<a name="line309"></a>    static public $yyRuleName = array(
+<a name="line310"></a> /*   0 */ "start ::= global_vars sections",
+<a name="line311"></a> /*   1 */ "global_vars ::= var_list",
+<a name="line312"></a> /*   2 */ "sections ::= sections section",
+<a name="line313"></a> /*   3 */ "sections ::=",
+<a name="line314"></a> /*   4 */ "section ::= OPENB SECTION CLOSEB newline var_list",
+<a name="line315"></a> /*   5 */ "section ::= OPENB DOT SECTION CLOSEB newline var_list",
+<a name="line316"></a> /*   6 */ "var_list ::= var_list newline",
+<a name="line317"></a> /*   7 */ "var_list ::= var_list var",
+<a name="line318"></a> /*   8 */ "var_list ::=",
+<a name="line319"></a> /*   9 */ "var ::= ID EQUAL value",
+<a name="line320"></a> /*  10 */ "value ::= FLOAT",
+<a name="line321"></a> /*  11 */ "value ::= INT",
+<a name="line322"></a> /*  12 */ "value ::= BOOL",
+<a name="line323"></a> /*  13 */ "value ::= SINGLE_QUOTED_STRING",
+<a name="line324"></a> /*  14 */ "value ::= DOUBLE_QUOTED_STRING",
+<a name="line325"></a> /*  15 */ "value ::= TRIPPLE_DOUBLE_QUOTED_STRING",
+<a name="line326"></a> /*  16 */ "value ::= NAKED_STRING",
+<a name="line327"></a> /*  17 */ "newline ::= NEWLINE",
+<a name="line328"></a> /*  18 */ "newline ::= COMMENTSTART NEWLINE",
+<a name="line329"></a> /*  19 */ "newline ::= COMMENTSTART NAKED_STRING NEWLINE",
+<a name="line330"></a>    );
+<a name="line331"></a>
+<a name="line332"></a>    function tokenName($tokenType)
+<a name="line333"></a>    {
+<a name="line334"></a>        if ($tokenType === 0) {
+<a name="line335"></a>            return 'End of Input';
+<a name="line336"></a>        }
+<a name="line337"></a>        if ($tokenType > 0 && $tokenType < count($this->yyTokenName)) {
+<a name="line338"></a>            return $this->yyTokenName[$tokenType];
+<a name="line339"></a>        } else {
+<a name="line340"></a>            return "Unknown";
+<a name="line341"></a>        }
+<a name="line342"></a>    }
+<a name="line343"></a>
+<a name="line344"></a>    static function yy_destructor($yymajor, $yypminor)
+<a name="line345"></a>    {
+<a name="line346"></a>        switch ($yymajor) {
+<a name="line347"></a>            default:  break;   /* If no destructor action specified: do nothing */
+<a name="line348"></a>        }
+<a name="line349"></a>    }
+<a name="line350"></a>
+<a name="line351"></a>    function yy_pop_parser_stack()
+<a name="line352"></a>    {
+<a name="line353"></a>        if (!count($this->yystack)) {
+<a name="line354"></a>            return;
+<a name="line355"></a>        }
+<a name="line356"></a>        $yytos = array_pop($this->yystack);
+<a name="line357"></a>        if (self::$yyTraceFILE && $this->yyidx >= 0) {
+<a name="line358"></a>            fwrite(self::$yyTraceFILE,
+<a name="line359"></a>                self::$yyTracePrompt . 'Popping ' . $this->yyTokenName[$yytos->major] .
+<a name="line360"></a>                    "\n");
+<a name="line361"></a>        }
+<a name="line362"></a>        $yymajor = $yytos->major;
+<a name="line363"></a>        self::yy_destructor($yymajor, $yytos->minor);
+<a name="line364"></a>        $this->yyidx--;
+<a name="line365"></a>        return $yymajor;
+<a name="line366"></a>    }
+<a name="line367"></a>
+<a name="line368"></a>    function __destruct()
+<a name="line369"></a>    {
+<a name="line370"></a>        while ($this->yystack !== Array()) {
+<a name="line371"></a>            $this->yy_pop_parser_stack();
+<a name="line372"></a>        }
+<a name="line373"></a>        if (is_resource(self::$yyTraceFILE)) {
+<a name="line374"></a>            fclose(self::$yyTraceFILE);
+<a name="line375"></a>        }
+<a name="line376"></a>    }
+<a name="line377"></a>
+<a name="line378"></a>    function yy_get_expected_tokens($token)
+<a name="line379"></a>    {
+<a name="line380"></a>        $state = $this->yystack[$this->yyidx]->stateno;
+<a name="line381"></a>        $expected = self::$yyExpectedTokens[$state];
+<a name="line382"></a>        if (in_array($token, self::$yyExpectedTokens[$state], true)) {
+<a name="line383"></a>            return $expected;
+<a name="line384"></a>        }
+<a name="line385"></a>        $stack = $this->yystack;
+<a name="line386"></a>        $yyidx = $this->yyidx;
+<a name="line387"></a>        do {
+<a name="line388"></a>            $yyact = $this->yy_find_shift_action($token);
+<a name="line389"></a>            if ($yyact >= self::YYNSTATE && $yyact < self::YYNSTATE + self::YYNRULE) {
+<a name="line390"></a>                // reduce action
+<a name="line391"></a>                $done = 0;
+<a name="line392"></a>                do {
+<a name="line393"></a>                    if ($done++ == 100) {
+<a name="line394"></a>                        $this->yyidx = $yyidx;
+<a name="line395"></a>                        $this->yystack = $stack;
+<a name="line396"></a>                        // too much recursion prevents proper detection
+<a name="line397"></a>                        // so give up
+<a name="line398"></a>                        return array_unique($expected);
+<a name="line399"></a>                    }
+<a name="line400"></a>                    $yyruleno = $yyact - self::YYNSTATE;
+<a name="line401"></a>                    $this->yyidx -= self::$yyRuleInfo[$yyruleno]['rhs'];
+<a name="line402"></a>                    $nextstate = $this->yy_find_reduce_action(
+<a name="line403"></a>                        $this->yystack[$this->yyidx]->stateno,
+<a name="line404"></a>                        self::$yyRuleInfo[$yyruleno]['lhs']);
+<a name="line405"></a>                    if (isset(self::$yyExpectedTokens[$nextstate])) {
+<a name="line406"></a>		        $expected = array_merge($expected, self::$yyExpectedTokens[$nextstate]);
+<a name="line407"></a>                            if (in_array($token,
+<a name="line408"></a>                                  self::$yyExpectedTokens[$nextstate], true)) {
+<a name="line409"></a>                            $this->yyidx = $yyidx;
+<a name="line410"></a>                            $this->yystack = $stack;
+<a name="line411"></a>                            return array_unique($expected);
+<a name="line412"></a>                        }
+<a name="line413"></a>                    }
+<a name="line414"></a>                    if ($nextstate < self::YYNSTATE) {
+<a name="line415"></a>                        // we need to shift a non-terminal
+<a name="line416"></a>                        $this->yyidx++;
+<a name="line417"></a>                        $x = new TPC_yyStackEntry;
+<a name="line418"></a>                        $x->stateno = $nextstate;
+<a name="line419"></a>                        $x->major = self::$yyRuleInfo[$yyruleno]['lhs'];
+<a name="line420"></a>                        $this->yystack[$this->yyidx] = $x;
+<a name="line421"></a>                        continue 2;
+<a name="line422"></a>                    } elseif ($nextstate == self::YYNSTATE + self::YYNRULE + 1) {
+<a name="line423"></a>                        $this->yyidx = $yyidx;
+<a name="line424"></a>                        $this->yystack = $stack;
+<a name="line425"></a>                        // the last token was just ignored, we can't accept
+<a name="line426"></a>                        // by ignoring input, this is in essence ignoring a
+<a name="line427"></a>                        // syntax error!
+<a name="line428"></a>                        return array_unique($expected);
+<a name="line429"></a>                    } elseif ($nextstate === self::YY_NO_ACTION) {
+<a name="line430"></a>                        $this->yyidx = $yyidx;
+<a name="line431"></a>                        $this->yystack = $stack;
+<a name="line432"></a>                        // input accepted, but not shifted (I guess)
+<a name="line433"></a>                        return $expected;
+<a name="line434"></a>                    } else {
+<a name="line435"></a>                        $yyact = $nextstate;
+<a name="line436"></a>                    }
+<a name="line437"></a>                } while (true);
+<a name="line438"></a>            }
+<a name="line439"></a>            break;
+<a name="line440"></a>        } while (true);
+<a name="line441"></a>	$this->yyidx = $yyidx;
+<a name="line442"></a>	$this->yystack = $stack;
+<a name="line443"></a>        return array_unique($expected);
+<a name="line444"></a>    }
+<a name="line445"></a>
+<a name="line446"></a>    function yy_is_expected_token($token)
+<a name="line447"></a>    {
+<a name="line448"></a>        if ($token === 0) {
+<a name="line449"></a>            return true; // 0 is not part of this
+<a name="line450"></a>        }
+<a name="line451"></a>        $state = $this->yystack[$this->yyidx]->stateno;
+<a name="line452"></a>        if (in_array($token, self::$yyExpectedTokens[$state], true)) {
+<a name="line453"></a>            return true;
+<a name="line454"></a>        }
+<a name="line455"></a>        $stack = $this->yystack;
+<a name="line456"></a>        $yyidx = $this->yyidx;
+<a name="line457"></a>        do {
+<a name="line458"></a>            $yyact = $this->yy_find_shift_action($token);
+<a name="line459"></a>            if ($yyact >= self::YYNSTATE && $yyact < self::YYNSTATE + self::YYNRULE) {
+<a name="line460"></a>                // reduce action
+<a name="line461"></a>                $done = 0;
+<a name="line462"></a>                do {
+<a name="line463"></a>                    if ($done++ == 100) {
+<a name="line464"></a>                        $this->yyidx = $yyidx;
+<a name="line465"></a>                        $this->yystack = $stack;
+<a name="line466"></a>                        // too much recursion prevents proper detection
+<a name="line467"></a>                        // so give up
+<a name="line468"></a>                        return true;
+<a name="line469"></a>                    }
+<a name="line470"></a>                    $yyruleno = $yyact - self::YYNSTATE;
+<a name="line471"></a>                    $this->yyidx -= self::$yyRuleInfo[$yyruleno]['rhs'];
+<a name="line472"></a>                    $nextstate = $this->yy_find_reduce_action(
+<a name="line473"></a>                        $this->yystack[$this->yyidx]->stateno,
+<a name="line474"></a>                        self::$yyRuleInfo[$yyruleno]['lhs']);
+<a name="line475"></a>                    if (isset(self::$yyExpectedTokens[$nextstate]) &&
+<a name="line476"></a>                          in_array($token, self::$yyExpectedTokens[$nextstate], true)) {
+<a name="line477"></a>                        $this->yyidx = $yyidx;
+<a name="line478"></a>                        $this->yystack = $stack;
+<a name="line479"></a>                        return true;
+<a name="line480"></a>                    }
+<a name="line481"></a>                    if ($nextstate < self::YYNSTATE) {
+<a name="line482"></a>                        // we need to shift a non-terminal
+<a name="line483"></a>                        $this->yyidx++;
+<a name="line484"></a>                        $x = new TPC_yyStackEntry;
+<a name="line485"></a>                        $x->stateno = $nextstate;
+<a name="line486"></a>                        $x->major = self::$yyRuleInfo[$yyruleno]['lhs'];
+<a name="line487"></a>                        $this->yystack[$this->yyidx] = $x;
+<a name="line488"></a>                        continue 2;
+<a name="line489"></a>                    } elseif ($nextstate == self::YYNSTATE + self::YYNRULE + 1) {
+<a name="line490"></a>                        $this->yyidx = $yyidx;
+<a name="line491"></a>                        $this->yystack = $stack;
+<a name="line492"></a>                        if (!$token) {
+<a name="line493"></a>                            // end of input: this is valid
+<a name="line494"></a>                            return true;
+<a name="line495"></a>                        }
+<a name="line496"></a>                        // the last token was just ignored, we can't accept
+<a name="line497"></a>                        // by ignoring input, this is in essence ignoring a
+<a name="line498"></a>                        // syntax error!
+<a name="line499"></a>                        return false;
+<a name="line500"></a>                    } elseif ($nextstate === self::YY_NO_ACTION) {
+<a name="line501"></a>                        $this->yyidx = $yyidx;
+<a name="line502"></a>                        $this->yystack = $stack;
+<a name="line503"></a>                        // input accepted, but not shifted (I guess)
+<a name="line504"></a>                        return true;
+<a name="line505"></a>                    } else {
+<a name="line506"></a>                        $yyact = $nextstate;
+<a name="line507"></a>                    }
+<a name="line508"></a>                } while (true);
+<a name="line509"></a>            }
+<a name="line510"></a>            break;
+<a name="line511"></a>        } while (true);
+<a name="line512"></a>        $this->yyidx = $yyidx;
+<a name="line513"></a>        $this->yystack = $stack;
+<a name="line514"></a>        return true;
+<a name="line515"></a>    }
+<a name="line516"></a>
+<a name="line517"></a>   function yy_find_shift_action($iLookAhead)
+<a name="line518"></a>    {
+<a name="line519"></a>        $stateno = $this->yystack[$this->yyidx]->stateno;
+<a name="line520"></a>     
+<a name="line521"></a>        /* if ($this->yyidx < 0) return self::YY_NO_ACTION;  */
+<a name="line522"></a>        if (!isset(self::$yy_shift_ofst[$stateno])) {
+<a name="line523"></a>            // no shift actions
+<a name="line524"></a>            return self::$yy_default[$stateno];
+<a name="line525"></a>        }
+<a name="line526"></a>        $i = self::$yy_shift_ofst[$stateno];
+<a name="line527"></a>        if ($i === self::YY_SHIFT_USE_DFLT) {
+<a name="line528"></a>            return self::$yy_default[$stateno];
+<a name="line529"></a>        }
+<a name="line530"></a>        if ($iLookAhead == self::YYNOCODE) {
+<a name="line531"></a>            return self::YY_NO_ACTION;
+<a name="line532"></a>        }
+<a name="line533"></a>        $i += $iLookAhead;
+<a name="line534"></a>        if ($i < 0 || $i >= self::YY_SZ_ACTTAB ||
+<a name="line535"></a>              self::$yy_lookahead[$i] != $iLookAhead) {
+<a name="line536"></a>            if (count(self::$yyFallback) && $iLookAhead < count(self::$yyFallback)
+<a name="line537"></a>                   && ($iFallback = self::$yyFallback[$iLookAhead]) != 0) {
+<a name="line538"></a>                if (self::$yyTraceFILE) {
+<a name="line539"></a>                    fwrite(self::$yyTraceFILE, self::$yyTracePrompt . "FALLBACK " .
+<a name="line540"></a>                        $this->yyTokenName[$iLookAhead] . " => " .
+<a name="line541"></a>                        $this->yyTokenName[$iFallback] . "\n");
+<a name="line542"></a>                }
+<a name="line543"></a>                return $this->yy_find_shift_action($iFallback);
+<a name="line544"></a>            }
+<a name="line545"></a>            return self::$yy_default[$stateno];
+<a name="line546"></a>        } else {
+<a name="line547"></a>            return self::$yy_action[$i];
+<a name="line548"></a>        }
+<a name="line549"></a>    }
+<a name="line550"></a>
+<a name="line551"></a>    function yy_find_reduce_action($stateno, $iLookAhead)
+<a name="line552"></a>    {
+<a name="line553"></a>        /* $stateno = $this->yystack[$this->yyidx]->stateno; */
+<a name="line554"></a>
+<a name="line555"></a>        if (!isset(self::$yy_reduce_ofst[$stateno])) {
+<a name="line556"></a>            return self::$yy_default[$stateno];
+<a name="line557"></a>        }
+<a name="line558"></a>        $i = self::$yy_reduce_ofst[$stateno];
+<a name="line559"></a>        if ($i == self::YY_REDUCE_USE_DFLT) {
+<a name="line560"></a>            return self::$yy_default[$stateno];
+<a name="line561"></a>        }
+<a name="line562"></a>        if ($iLookAhead == self::YYNOCODE) {
+<a name="line563"></a>            return self::YY_NO_ACTION;
+<a name="line564"></a>        }
+<a name="line565"></a>        $i += $iLookAhead;
+<a name="line566"></a>        if ($i < 0 || $i >= self::YY_SZ_ACTTAB ||
+<a name="line567"></a>              self::$yy_lookahead[$i] != $iLookAhead) {
+<a name="line568"></a>            return self::$yy_default[$stateno];
+<a name="line569"></a>        } else {
+<a name="line570"></a>            return self::$yy_action[$i];
+<a name="line571"></a>        }
+<a name="line572"></a>    }
+<a name="line573"></a>
+<a name="line574"></a>    function yy_shift($yyNewState, $yyMajor, $yypMinor)
+<a name="line575"></a>    {
+<a name="line576"></a>        $this->yyidx++;
+<a name="line577"></a>        if ($this->yyidx >= self::YYSTACKDEPTH) {
+<a name="line578"></a>            $this->yyidx--;
+<a name="line579"></a>            if (self::$yyTraceFILE) {
+<a name="line580"></a>                fprintf(self::$yyTraceFILE, "%sStack Overflow!\n", self::$yyTracePrompt);
+<a name="line581"></a>            }
+<a name="line582"></a>            while ($this->yyidx >= 0) {
+<a name="line583"></a>                $this->yy_pop_parser_stack();
+<a name="line584"></a>            }
+<a name="line585"></a>#line 126 "smarty_internal_configfileparser.y"
+<a name="line586"></a>
+<a name="line587"></a>    $this->internalError = true;
+<a name="line588"></a>    $this->compiler->trigger_config_file_error("Stack overflow in configfile parser");
+<a name="line589"></a>#line 585 "smarty_internal_configfileparser.php"
+<a name="line590"></a>            return;
+<a name="line591"></a>        }
+<a name="line592"></a>        $yytos = new TPC_yyStackEntry;
+<a name="line593"></a>        $yytos->stateno = $yyNewState;
+<a name="line594"></a>        $yytos->major = $yyMajor;
+<a name="line595"></a>        $yytos->minor = $yypMinor;
+<a name="line596"></a>        array_push($this->yystack, $yytos);
+<a name="line597"></a>        if (self::$yyTraceFILE && $this->yyidx > 0) {
+<a name="line598"></a>            fprintf(self::$yyTraceFILE, "%sShift %d\n", self::$yyTracePrompt,
+<a name="line599"></a>                $yyNewState);
+<a name="line600"></a>            fprintf(self::$yyTraceFILE, "%sStack:", self::$yyTracePrompt);
+<a name="line601"></a>            for($i = 1; $i <= $this->yyidx; $i++) {
+<a name="line602"></a>                fprintf(self::$yyTraceFILE, " %s",
+<a name="line603"></a>                    $this->yyTokenName[$this->yystack[$i]->major]);
+<a name="line604"></a>            }
+<a name="line605"></a>            fwrite(self::$yyTraceFILE,"\n");
+<a name="line606"></a>        }
+<a name="line607"></a>    }
+<a name="line608"></a>
+<a name="line609"></a>    static public $yyRuleInfo = array(
+<a name="line610"></a>  array( 'lhs' => 17, 'rhs' => 2 ),
+<a name="line611"></a>  array( 'lhs' => 18, 'rhs' => 1 ),
+<a name="line612"></a>  array( 'lhs' => 19, 'rhs' => 2 ),
+<a name="line613"></a>  array( 'lhs' => 19, 'rhs' => 0 ),
+<a name="line614"></a>  array( 'lhs' => 21, 'rhs' => 5 ),
+<a name="line615"></a>  array( 'lhs' => 21, 'rhs' => 6 ),
+<a name="line616"></a>  array( 'lhs' => 20, 'rhs' => 2 ),
+<a name="line617"></a>  array( 'lhs' => 20, 'rhs' => 2 ),
+<a name="line618"></a>  array( 'lhs' => 20, 'rhs' => 0 ),
+<a name="line619"></a>  array( 'lhs' => 23, 'rhs' => 3 ),
+<a name="line620"></a>  array( 'lhs' => 24, 'rhs' => 1 ),
+<a name="line621"></a>  array( 'lhs' => 24, 'rhs' => 1 ),
+<a name="line622"></a>  array( 'lhs' => 24, 'rhs' => 1 ),
+<a name="line623"></a>  array( 'lhs' => 24, 'rhs' => 1 ),
+<a name="line624"></a>  array( 'lhs' => 24, 'rhs' => 1 ),
+<a name="line625"></a>  array( 'lhs' => 24, 'rhs' => 1 ),
+<a name="line626"></a>  array( 'lhs' => 24, 'rhs' => 1 ),
+<a name="line627"></a>  array( 'lhs' => 22, 'rhs' => 1 ),
+<a name="line628"></a>  array( 'lhs' => 22, 'rhs' => 2 ),
+<a name="line629"></a>  array( 'lhs' => 22, 'rhs' => 3 ),
+<a name="line630"></a>    );
+<a name="line631"></a>
+<a name="line632"></a>    static public $yyReduceMap = array(
+<a name="line633"></a>        0 => 0,
+<a name="line634"></a>        2 => 0,
+<a name="line635"></a>        3 => 0,
+<a name="line636"></a>        17 => 0,
+<a name="line637"></a>        18 => 0,
+<a name="line638"></a>        19 => 0,
+<a name="line639"></a>        1 => 1,
+<a name="line640"></a>        4 => 4,
+<a name="line641"></a>        5 => 5,
+<a name="line642"></a>        6 => 6,
+<a name="line643"></a>        7 => 7,
+<a name="line644"></a>        8 => 8,
+<a name="line645"></a>        9 => 9,
+<a name="line646"></a>        10 => 10,
+<a name="line647"></a>        11 => 11,
+<a name="line648"></a>        12 => 12,
+<a name="line649"></a>        13 => 13,
+<a name="line650"></a>        14 => 14,
+<a name="line651"></a>        15 => 15,
+<a name="line652"></a>        16 => 16,
+<a name="line653"></a>    );
+<a name="line654"></a>#line 132 "smarty_internal_configfileparser.y"
+<a name="line655"></a>    function yy_r0(){ $this->_retvalue = null;     }
+<a name="line656"></a>#line 652 "smarty_internal_configfileparser.php"
+<a name="line657"></a>#line 135 "smarty_internal_configfileparser.y"
+<a name="line658"></a>    function yy_r1(){ $this->add_global_vars($this->yystack[$this->yyidx + 0]->minor); $this->_retvalue = null;     }
+<a name="line659"></a>#line 655 "smarty_internal_configfileparser.php"
+<a name="line660"></a>#line 141 "smarty_internal_configfileparser.y"
+<a name="line661"></a>    function yy_r4(){ $this->add_section_vars($this->yystack[$this->yyidx + -3]->minor, $this->yystack[$this->yyidx + 0]->minor); $this->_retvalue = null;     }
+<a name="line662"></a>#line 658 "smarty_internal_configfileparser.php"
+<a name="line663"></a>#line 142 "smarty_internal_configfileparser.y"
+<a name="line664"></a>    function yy_r5(){ if ($this->smarty->config_read_hidden) { $this->add_section_vars($this->yystack[$this->yyidx + -3]->minor, $this->yystack[$this->yyidx + 0]->minor); } $this->_retvalue = null;     }
+<a name="line665"></a>#line 661 "smarty_internal_configfileparser.php"
+<a name="line666"></a>#line 145 "smarty_internal_configfileparser.y"
+<a name="line667"></a>    function yy_r6(){ $this->_retvalue = $this->yystack[$this->yyidx + -1]->minor;     }
+<a name="line668"></a>#line 664 "smarty_internal_configfileparser.php"
+<a name="line669"></a>#line 146 "smarty_internal_configfileparser.y"
+<a name="line670"></a>    function yy_r7(){ $this->_retvalue = array_merge($this->yystack[$this->yyidx + -1]->minor, Array($this->yystack[$this->yyidx + 0]->minor));     }
+<a name="line671"></a>#line 667 "smarty_internal_configfileparser.php"
+<a name="line672"></a>#line 147 "smarty_internal_configfileparser.y"
+<a name="line673"></a>    function yy_r8(){ $this->_retvalue = Array();     }
+<a name="line674"></a>#line 670 "smarty_internal_configfileparser.php"
+<a name="line675"></a>#line 151 "smarty_internal_configfileparser.y"
+<a name="line676"></a>    function yy_r9(){ $this->_retvalue = Array("key" => $this->yystack[$this->yyidx + -2]->minor, "value" => $this->yystack[$this->yyidx + 0]->minor);     }
+<a name="line677"></a>#line 673 "smarty_internal_configfileparser.php"
+<a name="line678"></a>#line 153 "smarty_internal_configfileparser.y"
+<a name="line679"></a>    function yy_r10(){ $this->_retvalue = (float) $this->yystack[$this->yyidx + 0]->minor;     }
+<a name="line680"></a>#line 676 "smarty_internal_configfileparser.php"
+<a name="line681"></a>#line 154 "smarty_internal_configfileparser.y"
+<a name="line682"></a>    function yy_r11(){ $this->_retvalue = (int) $this->yystack[$this->yyidx + 0]->minor;     }
+<a name="line683"></a>#line 679 "smarty_internal_configfileparser.php"
+<a name="line684"></a>#line 155 "smarty_internal_configfileparser.y"
+<a name="line685"></a>    function yy_r12(){ $this->_retvalue = $this->parse_bool($this->yystack[$this->yyidx + 0]->minor);     }
+<a name="line686"></a>#line 682 "smarty_internal_configfileparser.php"
+<a name="line687"></a>#line 156 "smarty_internal_configfileparser.y"
+<a name="line688"></a>    function yy_r13(){ $this->_retvalue = self::parse_single_quoted_string($this->yystack[$this->yyidx + 0]->minor);     }
+<a name="line689"></a>#line 685 "smarty_internal_configfileparser.php"
+<a name="line690"></a>#line 157 "smarty_internal_configfileparser.y"
+<a name="line691"></a>    function yy_r14(){ $this->_retvalue = self::parse_double_quoted_string($this->yystack[$this->yyidx + 0]->minor);     }
+<a name="line692"></a>#line 688 "smarty_internal_configfileparser.php"
+<a name="line693"></a>#line 158 "smarty_internal_configfileparser.y"
+<a name="line694"></a>    function yy_r15(){ $this->_retvalue = self::parse_tripple_double_quoted_string($this->yystack[$this->yyidx + 0]->minor);     }
+<a name="line695"></a>#line 691 "smarty_internal_configfileparser.php"
+<a name="line696"></a>#line 159 "smarty_internal_configfileparser.y"
+<a name="line697"></a>    function yy_r16(){ $this->_retvalue = $this->yystack[$this->yyidx + 0]->minor;     }
+<a name="line698"></a>#line 694 "smarty_internal_configfileparser.php"
+<a name="line699"></a>
+<a name="line700"></a>    private $_retvalue;
+<a name="line701"></a>
+<a name="line702"></a>    function yy_reduce($yyruleno)
+<a name="line703"></a>    {
+<a name="line704"></a>        $yymsp = $this->yystack[$this->yyidx];
+<a name="line705"></a>        if (self::$yyTraceFILE && $yyruleno >= 0 
+<a name="line706"></a>              && $yyruleno < count(self::$yyRuleName)) {
+<a name="line707"></a>            fprintf(self::$yyTraceFILE, "%sReduce (%d) [%s].\n",
+<a name="line708"></a>                self::$yyTracePrompt, $yyruleno,
+<a name="line709"></a>                self::$yyRuleName[$yyruleno]);
+<a name="line710"></a>        }
+<a name="line711"></a>
+<a name="line712"></a>        $this->_retvalue = $yy_lefthand_side = null;
+<a name="line713"></a>        if (array_key_exists($yyruleno, self::$yyReduceMap)) {
+<a name="line714"></a>            // call the action
+<a name="line715"></a>            $this->_retvalue = null;
+<a name="line716"></a>            $this->{'yy_r' . self::$yyReduceMap[$yyruleno]}();
+<a name="line717"></a>            $yy_lefthand_side = $this->_retvalue;
+<a name="line718"></a>        }
+<a name="line719"></a>        $yygoto = self::$yyRuleInfo[$yyruleno]['lhs'];
+<a name="line720"></a>        $yysize = self::$yyRuleInfo[$yyruleno]['rhs'];
+<a name="line721"></a>        $this->yyidx -= $yysize;
+<a name="line722"></a>        for($i = $yysize; $i; $i--) {
+<a name="line723"></a>            // pop all of the right-hand side parameters
+<a name="line724"></a>            array_pop($this->yystack);
+<a name="line725"></a>        }
+<a name="line726"></a>        $yyact = $this->yy_find_reduce_action($this->yystack[$this->yyidx]->stateno, $yygoto);
+<a name="line727"></a>        if ($yyact < self::YYNSTATE) {
+<a name="line728"></a>            if (!self::$yyTraceFILE && $yysize) {
+<a name="line729"></a>                $this->yyidx++;
+<a name="line730"></a>                $x = new TPC_yyStackEntry;
+<a name="line731"></a>                $x->stateno = $yyact;
+<a name="line732"></a>                $x->major = $yygoto;
+<a name="line733"></a>                $x->minor = $yy_lefthand_side;
+<a name="line734"></a>                $this->yystack[$this->yyidx] = $x;
+<a name="line735"></a>            } else {
+<a name="line736"></a>                $this->yy_shift($yyact, $yygoto, $yy_lefthand_side);
+<a name="line737"></a>            }
+<a name="line738"></a>        } elseif ($yyact == self::YYNSTATE + self::YYNRULE + 1) {
+<a name="line739"></a>            $this->yy_accept();
+<a name="line740"></a>        }
+<a name="line741"></a>    }
+<a name="line742"></a>
+<a name="line743"></a>    function yy_parse_failed()
+<a name="line744"></a>    {
+<a name="line745"></a>        if (self::$yyTraceFILE) {
+<a name="line746"></a>            fprintf(self::$yyTraceFILE, "%sFail!\n", self::$yyTracePrompt);
+<a name="line747"></a>        }
+<a name="line748"></a>        while ($this->yyidx >= 0) {
+<a name="line749"></a>            $this->yy_pop_parser_stack();
+<a name="line750"></a>        }
+<a name="line751"></a>    }
+<a name="line752"></a>
+<a name="line753"></a>    function yy_syntax_error($yymajor, $TOKEN)
+<a name="line754"></a>    {
+<a name="line755"></a>#line 119 "smarty_internal_configfileparser.y"
+<a name="line756"></a>
+<a name="line757"></a>    $this->internalError = true;
+<a name="line758"></a>    $this->yymajor = $yymajor;
+<a name="line759"></a>    $this->compiler->trigger_config_file_error();
+<a name="line760"></a>#line 757 "smarty_internal_configfileparser.php"
+<a name="line761"></a>    }
+<a name="line762"></a>
+<a name="line763"></a>    function yy_accept()
+<a name="line764"></a>    {
+<a name="line765"></a>        if (self::$yyTraceFILE) {
+<a name="line766"></a>            fprintf(self::$yyTraceFILE, "%sAccept!\n", self::$yyTracePrompt);
+<a name="line767"></a>        }
+<a name="line768"></a>        while ($this->yyidx >= 0) {
+<a name="line769"></a>            $stack = $this->yy_pop_parser_stack();
+<a name="line770"></a>        }
+<a name="line771"></a>#line 111 "smarty_internal_configfileparser.y"
+<a name="line772"></a>
+<a name="line773"></a>    $this->successful = !$this->internalError;
+<a name="line774"></a>    $this->internalError = false;
+<a name="line775"></a>    $this->retvalue = $this->_retvalue;
+<a name="line776"></a>    //echo $this->retvalue."\n\n";
+<a name="line777"></a>#line 775 "smarty_internal_configfileparser.php"
+<a name="line778"></a>    }
+<a name="line779"></a>
+<a name="line780"></a>    function doParse($yymajor, $yytokenvalue)
+<a name="line781"></a>    {
+<a name="line782"></a>        $yyerrorhit = 0;   /* True if yymajor has invoked an error */
+<a name="line783"></a>        
+<a name="line784"></a>        if ($this->yyidx === null || $this->yyidx < 0) {
+<a name="line785"></a>            $this->yyidx = 0;
+<a name="line786"></a>            $this->yyerrcnt = -1;
+<a name="line787"></a>            $x = new TPC_yyStackEntry;
+<a name="line788"></a>            $x->stateno = 0;
+<a name="line789"></a>            $x->major = 0;
+<a name="line790"></a>            $this->yystack = array();
+<a name="line791"></a>            array_push($this->yystack, $x);
+<a name="line792"></a>        }
+<a name="line793"></a>        $yyendofinput = ($yymajor==0);
+<a name="line794"></a>        
+<a name="line795"></a>        if (self::$yyTraceFILE) {
+<a name="line796"></a>            fprintf(self::$yyTraceFILE, "%sInput %s\n",
+<a name="line797"></a>                self::$yyTracePrompt, $this->yyTokenName[$yymajor]);
+<a name="line798"></a>        }
+<a name="line799"></a>        
+<a name="line800"></a>        do {
+<a name="line801"></a>            $yyact = $this->yy_find_shift_action($yymajor);
+<a name="line802"></a>            if ($yymajor < self::YYERRORSYMBOL &&
+<a name="line803"></a>                  !$this->yy_is_expected_token($yymajor)) {
+<a name="line804"></a>                // force a syntax error
+<a name="line805"></a>                $yyact = self::YY_ERROR_ACTION;
+<a name="line806"></a>            }
+<a name="line807"></a>            if ($yyact < self::YYNSTATE) {
+<a name="line808"></a>                $this->yy_shift($yyact, $yymajor, $yytokenvalue);
+<a name="line809"></a>                $this->yyerrcnt--;
+<a name="line810"></a>                if ($yyendofinput && $this->yyidx >= 0) {
+<a name="line811"></a>                    $yymajor = 0;
+<a name="line812"></a>                } else {
+<a name="line813"></a>                    $yymajor = self::YYNOCODE;
+<a name="line814"></a>                }
+<a name="line815"></a>            } elseif ($yyact < self::YYNSTATE + self::YYNRULE) {
+<a name="line816"></a>                $this->yy_reduce($yyact - self::YYNSTATE);
+<a name="line817"></a>            } elseif ($yyact == self::YY_ERROR_ACTION) {
+<a name="line818"></a>                if (self::$yyTraceFILE) {
+<a name="line819"></a>                    fprintf(self::$yyTraceFILE, "%sSyntax Error!\n",
+<a name="line820"></a>                        self::$yyTracePrompt);
+<a name="line821"></a>                }
+<a name="line822"></a>                if (self::YYERRORSYMBOL) {
+<a name="line823"></a>                    if ($this->yyerrcnt < 0) {
+<a name="line824"></a>                        $this->yy_syntax_error($yymajor, $yytokenvalue);
+<a name="line825"></a>                    }
+<a name="line826"></a>                    $yymx = $this->yystack[$this->yyidx]->major;
+<a name="line827"></a>                    if ($yymx == self::YYERRORSYMBOL || $yyerrorhit ){
+<a name="line828"></a>                        if (self::$yyTraceFILE) {
+<a name="line829"></a>                            fprintf(self::$yyTraceFILE, "%sDiscard input token %s\n",
+<a name="line830"></a>                                self::$yyTracePrompt, $this->yyTokenName[$yymajor]);
+<a name="line831"></a>                        }
+<a name="line832"></a>                        $this->yy_destructor($yymajor, $yytokenvalue);
+<a name="line833"></a>                        $yymajor = self::YYNOCODE;
+<a name="line834"></a>                    } else {
+<a name="line835"></a>                        while ($this->yyidx >= 0 &&
+<a name="line836"></a>                                 $yymx != self::YYERRORSYMBOL &&
+<a name="line837"></a>        ($yyact = $this->yy_find_shift_action(self::YYERRORSYMBOL)) >= self::YYNSTATE
+<a name="line838"></a>                              ){
+<a name="line839"></a>                            $this->yy_pop_parser_stack();
+<a name="line840"></a>                        }
+<a name="line841"></a>                        if ($this->yyidx < 0 || $yymajor==0) {
+<a name="line842"></a>                            $this->yy_destructor($yymajor, $yytokenvalue);
+<a name="line843"></a>                            $this->yy_parse_failed();
+<a name="line844"></a>                            $yymajor = self::YYNOCODE;
+<a name="line845"></a>                        } elseif ($yymx != self::YYERRORSYMBOL) {
+<a name="line846"></a>                            $u2 = 0;
+<a name="line847"></a>                            $this->yy_shift($yyact, self::YYERRORSYMBOL, $u2);
+<a name="line848"></a>                        }
+<a name="line849"></a>                    }
+<a name="line850"></a>                    $this->yyerrcnt = 3;
+<a name="line851"></a>                    $yyerrorhit = 1;
+<a name="line852"></a>                } else {
+<a name="line853"></a>                    if ($this->yyerrcnt <= 0) {
+<a name="line854"></a>                        $this->yy_syntax_error($yymajor, $yytokenvalue);
+<a name="line855"></a>                    }
+<a name="line856"></a>                    $this->yyerrcnt = 3;
+<a name="line857"></a>                    $this->yy_destructor($yymajor, $yytokenvalue);
+<a name="line858"></a>                    if ($yyendofinput) {
+<a name="line859"></a>                        $this->yy_parse_failed();
+<a name="line860"></a>                    }
+<a name="line861"></a>                    $yymajor = self::YYNOCODE;
+<a name="line862"></a>                }
+<a name="line863"></a>            } else {
+<a name="line864"></a>                $this->yy_accept();
+<a name="line865"></a>                $yymajor = self::YYNOCODE;
+<a name="line866"></a>            }            
+<a name="line867"></a>        } while ($yymajor != self::YYNOCODE && $this->yyidx >= 0);
+<a name="line868"></a>    }
+<a name="line869"></a>}
+<a name="line870"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_configfileparser.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

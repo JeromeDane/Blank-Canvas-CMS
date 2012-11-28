@@ -1,0 +1,1567 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Sun, 01 May 2011 16:25:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>Smarty (Blank Canvas CMS)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../the unknown package/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../the unknown package/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../the unknown package\smarty.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">The Unknown Package\Smarty</div>
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line84" class="location">libraries\smarty\libs\Smarty.class.php at line 84</a>
+
+<h1>Class Smarty</h1>
+
+<pre class="tree"><a href="../smarty/smarty_internal_data.html">Smarty_Internal_Data</a><br>    └─<strong>Smarty</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>Smarty</strong><br>extends <a href="../smarty/smarty_internal_data.html">Smarty_Internal_Data</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>This is the main Smarty class</p></div>
+
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Constant Summary</th></tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#CACHING_LIFETIME_CURRENT">CACHING_LIFETIME_CURRENT</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#CACHING_LIFETIME_SAVED">CACHING_LIFETIME_SAVED</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#CACHING_OFF">CACHING_OFF</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#FILTER_OUTPUT">FILTER_OUTPUT</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#FILTER_POST">FILTER_POST</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#FILTER_PRE">FILTER_PRE</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#FILTER_VARIABLE">FILTER_VARIABLE</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#PHP_ALLOW">PHP_ALLOW</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#PHP_PASSTHRU">PHP_PASSTHRU</a></p><p class="description">modes for handling of "</p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#PHP_QUOTE">PHP_QUOTE</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#PHP_REMOVE">PHP_REMOVE</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#PLUGIN_BLOCK">PLUGIN_BLOCK</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#PLUGIN_COMPILER">PLUGIN_COMPILER</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#PLUGIN_FUNCTION">PLUGIN_FUNCTION</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#PLUGIN_MODIFIER">PLUGIN_MODIFIER</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#SCOPE_GLOBAL">SCOPE_GLOBAL</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#SCOPE_LOCAL">SCOPE_LOCAL</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#SCOPE_PARENT">SCOPE_PARENT</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  int</td>
+<td class="description"><p class="name"><a href="#SCOPE_ROOT">SCOPE_ROOT</a></p></td>
+</tr>
+<tr>
+<td class="type">final static  str</td>
+<td class="description"><p class="name"><a href="#SMARTY_VERSION">SMARTY_VERSION</a></p><p class="description">constant definitions</p></td>
+</tr>
+</table>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#_dir_perms">$_dir_perms</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#_file_perms">$_file_perms</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#_tag_stack">$_tag_stack</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#_version">$_version</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#allow_php_tag">$allow_php_tag</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#allow_php_templates">$allow_php_templates</a></p></td>
+</tr>
+<tr>
+<td class="type">static  mixed</td>
+<td class="description"><p class="name"><a href="#auto_literal">$auto_literal</a></p><p class="description">variables</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#autoload_filters">$autoload_filters</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#cache_dir">$cache_dir</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#cache_id">$cache_id</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#cache_lifetime">$cache_lifetime</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#cache_modified_check">$cache_modified_check</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#cache_resource_types">$cache_resource_types</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#caching">$caching</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#caching_type">$caching_type</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#compile_check">$compile_check</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#compile_dir">$compile_dir</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#compile_error">$compile_error</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#compile_id">$compile_id</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#compile_locking">$compile_locking</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#config_booleanize">$config_booleanize</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#config_dir">$config_dir</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#config_overwrite">$config_overwrite</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#config_read_hidden">$config_read_hidden</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#config_vars">$config_vars</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#debug_tpl">$debug_tpl</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#debugging">$debugging</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#debugging_ctrl">$debugging_ctrl</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#default_config_type">$default_config_type</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#default_modifiers">$default_modifiers</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#default_resource_type">$default_resource_type</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#default_template_handler_func">$default_template_handler_func</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#deprecation_notices">$deprecation_notices</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#direct_access_security">$direct_access_security</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#error_reporting">$error_reporting</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#error_unassigned">$error_unassigned</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#force_cache">$force_cache</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#force_compile">$force_compile</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#inheritance">$inheritance</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#left_delimiter">$left_delimiter</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#merge_compiled_includes">$merge_compiled_includes</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#parent">$parent</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#php_handling">$php_handling</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#plugin_search_order">$plugin_search_order</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#plugins_dir">$plugins_dir</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#properties">$properties</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#registered_classes">$registered_classes</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#registered_filters">$registered_filters</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#registered_objects">$registered_objects</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#registered_plugins">$registered_plugins</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#registered_resources">$registered_resources</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#right_delimiter">$right_delimiter</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#security_class">$security_class</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#security_policy">$security_policy</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#smarty">$smarty</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#smarty_debug_id">$smarty_debug_id</a></p></td>
+</tr>
+<tr>
+<td class="type">static  mixed</td>
+<td class="description"><p class="name"><a href="#start_time">$start_time</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#template_dir">$template_dir</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#template_functions">$template_functions</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#template_objects">$template_objects</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#tpl_vars">$tpl_vars</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#trusted_dir">$trusted_dir</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#use_sub_dirs">$use_sub_dirs</a></p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#variable_filter">$variable_filter</a></p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Fields inherited from Smarty\Smarty_Internal_Data</th></tr>
+<tr><td><a href="../smarty/smarty_internal_data.html#template_class">template_class</a></td></tr></table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>()</p><p class="description">Class constructor, initializes basic smarty properties</p></td>
+</tr>
+<tr>
+<td class="type"> </td>
+<td class="description"><p class="name"><a href="#addPluginsDir()">addPluginsDir</a>(mixed plugins_dir, string smarty)</p><p class="description">Adds directory of plugin files</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#addTemplateDir()">addTemplateDir</a>(string template_dir)</p><p class="description">Adds template directory(s) to existing ones</p></td>
+</tr>
+<tr>
+<td class="type"> integer</td>
+<td class="description"><p class="name"><a href="#clearAllCache()">clearAllCache</a>(integer exp_time, string type)</p><p class="description">Empty cache folder</p></td>
+</tr>
+<tr>
+<td class="type"> integer</td>
+<td class="description"><p class="name"><a href="#clearCache()">clearCache</a>(string template_name, string cache_id, string compile_id, integer exp_time, string type)</p><p class="description">Empty cache for a specific template</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#createData()">createData</a>(object parent)</p><p class="description">creates a data object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#createTemplate()">createTemplate</a>(string template, mixed cache_id, mixed compile_id, object parent, boolean do_clone)</p><p class="description">creates a template object</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#disableSecurity()">disableSecurity</a>()</p><p class="description">Disable security</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#display()">display</a>(string template, mixed cache_id, mixed compile_id, object parent)</p><p class="description">displays a Smarty template</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#enableSecurity()">enableSecurity</a>(mixed security_class)</p><p class="description">Loads security class and enables security</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#fetch()">fetch</a>(string template, mixed cache_id, mixed compile_id, object parent, bool display)</p><p class="description">fetches a rendered Smarty template</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#getDebugTemplate()">getDebugTemplate</a>()</p><p class="description">return name of debugging template</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#getGlobal()">getGlobal</a>(string varname, object smarty)</p><p class="description">Returns a single or all global  variables</p></td>
+</tr>
+<tr>
+<td class="type"> object</td>
+<td class="description"><p class="name"><a href="#getRegisteredObject()">getRegisteredObject</a>(string name)</p><p class="description">return a reference to a registered object</p></td>
+</tr>
+<tr>
+<td class="type"> boolean</td>
+<td class="description"><p class="name"><a href="#isCached()">isCached</a>(string template, mixed cache_id, mixed compile_id, object parent)</p><p class="description">test if cache i valid</p></td>
+</tr>
+<tr>
+<td class="type"> object</td>
+<td class="description"><p class="name"><a href="#loadCacheResource()">loadCacheResource</a>(string type)</p><p class="description">Loads cache resource.</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#loadPlugin()">loadPlugin</a>(string plugin_name, bool check)</p><p class="description">Takes unknown classes and loads plugin files for them
+class name format: Smarty_PluginType_PluginName
+plugin filename format: plugintype.pluginname.php</p></td>
+</tr>
+<tr>
+<td class="type"> bool</td>
+<td class="description"><p class="name"><a href="#setDebugTemplate()">setDebugTemplate</a>(string tpl_name)</p><p class="description">set the debug template</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#setTemplateDir()">setTemplateDir</a>(string template_dir)</p><p class="description">Set template directory</p></td>
+</tr>
+<tr>
+<td class="type"> boolean</td>
+<td class="description"><p class="name"><a href="#templateExists()">templateExists</a>(string resource_name)</p><p class="description">Check if a template resource exists</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from Smarty\Smarty_Internal_Data</th></tr>
+<tr><td><a href="../smarty/smarty_internal_data.html#append()">append</a>, <a href="../smarty/smarty_internal_data.html#appendByRef()">appendByRef</a>, <a href="../smarty/smarty_internal_data.html#append_by_ref()">append_by_ref</a>, <a href="../smarty/smarty_internal_data.html#assign()">assign</a>, <a href="../smarty/smarty_internal_data.html#assignByRef()">assignByRef</a>, <a href="../smarty/smarty_internal_data.html#assignGlobal()">assignGlobal</a>, <a href="../smarty/smarty_internal_data.html#assign_by_ref()">assign_by_ref</a>, <a href="../smarty/smarty_internal_data.html#clearAllAssign()">clearAllAssign</a>, <a href="../smarty/smarty_internal_data.html#clearAssign()">clearAssign</a>, <a href="../smarty/smarty_internal_data.html#clearConfig()">clearConfig</a>, <a href="../smarty/smarty_internal_data.html#configLoad()">configLoad</a>, <a href="../smarty/smarty_internal_data.html#getConfigVariable()">getConfigVariable</a>, <a href="../smarty/smarty_internal_data.html#getConfigVars()">getConfigVars</a>, <a href="../smarty/smarty_internal_data.html#getStreamVariable()">getStreamVariable</a>, <a href="../smarty/smarty_internal_data.html#getTemplateVars()">getTemplateVars</a>, <a href="../smarty/smarty_internal_data.html#getVariable()">getVariable</a></td></tr></table>
+
+<h2 id="detail_field">Constant Detail</h2>
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line97" class="location">libraries\smarty\libs\Smarty.class.php at line 97</a>
+
+<h3 id="CACHING_LIFETIME_CURRENT">CACHING_LIFETIME_CURRENT</h3>
+<code class="signature">public final static  int <strong>CACHING_LIFETIME_CURRENT</strong> = 1</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line98" class="location">libraries\smarty\libs\Smarty.class.php at line 98</a>
+
+<h3 id="CACHING_LIFETIME_SAVED">CACHING_LIFETIME_SAVED</h3>
+<code class="signature">public final static  int <strong>CACHING_LIFETIME_SAVED</strong> = 2</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line96" class="location">libraries\smarty\libs\Smarty.class.php at line 96</a>
+
+<h3 id="CACHING_OFF">CACHING_OFF</h3>
+<code class="signature">public final static  int <strong>CACHING_OFF</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line107" class="location">libraries\smarty\libs\Smarty.class.php at line 107</a>
+
+<h3 id="FILTER_OUTPUT">FILTER_OUTPUT</h3>
+<code class="signature">public final static  str <strong>FILTER_OUTPUT</strong> = 'output'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line105" class="location">libraries\smarty\libs\Smarty.class.php at line 105</a>
+
+<h3 id="FILTER_POST">FILTER_POST</h3>
+<code class="signature">public final static  str <strong>FILTER_POST</strong> = 'post'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line106" class="location">libraries\smarty\libs\Smarty.class.php at line 106</a>
+
+<h3 id="FILTER_PRE">FILTER_PRE</h3>
+<code class="signature">public final static  str <strong>FILTER_PRE</strong> = 'pre'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line108" class="location">libraries\smarty\libs\Smarty.class.php at line 108</a>
+
+<h3 id="FILTER_VARIABLE">FILTER_VARIABLE</h3>
+<code class="signature">public final static  str <strong>FILTER_VARIABLE</strong> = 'variable'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line103" class="location">libraries\smarty\libs\Smarty.class.php at line 103</a>
+
+<h3 id="PHP_ALLOW">PHP_ALLOW</h3>
+<code class="signature">public final static  int <strong>PHP_ALLOW</strong> = 3</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line100" class="location">libraries\smarty\libs\Smarty.class.php at line 100</a>
+
+<h3 id="PHP_PASSTHRU">PHP_PASSTHRU</h3>
+<code class="signature">public final static  int <strong>PHP_PASSTHRU</strong> = 0</code>
+<div class="details">
+<p>modes for handling of "<?php ... ?>" tags in templates.</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line101" class="location">libraries\smarty\libs\Smarty.class.php at line 101</a>
+
+<h3 id="PHP_QUOTE">PHP_QUOTE</h3>
+<code class="signature">public final static  int <strong>PHP_QUOTE</strong> = 1</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line102" class="location">libraries\smarty\libs\Smarty.class.php at line 102</a>
+
+<h3 id="PHP_REMOVE">PHP_REMOVE</h3>
+<code class="signature">public final static  int <strong>PHP_REMOVE</strong> = 2</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line111" class="location">libraries\smarty\libs\Smarty.class.php at line 111</a>
+
+<h3 id="PLUGIN_BLOCK">PLUGIN_BLOCK</h3>
+<code class="signature">public final static  str <strong>PLUGIN_BLOCK</strong> = 'block'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line112" class="location">libraries\smarty\libs\Smarty.class.php at line 112</a>
+
+<h3 id="PLUGIN_COMPILER">PLUGIN_COMPILER</h3>
+<code class="signature">public final static  str <strong>PLUGIN_COMPILER</strong> = 'compiler'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line110" class="location">libraries\smarty\libs\Smarty.class.php at line 110</a>
+
+<h3 id="PLUGIN_FUNCTION">PLUGIN_FUNCTION</h3>
+<code class="signature">public final static  str <strong>PLUGIN_FUNCTION</strong> = 'function'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line113" class="location">libraries\smarty\libs\Smarty.class.php at line 113</a>
+
+<h3 id="PLUGIN_MODIFIER">PLUGIN_MODIFIER</h3>
+<code class="signature">public final static  str <strong>PLUGIN_MODIFIER</strong> = 'modifier'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line94" class="location">libraries\smarty\libs\Smarty.class.php at line 94</a>
+
+<h3 id="SCOPE_GLOBAL">SCOPE_GLOBAL</h3>
+<code class="signature">public final static  int <strong>SCOPE_GLOBAL</strong> = 3</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line91" class="location">libraries\smarty\libs\Smarty.class.php at line 91</a>
+
+<h3 id="SCOPE_LOCAL">SCOPE_LOCAL</h3>
+<code class="signature">public final static  int <strong>SCOPE_LOCAL</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line92" class="location">libraries\smarty\libs\Smarty.class.php at line 92</a>
+
+<h3 id="SCOPE_PARENT">SCOPE_PARENT</h3>
+<code class="signature">public final static  int <strong>SCOPE_PARENT</strong> = 1</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line93" class="location">libraries\smarty\libs\Smarty.class.php at line 93</a>
+
+<h3 id="SCOPE_ROOT">SCOPE_ROOT</h3>
+<code class="signature">public final static  int <strong>SCOPE_ROOT</strong> = 2</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line89" class="location">libraries\smarty\libs\Smarty.class.php at line 89</a>
+
+<h3 id="SMARTY_VERSION">SMARTY_VERSION</h3>
+<code class="signature">public final static  str <strong>SMARTY_VERSION</strong> = 'Smarty-3.0.7'</code>
+<div class="details">
+<p>constant definitions</p></div>
+
+<hr>
+
+<h2 id="detail_field">Field Detail</h2>
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line231" class="location">libraries\smarty\libs\Smarty.class.php at line 231</a>
+
+<h3 id="_dir_perms">_dir_perms</h3>
+<code class="signature">public  mixed <strong>$_dir_perms</strong> = 0771</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line229" class="location">libraries\smarty\libs\Smarty.class.php at line 229</a>
+
+<h3 id="_file_perms">_file_perms</h3>
+<code class="signature">public  mixed <strong>$_file_perms</strong> = 0644</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line233" class="location">libraries\smarty\libs\Smarty.class.php at line 233</a>
+
+<h3 id="_tag_stack">_tag_stack</h3>
+<code class="signature">public  mixed <strong>$_tag_stack</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line239" class="location">libraries\smarty\libs\Smarty.class.php at line 239</a>
+
+<h3 id="_version">_version</h3>
+<code class="signature">public  mixed <strong>$_version</strong> = self::SMARTY_VERSION</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line169" class="location">libraries\smarty\libs\Smarty.class.php at line 169</a>
+
+<h3 id="allow_php_tag">allow_php_tag</h3>
+<code class="signature">public  mixed <strong>$allow_php_tag</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line170" class="location">libraries\smarty\libs\Smarty.class.php at line 170</a>
+
+<h3 id="allow_php_templates">allow_php_templates</h3>
+<code class="signature">public  mixed <strong>$allow_php_templates</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line125" class="location">libraries\smarty\libs\Smarty.class.php at line 125</a>
+
+<h3 id="auto_literal">auto_literal</h3>
+<code class="signature">public static  mixed <strong>$auto_literal</strong> = true</code>
+<div class="details">
+<p>variables</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line219" class="location">libraries\smarty\libs\Smarty.class.php at line 219</a>
+
+<h3 id="autoload_filters">autoload_filters</h3>
+<code class="signature">public  mixed <strong>$autoload_filters</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line137" class="location">libraries\smarty\libs\Smarty.class.php at line 137</a>
+
+<h3 id="cache_dir">cache_dir</h3>
+<code class="signature">public  mixed <strong>$cache_dir</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line159" class="location">libraries\smarty\libs\Smarty.class.php at line 159</a>
+
+<h3 id="cache_id">cache_id</h3>
+<code class="signature">public  mixed <strong>$cache_id</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line155" class="location">libraries\smarty\libs\Smarty.class.php at line 155</a>
+
+<h3 id="cache_lifetime">cache_lifetime</h3>
+<code class="signature">public  mixed <strong>$cache_lifetime</strong> = 3600</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line205" class="location">libraries\smarty\libs\Smarty.class.php at line 205</a>
+
+<h3 id="cache_modified_check">cache_modified_check</h3>
+<code class="signature">public  mixed <strong>$cache_modified_check</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line197" class="location">libraries\smarty\libs\Smarty.class.php at line 197</a>
+
+<h3 id="cache_resource_types">cache_resource_types</h3>
+<code class="signature">public  mixed <strong>$cache_resource_types</strong> = array('file')</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line151" class="location">libraries\smarty\libs\Smarty.class.php at line 151</a>
+
+<h3 id="caching">caching</h3>
+<code class="signature">public  mixed <strong>$caching</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line195" class="location">libraries\smarty\libs\Smarty.class.php at line 195</a>
+
+<h3 id="caching_type">caching_type</h3>
+<code class="signature">public  mixed <strong>$caching_type</strong> = 'file'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line143" class="location">libraries\smarty\libs\Smarty.class.php at line 143</a>
+
+<h3 id="compile_check">compile_check</h3>
+<code class="signature">public  mixed <strong>$compile_check</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line133" class="location">libraries\smarty\libs\Smarty.class.php at line 133</a>
+
+<h3 id="compile_dir">compile_dir</h3>
+<code class="signature">public  mixed <strong>$compile_dir</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line149" class="location">libraries\smarty\libs\Smarty.class.php at line 149</a>
+
+<h3 id="compile_error">compile_error</h3>
+<code class="signature">public  mixed <strong>$compile_error</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line161" class="location">libraries\smarty\libs\Smarty.class.php at line 161</a>
+
+<h3 id="compile_id">compile_id</h3>
+<code class="signature">public  mixed <strong>$compile_id</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line145" class="location">libraries\smarty\libs\Smarty.class.php at line 145</a>
+
+<h3 id="compile_locking">compile_locking</h3>
+<code class="signature">public  mixed <strong>$compile_locking</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line182" class="location">libraries\smarty\libs\Smarty.class.php at line 182</a>
+
+<h3 id="config_booleanize">config_booleanize</h3>
+<code class="signature">public  mixed <strong>$config_booleanize</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line139" class="location">libraries\smarty\libs\Smarty.class.php at line 139</a>
+
+<h3 id="config_dir">config_dir</h3>
+<code class="signature">public  mixed <strong>$config_dir</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line181" class="location">libraries\smarty\libs\Smarty.class.php at line 181</a>
+
+<h3 id="config_overwrite">config_overwrite</h3>
+<code class="signature">public  mixed <strong>$config_overwrite</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line183" class="location">libraries\smarty\libs\Smarty.class.php at line 183</a>
+
+<h3 id="config_read_hidden">config_read_hidden</h3>
+<code class="signature">public  mixed <strong>$config_read_hidden</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line185" class="location">libraries\smarty\libs\Smarty.class.php at line 185</a>
+
+<h3 id="config_vars">config_vars</h3>
+<code class="signature">public  mixed <strong>$config_vars</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line177" class="location">libraries\smarty\libs\Smarty.class.php at line 177</a>
+
+<h3 id="debug_tpl">debug_tpl</h3>
+<code class="signature">public  mixed <strong>$debug_tpl</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line174" class="location">libraries\smarty\libs\Smarty.class.php at line 174</a>
+
+<h3 id="debugging">debugging</h3>
+<code class="signature">public  mixed <strong>$debugging</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line175" class="location">libraries\smarty\libs\Smarty.class.php at line 175</a>
+
+<h3 id="debugging_ctrl">debugging_ctrl</h3>
+<code class="signature">public  mixed <strong>$debugging_ctrl</strong> = 'NONE'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line201" class="location">libraries\smarty\libs\Smarty.class.php at line 201</a>
+
+<h3 id="default_config_type">default_config_type</h3>
+<code class="signature">public  mixed <strong>$default_config_type</strong> = 'file'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line223" class="location">libraries\smarty\libs\Smarty.class.php at line 223</a>
+
+<h3 id="default_modifiers">default_modifiers</h3>
+<code class="signature">public  mixed <strong>$default_modifiers</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line193" class="location">libraries\smarty\libs\Smarty.class.php at line 193</a>
+
+<h3 id="default_resource_type">default_resource_type</h3>
+<code class="signature">public  mixed <strong>$default_resource_type</strong> = 'file'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line131" class="location">libraries\smarty\libs\Smarty.class.php at line 131</a>
+
+<h3 id="default_template_handler_func">default_template_handler_func</h3>
+<code class="signature">public  mixed <strong>$default_template_handler_func</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line237" class="location">libraries\smarty\libs\Smarty.class.php at line 237</a>
+
+<h3 id="deprecation_notices">deprecation_notices</h3>
+<code class="signature">public  mixed <strong>$deprecation_notices</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line171" class="location">libraries\smarty\libs\Smarty.class.php at line 171</a>
+
+<h3 id="direct_access_security">direct_access_security</h3>
+<code class="signature">public  mixed <strong>$direct_access_security</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line179" class="location">libraries\smarty\libs\Smarty.class.php at line 179</a>
+
+<h3 id="error_reporting">error_reporting</h3>
+<code class="signature">public  mixed <strong>$error_reporting</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line127" class="location">libraries\smarty\libs\Smarty.class.php at line 127</a>
+
+<h3 id="error_unassigned">error_unassigned</h3>
+<code class="signature">public  mixed <strong>$error_unassigned</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line157" class="location">libraries\smarty\libs\Smarty.class.php at line 157</a>
+
+<h3 id="force_cache">force_cache</h3>
+<code class="signature">public  mixed <strong>$force_cache</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line141" class="location">libraries\smarty\libs\Smarty.class.php at line 141</a>
+
+<h3 id="force_compile">force_compile</h3>
+<code class="signature">public  mixed <strong>$force_compile</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line235" class="location">libraries\smarty\libs\Smarty.class.php at line 235</a>
+
+<h3 id="inheritance">inheritance</h3>
+<code class="signature">public  mixed <strong>$inheritance</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line163" class="location">libraries\smarty\libs\Smarty.class.php at line 163</a>
+
+<h3 id="left_delimiter">left_delimiter</h3>
+<code class="signature">public  mixed <strong>$left_delimiter</strong> = &quot;{&quot;</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line153" class="location">libraries\smarty\libs\Smarty.class.php at line 153</a>
+
+<h3 id="merge_compiled_includes">merge_compiled_includes</h3>
+<code class="signature">public  mixed <strong>$merge_compiled_includes</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line189" class="location">libraries\smarty\libs\Smarty.class.php at line 189</a>
+
+<h3 id="parent">parent</h3>
+<code class="signature">public  mixed <strong>$parent</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line168" class="location">libraries\smarty\libs\Smarty.class.php at line 168</a>
+
+<h3 id="php_handling">php_handling</h3>
+<code class="signature">public  mixed <strong>$php_handling</strong> = self::PHP_PASSTHRU</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line209" class="location">libraries\smarty\libs\Smarty.class.php at line 209</a>
+
+<h3 id="plugin_search_order">plugin_search_order</h3>
+<code class="signature">public  mixed <strong>$plugin_search_order</strong> = array(...)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line135" class="location">libraries\smarty\libs\Smarty.class.php at line 135</a>
+
+<h3 id="plugins_dir">plugins_dir</h3>
+<code class="signature">public  mixed <strong>$plugins_dir</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line199" class="location">libraries\smarty\libs\Smarty.class.php at line 199</a>
+
+<h3 id="properties">properties</h3>
+<code class="signature">public  mixed <strong>$properties</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line213" class="location">libraries\smarty\libs\Smarty.class.php at line 213</a>
+
+<h3 id="registered_classes">registered_classes</h3>
+<code class="signature">public  mixed <strong>$registered_classes</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line215" class="location">libraries\smarty\libs\Smarty.class.php at line 215</a>
+
+<h3 id="registered_filters">registered_filters</h3>
+<code class="signature">public  mixed <strong>$registered_filters</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line211" class="location">libraries\smarty\libs\Smarty.class.php at line 211</a>
+
+<h3 id="registered_objects">registered_objects</h3>
+<code class="signature">public  mixed <strong>$registered_objects</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line207" class="location">libraries\smarty\libs\Smarty.class.php at line 207</a>
+
+<h3 id="registered_plugins">registered_plugins</h3>
+<code class="signature">public  mixed <strong>$registered_plugins</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line217" class="location">libraries\smarty\libs\Smarty.class.php at line 217</a>
+
+<h3 id="registered_resources">registered_resources</h3>
+<code class="signature">public  mixed <strong>$registered_resources</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line164" class="location">libraries\smarty\libs\Smarty.class.php at line 164</a>
+
+<h3 id="right_delimiter">right_delimiter</h3>
+<code class="signature">public  mixed <strong>$right_delimiter</strong> = &quot;}&quot;</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line166" class="location">libraries\smarty\libs\Smarty.class.php at line 166</a>
+
+<h3 id="security_class">security_class</h3>
+<code class="signature">public  mixed <strong>$security_class</strong> = 'Smarty_Security'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line167" class="location">libraries\smarty\libs\Smarty.class.php at line 167</a>
+
+<h3 id="security_policy">security_policy</h3>
+<code class="signature">public  mixed <strong>$security_policy</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line241" class="location">libraries\smarty\libs\Smarty.class.php at line 241</a>
+
+<h3 id="smarty">smarty</h3>
+<code class="signature">public  mixed <strong>$smarty</strong></code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line176" class="location">libraries\smarty\libs\Smarty.class.php at line 176</a>
+
+<h3 id="smarty_debug_id">smarty_debug_id</h3>
+<code class="signature">public  mixed <strong>$smarty_debug_id</strong> = 'SMARTY_DEBUG'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line227" class="location">libraries\smarty\libs\Smarty.class.php at line 227</a>
+
+<h3 id="start_time">start_time</h3>
+<code class="signature">public static  mixed <strong>$start_time</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line129" class="location">libraries\smarty\libs\Smarty.class.php at line 129</a>
+
+<h3 id="template_dir">template_dir</h3>
+<code class="signature">public  mixed <strong>$template_dir</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line191" class="location">libraries\smarty\libs\Smarty.class.php at line 191</a>
+
+<h3 id="template_functions">template_functions</h3>
+<code class="signature">public  mixed <strong>$template_functions</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line203" class="location">libraries\smarty\libs\Smarty.class.php at line 203</a>
+
+<h3 id="template_objects">template_objects</h3>
+<code class="signature">public  mixed <strong>$template_objects</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line187" class="location">libraries\smarty\libs\Smarty.class.php at line 187</a>
+
+<h3 id="tpl_vars">tpl_vars</h3>
+<code class="signature">public  mixed <strong>$tpl_vars</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line172" class="location">libraries\smarty\libs\Smarty.class.php at line 172</a>
+
+<h3 id="trusted_dir">trusted_dir</h3>
+<code class="signature">public  mixed <strong>$trusted_dir</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line147" class="location">libraries\smarty\libs\Smarty.class.php at line 147</a>
+
+<h3 id="use_sub_dirs">use_sub_dirs</h3>
+<code class="signature">public  mixed <strong>$use_sub_dirs</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line221" class="location">libraries\smarty\libs\Smarty.class.php at line 221</a>
+
+<h3 id="variable_filter">variable_filter</h3>
+<code class="signature">public  mixed <strong>$variable_filter</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line246" class="location">libraries\smarty\libs\Smarty.class.php at line 246</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public  void <strong>__construct</strong>()</code>
+<div class="details">
+<p>Class constructor, initializes basic smarty properties</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line622" class="location">libraries\smarty\libs\Smarty.class.php at line 622</a>
+
+<h3 id="addPluginsDir()">addPluginsDir</h3>
+<code class="signature">public   <strong>addPluginsDir</strong>(mixed plugins_dir, string smarty)</code>
+<div class="details">
+<p>Adds directory of plugin files</p><dl>
+<dt>Parameters:</dt>
+<dd></dd>
+<dd> - |array $ plugins folder</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line609" class="location">libraries\smarty\libs\Smarty.class.php at line 609</a>
+
+<h3 id="addTemplateDir()">addTemplateDir</h3>
+<code class="signature">public  void <strong>addTemplateDir</strong>(string template_dir)</code>
+<div class="details">
+<p>Adds template directory(s) to existing ones</p><dl>
+<dt>Parameters:</dt>
+<dd> - |array $template_dir folder(s) of template sources</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line517" class="location">libraries\smarty\libs\Smarty.class.php at line 517</a>
+
+<h3 id="clearAllCache()">clearAllCache</h3>
+<code class="signature">public  integer <strong>clearAllCache</strong>(integer exp_time, string type)</code>
+<div class="details">
+<p>Empty cache folder</p><dl>
+<dt>Parameters:</dt>
+<dd>exp_time - expiration time</dd>
+<dd>type - resource type</dd>
+<dt>Returns:</dt>
+<dd>number of cache files deleted</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line533" class="location">libraries\smarty\libs\Smarty.class.php at line 533</a>
+
+<h3 id="clearCache()">clearCache</h3>
+<code class="signature">public  integer <strong>clearCache</strong>(string template_name, string cache_id, string compile_id, integer exp_time, string type)</code>
+<div class="details">
+<p>Empty cache for a specific template</p><dl>
+<dt>Parameters:</dt>
+<dd>template_name - template name</dd>
+<dd>cache_id - cache id</dd>
+<dd>compile_id - compile id</dd>
+<dd>exp_time - expiration time</dd>
+<dd>type - resource type</dd>
+<dt>Returns:</dt>
+<dd>number of cache files deleted</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line411" class="location">libraries\smarty\libs\Smarty.class.php at line 411</a>
+
+<h3 id="createData()">createData</h3>
+<code class="signature">public  void <strong>createData</strong>(object parent)</code>
+<div class="details">
+<p>creates a data object</p><dl>
+<dt>Parameters:</dt>
+<dd>parent - next higher level of Smarty variables</dd>
+<dt>Returns:</dt>
+<dd>object data object</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line426" class="location">libraries\smarty\libs\Smarty.class.php at line 426</a>
+
+<h3 id="createTemplate()">createTemplate</h3>
+<code class="signature">public  void <strong>createTemplate</strong>(string template, mixed cache_id, mixed compile_id, object parent, boolean do_clone)</code>
+<div class="details">
+<p>creates a template object</p><dl>
+<dt>Parameters:</dt>
+<dd>template - the resource handle of the template file</dd>
+<dd>cache_id - cache id to be used with this template</dd>
+<dd>compile_id - compile id to be used with this template</dd>
+<dd>parent - next higher level of Smarty variables</dd>
+<dd>do_clone - flag is Smarty object shall be cloned</dd>
+<dt>Returns:</dt>
+<dd>object template object</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line561" class="location">libraries\smarty\libs\Smarty.class.php at line 561</a>
+
+<h3 id="disableSecurity()">disableSecurity</h3>
+<code class="signature">public  void <strong>disableSecurity</strong>()</code>
+<div class="details">
+<p>Disable security</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line378" class="location">libraries\smarty\libs\Smarty.class.php at line 378</a>
+
+<h3 id="display()">display</h3>
+<code class="signature">public  void <strong>display</strong>(string template, mixed cache_id, mixed compile_id, object parent)</code>
+<div class="details">
+<p>displays a Smarty template</p><dl>
+<dt>Parameters:</dt>
+<dd> - |object $template the resource handle of the template file or template object</dd>
+<dd>cache_id - cache id to be used with this template</dd>
+<dd>compile_id - compile id to be used with this template</dd>
+<dd>parent - next higher level of Smarty variables</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line542" class="location">libraries\smarty\libs\Smarty.class.php at line 542</a>
+
+<h3 id="enableSecurity()">enableSecurity</h3>
+<code class="signature">public  void <strong>enableSecurity</strong>(mixed security_class)</code>
+<div class="details">
+<p>Loads security class and enables security</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line282" class="location">libraries\smarty\libs\Smarty.class.php at line 282</a>
+
+<h3 id="fetch()">fetch</h3>
+<code class="signature">public  string <strong>fetch</strong>(string template, mixed cache_id, mixed compile_id, object parent, bool display)</code>
+<div class="details">
+<p>fetches a rendered Smarty template</p><dl>
+<dt>Parameters:</dt>
+<dd>template - the resource handle of the template file or template object</dd>
+<dd>cache_id - cache id to be used with this template</dd>
+<dd>compile_id - compile id to be used with this template</dd>
+<dd> - |null $parent next higher level of Smarty variables</dd>
+<dt>Returns:</dt>
+<dd>rendered template output</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line652" class="location">libraries\smarty\libs\Smarty.class.php at line 652</a>
+
+<h3 id="getDebugTemplate()">getDebugTemplate</h3>
+<code class="signature">public  string <strong>getDebugTemplate</strong>()</code>
+<div class="details">
+<p>return name of debugging template</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line493" class="location">libraries\smarty\libs\Smarty.class.php at line 493</a>
+
+<h3 id="getGlobal()">getGlobal</h3>
+<code class="signature">public  string <strong>getGlobal</strong>(string varname, object smarty)</code>
+<div class="details">
+<p>Returns a single or all global  variables</p><dl>
+<dt>Parameters:</dt>
+<dd></dd>
+<dd>varname - variable name or null</dd>
+<dt>Returns:</dt>
+<dd>variable value or or array of variables</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line635" class="location">libraries\smarty\libs\Smarty.class.php at line 635</a>
+
+<h3 id="getRegisteredObject()">getRegisteredObject</h3>
+<code class="signature">public  object <strong>getRegisteredObject</strong>(string name)</code>
+<div class="details">
+<p>return a reference to a registered object</p><dl>
+<dt>Parameters:</dt>
+<dd>name - object name</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line393" class="location">libraries\smarty\libs\Smarty.class.php at line 393</a>
+
+<h3 id="isCached()">isCached</h3>
+<code class="signature">public  boolean <strong>isCached</strong>(string template, mixed cache_id, mixed compile_id, object parent)</code>
+<div class="details">
+<p>test if cache i valid</p><dl>
+<dt>Parameters:</dt>
+<dd> - |object $template the resource handle of the template file or template object</dd>
+<dd>cache_id - cache id to be used with this template</dd>
+<dd>compile_id - compile id to be used with this template</dd>
+<dd>parent - next higher level of Smarty variables</dd>
+<dt>Returns:</dt>
+<dd>cache status</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line572" class="location">libraries\smarty\libs\Smarty.class.php at line 572</a>
+
+<h3 id="loadCacheResource()">loadCacheResource</h3>
+<code class="signature">public  object <strong>loadCacheResource</strong>(string type)</code>
+<div class="details">
+<p>Loads cache resource.</p><dl>
+<dt>Parameters:</dt>
+<dd>type - cache resource type</dd>
+<dt>Returns:</dt>
+<dd>of cache resource</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line676" class="location">libraries\smarty\libs\Smarty.class.php at line 676</a>
+
+<h3 id="loadPlugin()">loadPlugin</h3>
+<code class="signature">public  string <strong>loadPlugin</strong>(string plugin_name, bool check)</code>
+<div class="details">
+<p>Takes unknown classes and loads plugin files for them
+class name format: Smarty_PluginType_PluginName
+plugin filename format: plugintype.pluginname.php</p><dl>
+<dt>Parameters:</dt>
+<dd>plugin_name - class plugin name to load</dd>
+<dt>Returns:</dt>
+<dd>|boolean filepath of loaded file or false</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line663" class="location">libraries\smarty\libs\Smarty.class.php at line 663</a>
+
+<h3 id="setDebugTemplate()">setDebugTemplate</h3>
+<code class="signature">public  bool <strong>setDebugTemplate</strong>(string tpl_name)</code>
+<div class="details">
+<p>set the debug template</p></div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line598" class="location">libraries\smarty\libs\Smarty.class.php at line 598</a>
+
+<h3 id="setTemplateDir()">setTemplateDir</h3>
+<code class="signature">public  void <strong>setTemplateDir</strong>(string template_dir)</code>
+<div class="details">
+<p>Set template directory</p><dl>
+<dt>Parameters:</dt>
+<dd> - |array $template_dir folder(s) of template sorces</dd>
+</dl>
+</div>
+
+<hr>
+
+<a href="../source/libraries/smarty/libs/smarty.class.php.html#line475" class="location">libraries\smarty\libs\Smarty.class.php at line 475</a>
+
+<h3 id="templateExists()">templateExists</h3>
+<code class="signature">public  boolean <strong>templateExists</strong>(string resource_name)</code>
+<div class="details">
+<p>Check if a template resource exists</p><dl>
+<dt>Parameters:</dt>
+<dd>resource_name - template name</dd>
+<dt>Returns:</dt>
+<dd>status</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../the unknown package/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../the unknown package/package-tree.html">Tree</a></li>
+<li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../the unknown package\smarty.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

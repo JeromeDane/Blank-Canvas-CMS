@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:02:00 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_parsetree.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_parsetree.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_parsetree.php</h1>
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty Internal Plugin Templateparser Parsetrees
+<a name="line4"></a> * 
+<a name="line5"></a> * These are classes to build parsetrees in the template parser
+<a name="line6"></a> * 
+<a name="line7"></a> * @package Smarty
+<a name="line8"></a> * @subpackage Compiler
+<a name="line9"></a> * @author Thue Kristensen 
+<a name="line10"></a> * @author Uwe Tews 
+<a name="line11"></a> */
+<a name="line12"></a> 
+<a name="line13"></a>abstract class _smarty_parsetree {
+<a name="line14"></a>  abstract public function to_smarty_php();
+<a name="line15"></a>}
+<a name="line16"></a>
+<a name="line17"></a>/**
+<a name="line18"></a> * A complete smarty tag.
+<a name="line19"></a> */
+<a name="line20"></a>class _smarty_tag extends _smarty_parsetree
+<a name="line21"></a>{
+<a name="line22"></a>    public $parser;
+<a name="line23"></a>    public $data;
+<a name="line24"></a>    public $saved_block_nesting;
+<a name="line25"></a>    function __construct($parser, $data)
+<a name="line26"></a>    {
+<a name="line27"></a>        $this->parser = $parser;
+<a name="line28"></a>        $this->data = $data;
+<a name="line29"></a>        $this->saved_block_nesting = $parser->block_nesting_level;
+<a name="line30"></a>    } 
+<a name="line31"></a>
+<a name="line32"></a>    public function to_smarty_php()
+<a name="line33"></a>    {
+<a name="line34"></a>        return $this->data;
+<a name="line35"></a>    } 
+<a name="line36"></a>
+<a name="line37"></a>    public function assign_to_var()
+<a name="line38"></a>    {
+<a name="line39"></a>        $var = sprintf('$_tmp%d', ++$this->parser->prefix_number);
+<a name="line40"></a>        $this->parser->compiler->prefix_code[] = sprintf('<?php ob_start();?>%s<?php %s=ob_get_clean();?>',
+<a name="line41"></a>            $this->data, $var);
+<a name="line42"></a>        return $var;
+<a name="line43"></a>    } 
+<a name="line44"></a>} 
+<a name="line45"></a>
+<a name="line46"></a>/**
+<a name="line47"></a> * Code fragment inside a tag.
+<a name="line48"></a> */
+<a name="line49"></a>class _smarty_code extends _smarty_parsetree {
+<a name="line50"></a>    public $parser;
+<a name="line51"></a>    public $data;
+<a name="line52"></a>    function __construct($parser, $data)
+<a name="line53"></a>    {
+<a name="line54"></a>        $this->parser = $parser;
+<a name="line55"></a>        $this->data = $data;
+<a name="line56"></a>    } 
+<a name="line57"></a>
+<a name="line58"></a>    public function to_smarty_php()
+<a name="line59"></a>    {
+<a name="line60"></a>        return sprintf("(%s)", $this->data);
+<a name="line61"></a>    } 
+<a name="line62"></a>} 
+<a name="line63"></a>
+<a name="line64"></a>/**
+<a name="line65"></a> * Double quoted string inside a tag.
+<a name="line66"></a> */
+<a name="line67"></a>class _smarty_doublequoted extends _smarty_parsetree {
+<a name="line68"></a>    public $parser;
+<a name="line69"></a>    public $subtrees = Array();
+<a name="line70"></a>    function __construct($parser, _smarty_parsetree $subtree)
+<a name="line71"></a>    {
+<a name="line72"></a>        $this->parser = $parser;
+<a name="line73"></a>        $this->subtrees[] = $subtree;
+<a name="line74"></a>        if ($subtree instanceof _smarty_tag) {
+<a name="line75"></a>            $this->parser->block_nesting_level = count($this->parser->compiler->_tag_stack);
+<a name="line76"></a>        } 
+<a name="line77"></a>    } 
+<a name="line78"></a>
+<a name="line79"></a>    function append_subtree(_smarty_parsetree $subtree)
+<a name="line80"></a>    {
+<a name="line81"></a>        $last_subtree = count($this->subtrees)-1;
+<a name="line82"></a>        if ($last_subtree >= 0 && $this->subtrees[$last_subtree] instanceof _smarty_tag && $this->subtrees[$last_subtree]->saved_block_nesting < $this->parser->block_nesting_level) {
+<a name="line83"></a>            if ($subtree instanceof _smarty_code) {
+<a name="line84"></a>                $this->subtrees[$last_subtree]->data .= '<?php echo ' . $subtree->data . ';?>';
+<a name="line85"></a>            } elseif ($subtree instanceof _smarty_dq_content) {
+<a name="line86"></a>                $this->subtrees[$last_subtree]->data .= '<?php echo "' . $subtree->data . '";?>';
+<a name="line87"></a>            } else {
+<a name="line88"></a>                $this->subtrees[$last_subtree]->data .= $subtree->data;
+<a name="line89"></a>            } 
+<a name="line90"></a>        } else {
+<a name="line91"></a>            $this->subtrees[] = $subtree;
+<a name="line92"></a>        } 
+<a name="line93"></a>        if ($subtree instanceof _smarty_tag) {
+<a name="line94"></a>            $this->parser->block_nesting_level = count($this->parser->compiler->_tag_stack);
+<a name="line95"></a>        } 
+<a name="line96"></a>    } 
+<a name="line97"></a>
+<a name="line98"></a>    public function to_smarty_php()
+<a name="line99"></a>    {
+<a name="line100"></a>        $code = '';
+<a name="line101"></a>        foreach ($this->subtrees as $subtree) {
+<a name="line102"></a>            if ($code !== "") {
+<a name="line103"></a>                $code .= ".";
+<a name="line104"></a>            } 
+<a name="line105"></a>            if ($subtree instanceof _smarty_tag) {
+<a name="line106"></a>                $more_php = $subtree->assign_to_var();
+<a name="line107"></a>            } else {
+<a name="line108"></a>                $more_php = $subtree->to_smarty_php();
+<a name="line109"></a>            } 
+<a name="line110"></a>
+<a name="line111"></a>            $code .= $more_php;
+<a name="line112"></a>
+<a name="line113"></a>            if (!$subtree instanceof _smarty_dq_content) {
+<a name="line114"></a>                $this->parser->compiler->has_variable_string = true;
+<a name="line115"></a>            } 
+<a name="line116"></a>        } 
+<a name="line117"></a>        return $code;
+<a name="line118"></a>    } 
+<a name="line119"></a>} 
+<a name="line120"></a>
+<a name="line121"></a>/**
+<a name="line122"></a> * Raw chars as part of a double quoted string.
+<a name="line123"></a> */
+<a name="line124"></a>class _smarty_dq_content extends _smarty_parsetree {
+<a name="line125"></a>    public $data;
+<a name="line126"></a>    function __construct($parser, $data)
+<a name="line127"></a>    {
+<a name="line128"></a>        $this->parser = $parser;
+<a name="line129"></a>        $this->data = $data;
+<a name="line130"></a>    } 
+<a name="line131"></a>
+<a name="line132"></a>    public function to_smarty_php()
+<a name="line133"></a>    {
+<a name="line134"></a>        return '"' . $this->data . '"';
+<a name="line135"></a>    } 
+<a name="line136"></a>} 
+<a name="line137"></a>
+<a name="line138"></a>/**
+<a name="line139"></a> * Template element
+<a name="line140"></a> */
+<a name="line141"></a>class _smarty_template_buffer extends _smarty_parsetree {
+<a name="line142"></a>    public $subtrees = Array();
+<a name="line143"></a>    function __construct($parser)
+<a name="line144"></a>    {
+<a name="line145"></a>        $this->parser = $parser;
+<a name="line146"></a>    } 
+<a name="line147"></a>
+<a name="line148"></a>    function append_subtree(_smarty_parsetree $subtree)
+<a name="line149"></a>    {
+<a name="line150"></a>        $this->subtrees[] = $subtree;
+<a name="line151"></a>    } 
+<a name="line152"></a>
+<a name="line153"></a>    public function to_smarty_php()
+<a name="line154"></a>    {
+<a name="line155"></a>        $code = '';
+<a name="line156"></a>        for ($key = 0, $cnt = count($this->subtrees); $key < $cnt; $key++) {
+<a name="line157"></a>            if ($key + 2 < $cnt) {
+<a name="line158"></a>                if ($this->subtrees[$key] instanceof _smarty_linebreak && $this->subtrees[$key + 1] instanceof _smarty_tag && $this->subtrees[$key + 1]->data == '' && $this->subtrees[$key + 2] instanceof _smarty_linebreak) {
+<a name="line159"></a>                    $key = $key + 1;
+<a name="line160"></a>                    continue;
+<a name="line161"></a>                } 
+<a name="line162"></a>                if (substr($this->subtrees[$key]->data, -1) == '<' && $this->subtrees[$key + 1]->data == '' && substr($this->subtrees[$key + 2]->data, -1) == '?') {
+<a name="line163"></a>                    $key = $key + 2;
+<a name="line164"></a>                    continue;
+<a name="line165"></a>                } 
+<a name="line166"></a>            } 
+<a name="line167"></a>            if (substr($code, -1) == '<') {
+<a name="line168"></a>                $subtree = $this->subtrees[$key]->to_smarty_php();
+<a name="line169"></a>                if (substr($subtree, 0, 1) == '?') {
+<a name="line170"></a>                    $code = substr($code, 0, strlen($code)-1) . '<<?php ?>?' . substr($subtree, 1);
+<a name="line171"></a>                } elseif ($this->parser->asp_tags && substr($subtree, 0, 1) == '%') {
+<a name="line172"></a>                    $code = substr($code, 0, strlen($code)-1) . '<<?php ?>%' . substr($subtree, 1);
+<a name="line173"></a>           } else {
+<a name="line174"></a>                    $code .= $subtree;
+<a name="line175"></a>                } 
+<a name="line176"></a>                continue;
+<a name="line177"></a>            } 
+<a name="line178"></a>            if ($this->parser->asp_tags && substr($code, -1) == '%') {
+<a name="line179"></a>                $subtree = $this->subtrees[$key]->to_smarty_php();
+<a name="line180"></a>                if (substr($subtree, 0, 1) == '>') {
+<a name="line181"></a>                    $code = substr($code, 0, strlen($code)-1) . '%<?php ?>>' . substr($subtree, 1);
+<a name="line182"></a>           } else {
+<a name="line183"></a>                    $code .= $subtree;
+<a name="line184"></a>                } 
+<a name="line185"></a>                continue;
+<a name="line186"></a>            } 
+<a name="line187"></a>            if (substr($code, -1) == '?') {
+<a name="line188"></a>                $subtree = $this->subtrees[$key]->to_smarty_php();
+<a name="line189"></a>                if (substr($subtree, 0, 1) == '>') {
+<a name="line190"></a>                    $code = substr($code, 0, strlen($code)-1) . '?<?php ?>>' . substr($subtree, 1);
+<a name="line191"></a>           } else {
+<a name="line192"></a>                    $code .= $subtree;
+<a name="line193"></a>                } 
+<a name="line194"></a>                continue;
+<a name="line195"></a>            } 
+<a name="line196"></a>            $code .= $this->subtrees[$key]->to_smarty_php();
+<a name="line197"></a>        } 
+<a name="line198"></a>        return $code;
+<a name="line199"></a>    } 
+<a name="line200"></a>}
+<a name="line201"></a>
+<a name="line202"></a>/**
+<a name="line203"></a> * template text
+<a name="line204"></a> */
+<a name="line205"></a>class _smarty_text extends _smarty_parsetree {
+<a name="line206"></a>    public $data;
+<a name="line207"></a>    function __construct($parser, $data)
+<a name="line208"></a>    {
+<a name="line209"></a>        $this->parser = $parser;
+<a name="line210"></a>        $this->data = $data;
+<a name="line211"></a>    } 
+<a name="line212"></a>
+<a name="line213"></a>    public function to_smarty_php()
+<a name="line214"></a>    {
+<a name="line215"></a>        return $this->data;
+<a name="line216"></a>    } 
+<a name="line217"></a>} 
+<a name="line218"></a>
+<a name="line219"></a>/**
+<a name="line220"></a> * template linebreaks
+<a name="line221"></a> */
+<a name="line222"></a>class _smarty_linebreak extends _smarty_parsetree {
+<a name="line223"></a>    public $data;
+<a name="line224"></a>    function __construct($parser, $data)
+<a name="line225"></a>    {
+<a name="line226"></a>        $this->parser = $parser;
+<a name="line227"></a>        $this->data = $data;
+<a name="line228"></a>    } 
+<a name="line229"></a>
+<a name="line230"></a>    public function to_smarty_php()
+<a name="line231"></a>    {
+<a name="line232"></a>        return $this->data;
+<a name="line233"></a>    } 
+<a name="line234"></a>} 
+<a name="line235"></a>
+<a name="line236"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_parsetree.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

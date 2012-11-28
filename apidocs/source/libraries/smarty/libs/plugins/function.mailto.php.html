@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:57 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\plugins\function.mailto.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\function.mailto.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\plugins\function.mailto.php</h1>
+<div class="comment" id="overview_description"><p>Smarty plugin</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty plugin
+<a name="line4"></a> * 
+<a name="line5"></a> * @package Smarty
+<a name="line6"></a> * @subpackage PluginsFunction
+<a name="line7"></a> */
+<a name="line8"></a>
+<a name="line9"></a>/**
+<a name="line10"></a> * Smarty {mailto} function plugin
+<a name="line11"></a> * 
+<a name="line12"></a> * Type:     function<br>
+<a name="line13"></a> * Name:     mailto<br>
+<a name="line14"></a> * Date:     May 21, 2002
+<a name="line15"></a> * Purpose:  automate mailto address link creation, and optionally
+<a name="line16"></a> *            encode them.<br>
+<a name="line17"></a> * 
+<a name="line18"></a> * Examples:
+<a name="line19"></a> * <pre>
+<a name="line20"></a> * {mailto address="me@domain.com"}
+<a name="line21"></a> * {mailto address="me@domain.com" encode="javascript"}
+<a name="line22"></a> * {mailto address="me@domain.com" encode="hex"}
+<a name="line23"></a> * {mailto address="me@domain.com" subject="Hello to you!"}
+<a name="line24"></a> * {mailto address="me@domain.com" cc="you@domain.com,they@domain.com"}
+<a name="line25"></a> * {mailto address="me@domain.com" extra='class="mailto"'}
+<a name="line26"></a> * </pre>
+<a name="line27"></a> * 
+<a name="line28"></a> * @link http://smarty.php.net/manual/en/language.function.mailto.php {mailto}
+<a name="line29"></a> *          (Smarty online manual)
+<a name="line30"></a> * @version 1.2
+<a name="line31"></a> * @author Monte Ohrt <monte at ohrt dot com> 
+<a name="line32"></a> * @author credits to Jason Sweat (added cc, bcc and subject functionality) 
+<a name="line33"></a> * @param array $params parameters
+<a name="line34"></a> * Input:<br>
+<a name="line35"></a> *          - address = e-mail address
+<a name="line36"></a> *          - text = (optional) text to display, default is address
+<a name="line37"></a> *          - encode = (optional) can be one of:
+<a name="line38"></a> *                 * none : no encoding (default)
+<a name="line39"></a> *                 * javascript : encode with javascript
+<a name="line40"></a> *                 * javascript_charcode : encode with javascript charcode
+<a name="line41"></a> *                 * hex : encode with hexidecimal (no javascript)
+<a name="line42"></a> *          - cc = (optional) address(es) to carbon copy
+<a name="line43"></a> *          - bcc = (optional) address(es) to blind carbon copy
+<a name="line44"></a> *          - subject = (optional) e-mail subject
+<a name="line45"></a> *          - newsgroups = (optional) newsgroup(s) to post to
+<a name="line46"></a> *          - followupto = (optional) address(es) to follow up to
+<a name="line47"></a> *          - extra = (optional) extra tags for the href link
+<a name="line48"></a> * @param object $template template object
+<a name="line49"></a> * @return string 
+<a name="line50"></a> */
+<a name="line51"></a>function smarty_function_mailto($params, $template)
+<a name="line52"></a>{
+<a name="line53"></a>    $extra = '';
+<a name="line54"></a>
+<a name="line55"></a>    if (empty($params['address'])) {
+<a name="line56"></a>        trigger_error("mailto: missing 'address' parameter",E_USER_WARNING);
+<a name="line57"></a>        return;
+<a name="line58"></a>    } else {
+<a name="line59"></a>        $address = $params['address'];
+<a name="line60"></a>    } 
+<a name="line61"></a>
+<a name="line62"></a>    $text = $address; 
+<a name="line63"></a>    // netscape and mozilla do not decode %40 (@) in BCC field (bug?)
+<a name="line64"></a>    // so, don't encode it.
+<a name="line65"></a>    $search = array('%40', '%2C');
+<a name="line66"></a>    $replace = array('@', ',');
+<a name="line67"></a>    $mail_parms = array();
+<a name="line68"></a>    foreach ($params as $var => $value) {
+<a name="line69"></a>        switch ($var) {
+<a name="line70"></a>            case 'cc':
+<a name="line71"></a>            case 'bcc':
+<a name="line72"></a>            case 'followupto':
+<a name="line73"></a>                if (!empty($value))
+<a name="line74"></a>                    $mail_parms[] = $var . '=' . str_replace($search, $replace, rawurlencode($value));
+<a name="line75"></a>                break;
+<a name="line76"></a>
+<a name="line77"></a>            case 'subject':
+<a name="line78"></a>            case 'newsgroups':
+<a name="line79"></a>                $mail_parms[] = $var . '=' . rawurlencode($value);
+<a name="line80"></a>                break;
+<a name="line81"></a>
+<a name="line82"></a>            case 'extra':
+<a name="line83"></a>            case 'text':
+<a name="line84"></a>                $$var = $value;
+<a name="line85"></a>
+<a name="line86"></a>            default:
+<a name="line87"></a>        } 
+<a name="line88"></a>    } 
+<a name="line89"></a>
+<a name="line90"></a>    $mail_parm_vals = '';
+<a name="line91"></a>    for ($i = 0; $i < count($mail_parms); $i++) {
+<a name="line92"></a>        $mail_parm_vals .= (0 == $i) ? '?' : '&';
+<a name="line93"></a>        $mail_parm_vals .= $mail_parms[$i];
+<a name="line94"></a>    } 
+<a name="line95"></a>    $address .= $mail_parm_vals;
+<a name="line96"></a>
+<a name="line97"></a>    $encode = (empty($params['encode'])) ? 'none' : $params['encode'];
+<a name="line98"></a>    if (!in_array($encode, array('javascript', 'javascript_charcode', 'hex', 'none'))) {
+<a name="line99"></a>        trigger_error("mailto: 'encode' parameter must be none, javascript or hex",E_USER_WARNING);
+<a name="line100"></a>        return;
+<a name="line101"></a>    } 
+<a name="line102"></a>
+<a name="line103"></a>    if ($encode == 'javascript') {
+<a name="line104"></a>        $string = 'document.write(\'<a href="mailto:' . $address . '" ' . $extra . '>' . $text . '</a>\');';
+<a name="line105"></a>
+<a name="line106"></a>        $js_encode = '';
+<a name="line107"></a>        for ($x = 0; $x < strlen($string); $x++) {
+<a name="line108"></a>            $js_encode .= '%' . bin2hex($string[$x]);
+<a name="line109"></a>        } 
+<a name="line110"></a>
+<a name="line111"></a>        return '<script type="text/javascript">eval(unescape(\'' . $js_encode . '\'))</script>';
+<a name="line112"></a>    } elseif ($encode == 'javascript_charcode') {
+<a name="line113"></a>        $string = '<a href="mailto:' . $address . '" ' . $extra . '>' . $text . '</a>';
+<a name="line114"></a>
+<a name="line115"></a>        for($x = 0, $y = strlen($string); $x < $y; $x++) {
+<a name="line116"></a>            $ord[] = ord($string[$x]);
+<a name="line117"></a>        } 
+<a name="line118"></a>
+<a name="line119"></a>        $_ret = "<script type=\"text/javascript\" language=\"javascript\">\n";
+<a name="line120"></a>        $_ret .= "<!--\n";
+<a name="line121"></a>        $_ret .= "{document.write(String.fromCharCode(";
+<a name="line122"></a>        $_ret .= implode(',', $ord);
+<a name="line123"></a>        $_ret .= "))";
+<a name="line124"></a>        $_ret .= "}\n";
+<a name="line125"></a>        $_ret .= "//-->\n";
+<a name="line126"></a>        $_ret .= "</script>\n";
+<a name="line127"></a>
+<a name="line128"></a>        return $_ret;
+<a name="line129"></a>    } elseif ($encode == 'hex') {
+<a name="line130"></a>        preg_match('!^(.*)(\?.*)$!', $address, $match);
+<a name="line131"></a>        if (!empty($match[2])) {
+<a name="line132"></a>            trigger_error("mailto: hex encoding does not work with extra attributes. Try javascript.",E_USER_WARNING);
+<a name="line133"></a>            return;
+<a name="line134"></a>        } 
+<a name="line135"></a>        $address_encode = '';
+<a name="line136"></a>        for ($x = 0; $x < strlen($address); $x++) {
+<a name="line137"></a>            if (preg_match('!\w!', $address[$x])) {
+<a name="line138"></a>                $address_encode .= '%' . bin2hex($address[$x]);
+<a name="line139"></a>            } else {
+<a name="line140"></a>                $address_encode .= $address[$x];
+<a name="line141"></a>            } 
+<a name="line142"></a>        } 
+<a name="line143"></a>        $text_encode = '';
+<a name="line144"></a>        for ($x = 0; $x < strlen($text); $x++) {
+<a name="line145"></a>            $text_encode .= '&#x' . bin2hex($text[$x]) . ';';
+<a name="line146"></a>        } 
+<a name="line147"></a>
+<a name="line148"></a>        $mailto = "&#109;&#97;&#105;&#108;&#116;&#111;&#58;";
+<a name="line149"></a>        return '<a href="' . $mailto . $address_encode . '" ' . $extra . '>' . $text_encode . '</a>';
+<a name="line150"></a>    } else {
+<a name="line151"></a>        // no encoding
+<a name="line152"></a>        return '<a href="mailto:' . $address . '" ' . $extra . '>' . $text . '</a>';
+<a name="line153"></a>    } 
+<a name="line154"></a>} 
+<a name="line155"></a>
+<a name="line156"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\plugins\function.mailto.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

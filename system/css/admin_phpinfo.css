@@ -1,0 +1,13 @@
+#phpInfoWrapper { margin-top:1.5em; }
+#phpInfoWrapper .center {text-align: center;}
+#phpInfoWrapper .center table { text-align: left; margin:0 auto; }
+#phpInfoWrapper .center th { text-align: center !important; }
+#phpInfoWrapper td, #phpInfoWrapper  th { border: 1px solid #000000; font-size: 75%; vertical-align: baseline;}
+#phpInfoWrapper .p {text-align: left;}
+#phpInfoWrapper .e {background-color: #ccccff; font-weight: bold; color: #000000;}
+#phpInfoWrapper .h {background-color: #9999cc; font-weight: bold; color: #000000;}
+#phpInfoWrapper .v {background-color: #cccccc; color: #000000;}
+#phpInfoWrapper .vr {background-color: #cccccc; text-align: right; color: #000000;}
+#phpInfoWrapper img {float: right; border: 0px;}
+#phpInfoWrapper hr {width: 600px; background-color: #cccccc; border: 0px; height: 1px; color: #000000;}
+#phpInfoWrapper h1 a { display:none; }

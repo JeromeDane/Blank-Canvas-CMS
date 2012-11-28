@@ -1,0 +1,9 @@
+.user_login_layout {
+	border-collapse:collapse;
+}
+.user_login_layout th, .user_login_layout td {
+	padding-bottom:.5em;
+}
+.user_login_layout th {
+	text-align:right; padding-right:1em;
+}

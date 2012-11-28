@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 19 Apr 2011 06:01:59 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>libraries\smarty\libs\sysplugins\smarty_internal_compile_private_block_plugin.php (Blank Canvas CMS)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_private_block_plugin.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>libraries\smarty\libs\sysplugins\smarty_internal_compile_private_block_plugin.php</h1>
+<div class="comment" id="overview_description"><p>Smarty Internal Plugin Compile Block Plugin</p><p>Compiles code for the execution of block plugin</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Smarty Internal Plugin Compile Block Plugin
+<a name="line4"></a> * 
+<a name="line5"></a> * Compiles code for the execution of block plugin
+<a name="line6"></a> * 
+<a name="line7"></a> * @package Smarty
+<a name="line8"></a> * @subpackage Compiler
+<a name="line9"></a> * @author Uwe Tews 
+<a name="line10"></a> */
+<a name="line11"></a>
+<a name="line12"></a>/**
+<a name="line13"></a> * Smarty Internal Plugin Compile Block Plugin Class
+<a name="line14"></a> */
+<a name="line15"></a>class Smarty_Internal_Compile_Private_Block_Plugin extends Smarty_Internal_CompileBase {
+<a name="line16"></a>	// attribute definitions
+<a name="line17"></a>    public $optional_attributes = array('_any'); 
+<a name="line18"></a>
+<a name="line19"></a>    /**
+<a name="line20"></a>     * Compiles code for the execution of block plugin
+<a name="line21"></a>     * 
+<a name="line22"></a>     * @param array $args array with attributes from parser
+<a name="line23"></a>     * @param object $compiler compiler object
+<a name="line24"></a>     * @param array $parameter array with compilation parameter
+<a name="line25"></a>     * @param string $tag name of block plugin
+<a name="line26"></a>     * @param string $function PHP function name
+<a name="line27"></a>     * @return string compiled code
+<a name="line28"></a>     */
+<a name="line29"></a>    public function compile($args, $compiler, $parameter, $tag, $function)
+<a name="line30"></a>    {
+<a name="line31"></a>        $this->compiler = $compiler;
+<a name="line32"></a>        if (strlen($tag) < 6 || substr($tag, -5) != 'close') {
+<a name="line33"></a>            // opening tag of block plugin
+<a name="line34"></a>        	// check and get attributes
+<a name="line35"></a>        	$_attr = $this->_get_attributes($args); 
+<a name="line36"></a>        	if ($_attr['nocache'] === true) {
+<a name="line37"></a>            	$this->compiler->tag_nocache = true;
+<a name="line38"></a>        	}
+<a name="line39"></a>       		unset($_attr['nocache']);
+<a name="line40"></a>            // convert attributes into parameter array string
+<a name="line41"></a>            $_paramsArray = array();
+<a name="line42"></a>            foreach ($_attr as $_key => $_value) {
+<a name="line43"></a>                if (is_int($_key)) {
+<a name="line44"></a>                    $_paramsArray[] = "$_key=>$_value";
+<a name="line45"></a>                } else {
+<a name="line46"></a>                    $_paramsArray[] = "'$_key'=>$_value";
+<a name="line47"></a>                } 
+<a name="line48"></a>            } 
+<a name="line49"></a>            $_params = 'array(' . implode(",", $_paramsArray) . ')';
+<a name="line50"></a>
+<a name="line51"></a>            $this->_open_tag($tag, array($_params, $this->compiler->nocache)); 
+<a name="line52"></a>            // maybe nocache because of nocache variables or nocache plugin
+<a name="line53"></a>            $this->compiler->nocache = $this->compiler->nocache | $this->compiler->tag_nocache; 
+<a name="line54"></a>            // compile code
+<a name="line55"></a>            $output = "<?php \$_smarty_tpl->smarty->_tag_stack[] = array('{$tag}', {$_params}); \$_block_repeat=true; {$function}({$_params}, null, \$_smarty_tpl, \$_block_repeat);while (\$_block_repeat) { ob_start();?>";
+<a name="line56"></a>        } else {
+<a name="line57"></a>            // must endblock be nocache?
+<a name="line58"></a>            if ($this->compiler->nocache) {
+<a name="line59"></a>                $this->compiler->tag_nocache = true;
+<a name="line60"></a>            } 
+<a name="line61"></a>            // closing tag of block plugin, restore nocache
+<a name="line62"></a>            list($_params, $this->compiler->nocache) = $this->_close_tag(substr($tag, 0, -5)); 
+<a name="line63"></a>            // This tag does create output
+<a name="line64"></a>            $this->compiler->has_output = true; 
+<a name="line65"></a>            // compile code
+<a name="line66"></a>            if (!isset($parameter['modifier_list'])) {
+<a name="line67"></a>            	$mod_pre = $mod_post ='';
+<a name="line68"></a>            } else {
+<a name="line69"></a>            	$mod_pre = ' ob_start(); ';
+<a name="line70"></a>            	$mod_post = 'echo '.$this->compiler->compileTag('private_modifier',array(),array('modifierlist'=>$parameter['modifier_list'],'value'=>'ob_get_clean()')).';';
+<a name="line71"></a>            }
+<a name="line72"></a>            $output = "<?php \$_block_content = ob_get_clean(); \$_block_repeat=false;".$mod_pre." echo {$function}({$_params}, \$_block_content, \$_smarty_tpl, \$_block_repeat); ".$mod_post." } array_pop(\$_smarty_tpl->smarty->_tag_stack);?>";
+<a name="line73"></a>        } 
+<a name="line74"></a>        return $output . "\n";
+<a name="line75"></a>    } 
+<a name="line76"></a>} 
+<a name="line77"></a>
+<a name="line78"></a>?></pre>
+<div class="header">
+<h1>Blank Canvas CMS</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source\libraries\smarty\libs\sysplugins\smarty_internal_compile_private_block_plugin.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>
